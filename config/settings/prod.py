@@ -14,12 +14,11 @@ AUTHENTICATION_BACKENDS += [
     "authbroker_client.backends.AuthbrokerBackend",
 ]
 
-INSTALLED_APPS += [
-    "elasticapm.contrib.django",
-]
+# INSTALLED_APPS += [
+#     "elasticapm.contrib.django",
+# ]
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "front_end/build/static"),
     os.path.join(BASE_DIR, "node_modules/govuk-frontend"),
 )
 
@@ -73,37 +72,17 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'forecast.import_csv': {
-            'handlers': ['stdout', ],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'forecast.views.upload_file': {
-            'handlers': ['stdout', ],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'forecast.tasks': {
-            'handlers': ['stdout', ],
-            'level': 'INFO',
-            'propagate': True,
-        }
     },
 }
 
-# Use anti virus check on uploaded files
-IGNORE_ANTI_VIRUS = False
+# TODO: enable
+# sentry_sdk.init(
+#     os.environ.get("SENTRY_DSN"),
+#     environment=os.environ.get("SENTRY_ENVIRONMENT"),
+#     integrations=[DjangoIntegration()],
+# )
 
-# Set async file uploading
-ASYNC_FILE_UPLOAD = True
-
-sentry_sdk.init(
-    os.environ.get("SENTRY_DSN"),
-    environment=os.environ.get("SENTRY_ENVIRONMENT"),
-    integrations=[DjangoIntegration()],
-)
-
-# Django staff SSO user migration process requries the following
+# Django staff SSO user migration process requires the following
 MIGRATE_EMAIL_USER_ON_LOGIN = True
 
 # HSTS (https://man.uktrade.io/docs/procedures/1st-go-live.html)
