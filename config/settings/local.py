@@ -16,7 +16,7 @@ STATICFILES_DIRS = (
 SASS_PROCESSOR_INCLUDE_DIRS = [os.path.join("/node_modules")]
 
 AUTHENTICATION_BACKENDS += [
-    "authbroker_client.backends.AuthbrokerBackend",
+    "main.backends.CustomAuthbrokerBackend",
 ]
 
 LOG_TO_ELK = env.bool("LOG_TO_ELK", default=False)
