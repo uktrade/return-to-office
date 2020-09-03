@@ -11,7 +11,7 @@ from django_log_formatter_ecs import ECSFormatter
 # ]
 
 AUTHENTICATION_BACKENDS += [
-    "authbroker_client.backends.AuthbrokerBackend",
+    "main.backends.CustomAuthbrokerBackend",
 ]
 
 # INSTALLED_APPS += [

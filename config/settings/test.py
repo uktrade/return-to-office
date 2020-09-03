@@ -12,7 +12,7 @@ MIDDLEWARE += [
 ]
 
 AUTHENTICATION_BACKENDS += [
-    "authbroker_client.backends.AuthbrokerBackend",
+    "main.backends.CustomAuthbrokerBackend",
 ]
 
 STATICFILES_DIRS = (
