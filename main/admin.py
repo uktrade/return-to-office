@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-# FIXME: implement
+# FIXME: implement admin side of things
 #
 #   -buildings
 #   -floors

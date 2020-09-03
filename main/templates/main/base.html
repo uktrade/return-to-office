@@ -63,6 +63,14 @@
 
   <div class="govuk-width-container ">
     <main class="govuk-main-wrapper " id="main-content" role="main">
+      {% if messages %}
+      <ul class="govuk-inset-text">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {% endif %}
+
       {% block content %}{% endblock %}
     </main>
   </div>
