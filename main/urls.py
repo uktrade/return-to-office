@@ -2,15 +2,16 @@ from django.urls import path
 
 from . import views
 
+app_name = "main"
+
 urlpatterns = [
     path("", views.index, name="index"),
+    path("my-bookings", views.show_bookings, name="show-bookings"),
+    path("booking/create", views.create_booking, name="booking-create"),
 ]
 
 # FIXME: views needed
 
-# home page with two links:
-#   -my bookings
-#   -new booking
 
 # new booking
 #   -show list of all my bookings in the future (including today)
