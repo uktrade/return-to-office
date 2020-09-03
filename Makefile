@@ -1,5 +1,5 @@
 migrations:
-	docker-compose run web python manage.py makemigrations
+	docker-compose run web python manage.py makemigrations main
 
 migrate:
 	docker-compose run web python manage.py migrate
@@ -15,6 +15,9 @@ flake8:
 
 up:
 	docker-compose up
+
+down:
+	docker-compose down
 
 build:
 	docker-compose build
