@@ -2,8 +2,20 @@
 
 {% block content %}
 
-<!-- FIXME: apply gov.uk styling -->
-
 <h1 class="govuk-heading-xl">Your bookings</h1>
+
+<ul class="govuk-list govuk-list--bullet">
+
+{% for b in bookings %}
+<li>Date: {{ b.booking_date }}</li>
+<ul class="govuk-list govuk-list--bullet">
+    <li>Building: {{ b.building }}</li>
+    <li>Floor: {{ b.floor }}</li>
+    <li>Desk: {{ b.desk }}</li>
+    <li>Booked at: {{ b.booked_timestamp }}</li>
+</ul>
+{% endfor %}
+
+</ul>
 
 {% endblock %}

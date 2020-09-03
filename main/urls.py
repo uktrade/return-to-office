@@ -7,18 +7,6 @@ app_name = "main"
 urlpatterns = [
     path("", views.index, name="index"),
     path("my-bookings", views.show_bookings, name="show-bookings"),
-    path("booking/create", views.create_booking, name="booking-create"),
+    path("booking/create-1", views.create_booking_1, name="booking-create-1"),
+    path("booking/create-2", views.create_booking_2, name="booking-create-2"),
 ]
-
-# FIXME: views needed
-
-
-# new booking
-#   -show list of all my bookings in the future (including today)
-#   -simple list for now, in future, maybe can cancel them
-#
-# new booking
-#   -select date and building
-#   -select floor (show free desks per floor)
-#   -get assigned desk
-#   -send email confirmation

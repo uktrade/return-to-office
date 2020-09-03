@@ -139,7 +139,7 @@ AUTHBROKER_CLIENT_SECRET = env("AUTHBROKER_CLIENT_SECRET", default=None)
 AUTHBROKER_SCOPES = "read write"
 
 LOGIN_URL = "/auth/login"
-LOGIN_REDIRECT_URL = "index"
+LOGIN_REDIRECT_URL = "main:index"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
