@@ -1,0 +1,8 @@
+{
+    "name": "return-to-office",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "govuk-frontend": "^3.8.0"
+    }
+}
