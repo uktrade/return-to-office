@@ -4,7 +4,7 @@ from django import forms
 
 from .models import Booking, Floor
 
-class BookingForm(forms.ModelForm):
+class BookingFormInitial(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ["booking_date", "building"]
@@ -22,7 +22,7 @@ class BookingForm(forms.ModelForm):
         return booking_date
 
 
-class BookingForm2(forms.ModelForm):
+class BookingFormFinal(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ["booking_date", "building", "floor"]

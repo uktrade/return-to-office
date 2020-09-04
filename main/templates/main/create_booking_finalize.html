@@ -14,7 +14,7 @@
     <li> {{ building }}</li>
 </ul>
 
-<form action="{% url "main:booking-create-2" %}" method="post">
+<form action="{% url "main:booking-create-finalize" %}" method="post">
 
     {% csrf_token %}
 

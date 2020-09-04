@@ -6,7 +6,7 @@ from django.db import transaction
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from .forms import BookingForm, BookingForm2
+from .forms import BookingFormInitial, BookingFormFinal
 from .models import Booking, Floor, Building
 
 
@@ -33,18 +33,18 @@ def show_bookings(req):
     return render(req, "main/show_bookings.html", ctx)
 
 
-def create_booking_1(req):
-    template = "main/create_booking.html"
+def create_booking_initial(req):
+    template = "main/create_booking_initial.html"
 
     ctx = {}
 
     if req.method == "POST":
-        form = BookingForm(req.POST)
+        form = BookingFormInitial(req.POST)
 
         if form.is_valid():
             booking = form.save(False)
 
-            form = BookingForm2(
+            form = BookingFormFinal(
                 building=booking.building,
                 initial={
                     "booking_date": booking.booking_date,
@@ -52,7 +52,7 @@ def create_booking_1(req):
                 }
             )
 
-            template = "main/create_booking_2.html"
+            template = "main/create_booking_finalize.html"
 
             floors = Floor.objects.filter(building=booking.building)
 
@@ -81,7 +81,7 @@ def create_booking_1(req):
             ctx["building"] = booking.building
 
     else:
-        form = BookingForm()
+        form = BookingFormInitial()
 
     ctx["form"] = form
 
@@ -89,8 +89,8 @@ def create_booking_1(req):
 
 
 @require_POST
-def create_booking_2(req):
-    form = BookingForm2(req.POST)
+def create_booking_finalize(req):
+    form = BookingFormFinal(req.POST)
 
     if form.is_valid():
         booking = form.save(False)
@@ -118,7 +118,9 @@ def create_booking_2(req):
 
             return redirect("main:show-bookings")
 
+    # FIXME: in theory, this should do all the things create_booking_initial
+    # does..not sure how this would ever go here in practise though
     ctx = {}
     ctx["form"] = form
 
-    return render(req, "main/create_booking_2.html", ctx)
+    return render(req, "main/create_booking_finalize.html", ctx)
