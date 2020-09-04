@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     # "simple_history",
     "axes",
     # "adv_cache_tag",
+
+    # must be last so other apps can override widget rendering
+    "django.forms",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -73,6 +76,8 @@ TEMPLATES = [
         },
     }
 ]
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -186,5 +191,9 @@ AUTHENTICATION_BACKENDS = [
 AXES_LOGIN_FAILURE_LIMIT = 5
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# we need to store dates in the session, which the default json serializer
+# doesn't support
+SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
 
 AUTHBROKER_ANONYMOUS_PATHS = ["/pingdom/ping.xml", ]

@@ -1,19 +1,13 @@
 import datetime
-from typing import NamedTuple
 
 from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
+from django.urls import reverse
 
 from .forms import BookingFormInitial, BookingFormFinal
 from .models import Booking, Floor, Building
-
-
-class FloorBookingInfo(NamedTuple):
-    floor_name: str
-    total_desks: int
-    free_desks: int
 
 
 def index(req):
@@ -34,8 +28,6 @@ def show_bookings(req):
 
 
 def create_booking_initial(req):
-    template = "main/create_booking_initial.html"
-
     ctx = {}
 
     if req.method == "POST":
@@ -44,83 +36,71 @@ def create_booking_initial(req):
         if form.is_valid():
             booking = form.save(False)
 
-            form = BookingFormFinal(
-                building=booking.building,
-                initial={
-                    "booking_date": booking.booking_date,
-                    "building": booking.building,
-                }
-            )
+            req.session["booking_date"] = booking.booking_date
+            req.session["building"] = booking.building.pk
 
-            template = "main/create_booking_finalize.html"
-
-            floors = Floor.objects.filter(building=booking.building)
-
-            all_bookings = Booking.objects.filter(
-                booking_date=booking.booking_date, building=booking.building)
-
-            # key = floor name, value = [number of bookings, total desks]
-            bookings_per_floor = {f.name: [0, f.nr_of_desks()] for f in floors}
-
-            for b in all_bookings:
-                bookings_per_floor[b.floor.name][0] += 1
-
-            floor_booking_info = []
-
-            for floor_name in sorted(bookings_per_floor.keys()):
-                val = bookings_per_floor[floor_name]
-
-                floor_booking_info.append(FloorBookingInfo(
-                    floor_name=floor_name,
-                    free_desks=val[1] - val[0],
-                    total_desks=val[1],
-                ))
-
-            ctx["floor_booking_info"] = floor_booking_info
-            ctx["booking_date"] = booking.booking_date
-            ctx["building"] = booking.building
-
+            return redirect(reverse("main:booking-create-finalize"))
     else:
         form = BookingFormInitial()
 
     ctx["form"] = form
 
-    return render(req, template, ctx)
+    return render(req, "main/create_booking_initial.html", ctx)
 
 
-@require_POST
 def create_booking_finalize(req):
-    form = BookingFormFinal(req.POST)
+    ctx = {}
 
-    if form.is_valid():
-        booking = form.save(False)
-        booking.user = req.user
+    building = get_object_or_404(Building, pk=req.session["building"])
+    booking_date = req.session["booking_date"]
 
-        with transaction.atomic():
-            # lock the floor we're trying to book
-            lock_floors = Floor.objects.filter(pk=booking.floor_id).select_for_update()
+    if req.method == "POST":
+        form = BookingFormFinal(req.POST)
+        form.populate_floors(booking_date, building)
 
-            all_bookings = Booking.objects.filter(
-                booking_date=booking.booking_date, building=booking.building, floor=booking.floor
+        if form.is_valid():
+            booking = Booking(
+                user=req.user,
+                building=building,
+                booking_date=booking_date,
+                floor=get_object_or_404(Floor, pk=int(form.cleaned_data["floor"])),
             )
 
-            if len(all_bookings) >= booking.floor.nr_of_desks():
-                messages.error(req, "Floor is completely booked")
+            if booking.booking_date < datetime.date.today():
+                form.add_error(None, "Bookings cannot be in the past.")
 
-                return redirect("main:index")
+            if booking.floor not in booking.building.floors.all():
+                # this should not be possible, but guard against it anyway
+                form.add_error(None, "Selected floor does not belong to the selected building.")
 
-            booking.desk = booking.floor.get_free_desk(set(b.desk for b in all_bookings))
-            booking.save()
+            if not form.errors:
+                with transaction.atomic():
+                    # lock the floor we're trying to book
+                    lock_floors = Floor.objects.filter(pk=booking.floor_id).select_for_update()
 
-            messages.success(req, "Desk booking successfully completed")
+                    all_bookings = Booking.objects.filter(
+                        booking_date=booking.booking_date, building=booking.building, floor=booking.floor
+                    )
 
-            # FIXME: send email confirmation
+                    if len(all_bookings) >= booking.floor.nr_of_desks():
+                        messages.error(req, "Floor is completely booked")
 
-            return redirect("main:show-bookings")
+                        return redirect("main:index")
 
-    # FIXME: in theory, this should do all the things create_booking_initial
-    # does..not sure how this would ever go here in practise though
-    ctx = {}
+                    booking.desk = booking.floor.get_free_desk(set(b.desk for b in all_bookings))
+                    booking.save()
+
+                    messages.success(req, "Desk booking successfully completed")
+
+                    # FIXME: send email confirmation
+
+                    return redirect("main:show-bookings")
+    else:
+        form = BookingFormFinal()
+        form.populate_floors(booking_date, building)
+
     ctx["form"] = form
+    ctx["booking_date"] = booking_date
+    ctx["building"] = building
 
     return render(req, "main/create_booking_finalize.html", ctx)

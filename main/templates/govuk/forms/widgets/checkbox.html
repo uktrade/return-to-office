@@ -1,0 +1,15 @@
+{% load main_tags %}
+
+<div class="govuk-checkboxes">
+  <div class="govuk-checkboxes__item">
+    <input class="govuk-checkboxes__input" type="{{ widget.type }}" name="{{ widget.name }}"
+      {% if widget.value != None %} value="{{ widget.value }}"{% endif %}
+      {% include "django/forms/widgets/attrs.html" %}
+    >
+    <label class="govuk-label govuk-checkboxes__label" for="{{ widget.attrs.id }}">
+        {% with field=form_instance.fields|get_obj_index:widget.name %}
+          {{ field.label }}
+        {% endwith %}
+      </label>
+  </div>
+</div>

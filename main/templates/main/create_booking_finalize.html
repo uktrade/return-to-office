@@ -4,29 +4,18 @@
 
 <h1 class="govuk-heading-xl">Create new booking</h1>
 
-<p class="govuk-body">Date</p>
-<ul class="govuk-list govuk-list--bullet">
-    <li> {{ booking_date }}</li>
-</ul>
+<p class="govuk-body">Date: {{ booking_date }}</p>
 
-<p class="govuk-body">Building</p>
-<ul class="govuk-list govuk-list--bullet">
-    <li> {{ building }}</li>
-</ul>
+<p class="govuk-body">Building: {{ building }}</p>
 
 <form action="{% url "main:booking-create-finalize" %}" method="post">
 
     {% csrf_token %}
 
-    {% include "main/govt_uk_form.html" %}
+    {% include "main/govuk_form_errors.html" %}
 
-    {% for fbi in floor_booking_info %}
-    <ul class="govuk-list govuk-list--bullet">
-        <li>Floor {{ fbi.floor_name }}: {{ fbi.free_desks }} free desks out of the  {{ fbi.total_desks }} total desks</li>
-    </ul>
-    {% endfor %}
-
-    <br>
+    {% include "main/govuk_form_field.html" with field=form.floor %}
+    {% include "main/govuk_form_field.html" with field=form.confirmation hide_label=True %}
 
     <input type="submit" value="Book" class="govuk-button"/>
 
