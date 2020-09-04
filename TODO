@@ -3,11 +3,8 @@ for go-live:
 * new domain (work with sajid/lyndon)
 * email with confirmation (gov.uk notify would be the best)
 * csv download for operator to audit
-* when booking, user needs to confirm that they’ve
-  * notified line manager
-  * done training
-  * done self assessment and their office visit was accepted by it
-  * I reckon three checkboxes
+* directorate selection
+* change desk numbers to just be a count on Floor
 
 * technical
   * implement pingdom
@@ -19,5 +16,6 @@ after go-live
 =============
 * cancel your own future bookings
 * technical
+  * upgrade to Django 3.1
   * add black
   * add tests?
