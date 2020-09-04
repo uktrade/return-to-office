@@ -1,0 +1,23 @@
+for go-live:
+============
+* new domain (work with sajid/lyndon)
+* email with confirmation (gov.uk notify would be the best)
+* csv download for operator to audit
+* when booking, user needs to confirm that they’ve
+  * notified line manager
+  * done training
+  * done self assessment and their office visit was accepted by it
+  * I reckon three checkboxes
+
+* technical
+  * implement pingdom
+  * trim requirements
+  * implement admin side
+  * add sentry
+
+after go-live
+=============
+* cancel your own future bookings
+* technical
+  * add black
+  * add tests?
