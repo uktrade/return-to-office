@@ -10,8 +10,15 @@ class BookingFormInitial(forms.ModelForm):
         fields = ["booking_date", "building"]
 
         widgets = {
-            "booking_date": forms.DateInput(attrs={'type': 'date'}),
+            "booking_date": forms.DateInput(attrs={"type": "date"}),
         }
+
+    def __init__(self, *args, building=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['booking_date'].widget.attrs.update({
+            "min": str(datetime.date.today()),
+        })
 
     def clean_booking_date(self):
         booking_date = self.cleaned_data["booking_date"]
@@ -36,7 +43,7 @@ class BookingFormFinal(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if building:
-            self.fields['floor'].queryset = Floor.objects.filter(building=building).order_by("name")
+            self.fields["floor"].queryset = Floor.objects.filter(building=building).order_by("name")
 
     def clean_booking_date(self):
         booking_date = self.cleaned_data["booking_date"]
