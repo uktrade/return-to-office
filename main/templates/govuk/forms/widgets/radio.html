@@ -1,0 +1,28 @@
+{% load main_tags %}
+
+{% with id=widget.attrs.id %}
+
+<fieldset class="govuk-fieldset">
+  <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+    <h1 class="govuk-fieldset__heading">
+        {% with field=form_instance.fields|get_obj_index:widget.name %}
+          {{ field.label }}
+        {% endwith %}
+    </h1>
+  </legend>
+
+  <div class="govuk-radios--small"{% if id %} id="{{ id }}"{% endif %}>
+  {% for group, options, index in widget.optgroups %}
+    {% for option in options %}
+      <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="{{ option.attrs.id }}" type="radio" name="{{ option.name }}"{% if option.value != None %} value="{{ option.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %}>
+          <label class="govuk-label govuk-radios__label" for="{{ option.attrs.id }}">
+            {{ option.label }}
+          </label>
+      </div>
+    {% endfor %}
+  {% endfor %}
+  </div>
+  {% endwith %}
+
+</fieldset>

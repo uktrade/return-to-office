@@ -14,7 +14,7 @@
 
     {% include "main/govuk_form_errors.html" %}
 
-    {% include "main/govuk_form_field.html" with field=form.floor %}
+    {% include "main/govuk_form_field.html" with field=form.floor hide_label=True %}
     {% include "main/govuk_form_field.html" with field=form.confirmation hide_label=True %}
 
     <input type="submit" value="Book" class="govuk-button"/>

@@ -4,16 +4,19 @@ from django import forms
 from django.utils.safestring import mark_safe
 
 from .models import Booking, Floor, Building
-from .widgets import GovUKCheckboxInput
+from .widgets import GovUKCheckboxInput, GovUKRadioSelect
 
 
 class BookingFormInitial(forms.Form):
     booking_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
-    building = forms.ChoiceField(widget=forms.RadioSelect())
-    directorate = forms.ChoiceField(widget=forms.RadioSelect())
+    building = forms.ChoiceField(label="Building", widget=GovUKRadioSelect())
+    directorate = forms.ChoiceField(label="Directorate", widget=GovUKRadioSelect())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.fields["building"].widget.form_instance = self
+        self.fields["directorate"].widget.form_instance = self
 
         self.fields['booking_date'].widget.attrs.update({
             "min": str(datetime.date.today()),
@@ -40,7 +43,7 @@ class BookingFormInitial(forms.Form):
 
 
 class BookingFormFinal(forms.Form):
-    floor = forms.ChoiceField(widget=forms.RadioSelect())
+    floor = forms.ChoiceField(label="Floor", widget=GovUKRadioSelect())
 
     confirmation = forms.BooleanField(label=mark_safe("""
     <p class="govuk-body">By making a booking I confirm that I, or the person on whose behalf I am making the booking have:</p>
@@ -56,6 +59,7 @@ class BookingFormFinal(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.fields["floor"].widget.form_instance = self
         self.fields["confirmation"].widget.form_instance = self
 
     def populate_floors(self, booking_date: datetime.date, building: Building) -> None:
