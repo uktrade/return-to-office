@@ -9,6 +9,9 @@
 {% for b in bookings %}
 <li>Date: {{ b.booking_date }}</li>
 <ul class="govuk-list govuk-list--bullet">
+    {% if b.on_behalf_of %}
+    <li>On behalf of: {{ b.on_behalf_of }}</li>
+    {% endif %}
     <li>Building: {{ b.building }}</li>
     <li>Floor: {{ b.floor }}</li>
     <li>Directorate: {{ b.directorate }}</li>
