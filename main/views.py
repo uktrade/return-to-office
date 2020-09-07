@@ -34,10 +34,9 @@ def create_booking_initial(req):
         form = BookingFormInitial(req.POST)
 
         if form.is_valid():
-            booking = form.save(False)
-
-            req.session["booking_date"] = booking.booking_date
-            req.session["building"] = booking.building.pk
+            req.session["booking_date"] = form.cleaned_data["booking_date"]
+            req.session["building"] = int(form.cleaned_data["building"])
+            req.session["directorate"] = form.cleaned_data["directorate"]
 
             return redirect(reverse("main:booking-create-finalize"))
     else:
@@ -53,6 +52,7 @@ def create_booking_finalize(req):
 
     building = get_object_or_404(Building, pk=req.session["building"])
     booking_date = req.session["booking_date"]
+    directorate = req.session["directorate"]
 
     if req.method == "POST":
         form = BookingFormFinal(req.POST)
@@ -64,6 +64,7 @@ def create_booking_finalize(req):
                 building=building,
                 booking_date=booking_date,
                 floor=get_object_or_404(Floor, pk=int(form.cleaned_data["floor"])),
+                directorate=directorate,
             )
 
             if booking.booking_date < datetime.date.today():
@@ -102,5 +103,6 @@ def create_booking_finalize(req):
     ctx["form"] = form
     ctx["booking_date"] = booking_date
     ctx["building"] = building
+    ctx["directorate"] = directorate
 
     return render(req, "main/create_booking_finalize.html", ctx)
