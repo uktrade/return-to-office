@@ -1,15 +1,18 @@
 for go-live:
 ============
-* new domain (work with sajid/lyndon)
-* email with confirmation (gov.uk notify would be the best)
+* allow booking for someone else
 * csv download for operator to audit
-* directorate selection
+* email with confirmation (gov.uk notify would be the best)
 * change desk numbers to just be a count on Floor
 
+* admin side
+
 * technical
+  * gov.uk styling
+    * radio buttons
+  * new domain (work with sajid/lyndon)
   * implement pingdom
   * trim requirements
-  * implement admin side
   * add sentry
 
 after go-live

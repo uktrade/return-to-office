@@ -6,23 +6,29 @@ from django.utils.safestring import mark_safe
 from .models import Booking, Floor, Building
 from .widgets import GovUKCheckboxInput
 
-class BookingFormInitial(forms.ModelForm):
-    class Meta:
-        model = Booking
-        fields = ["booking_date", "building"]
 
-        widgets = {
-            "booking_date": forms.DateInput(attrs={"type": "date"}),
-            "building": forms.RadioSelect(),
-        }
+class BookingFormInitial(forms.Form):
+    booking_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
+    building = forms.ChoiceField(widget=forms.RadioSelect())
+    directorate = forms.ChoiceField(widget=forms.RadioSelect())
 
-    def __init__(self, *args, building=None, **kwargs):
-        self.base_fields['building'].empty_label = None
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields['booking_date'].widget.attrs.update({
             "min": str(datetime.date.today()),
         })
+
+        self.fields["building"].choices = [(b.pk, str(b)) for b in Building.objects.all().order_by("name")]
+
+        self.fields["directorate"].choices = [(x, x) for x in [
+            "Chief Operating Officer",
+            "Ministerial Strategy Directorate",
+            "Global Trade and Investment",
+            "Trade Policy Group",
+            "Global Strategy Directorate",
+            "Other / Visitor",
+        ]]
 
     def clean_booking_date(self):
         booking_date = self.cleaned_data["booking_date"]
@@ -48,7 +54,6 @@ class BookingFormFinal(forms.Form):
     </ul>"""), widget=GovUKCheckboxInput())
 
     def __init__(self, *args, **kwargs):
-        self.base_fields['floor'].empty_label = None
         super().__init__(*args, **kwargs)
 
         self.fields["confirmation"].widget.form_instance = self

@@ -47,6 +47,8 @@ class Booking(models.Model):
 
     floor = models.ForeignKey(Floor, on_delete=models.CASCADE, related_name="+")
 
+    directorate = models.CharField(max_length=80)
+
     desk = models.CharField(max_length=20)
 
     booked_timestamp = models.DateTimeField(auto_now_add=True)

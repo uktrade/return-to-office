@@ -5,8 +5,8 @@
 <h1 class="govuk-heading-xl">Create new booking</h1>
 
 <p class="govuk-body">Date: {{ booking_date }}</p>
-
 <p class="govuk-body">Building: {{ building }}</p>
+<p class="govuk-body">Directorate: {{ directorate }}</p>
 
 <form action="{% url "main:booking-create-finalize" %}" method="post">
 
