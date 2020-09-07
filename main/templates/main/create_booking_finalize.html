@@ -4,6 +4,10 @@
 
 <h1 class="govuk-heading-xl">Create new booking</h1>
 
+{% if on_behalf_of %}
+<p class="govuk-body">On behalf of: {{ on_behalf_of }}</p>
+{% endif %}
+
 <p class="govuk-body">Date: {{ booking_date }}</p>
 <p class="govuk-body">Building: {{ building }}</p>
 <p class="govuk-body">Directorate: {{ directorate }}</p>

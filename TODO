@@ -1,6 +1,5 @@
 for go-live:
 ============
-* allow booking for someone else
 * csv download for operator to audit
 * email with confirmation (gov.uk notify would be the best)
 * change desk numbers to just be a count on Floor

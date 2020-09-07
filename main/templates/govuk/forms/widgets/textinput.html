@@ -1,0 +1,20 @@
+{% load main_tags %}
+
+<h1 class="govuk-label-wrapper">
+  <label class="govuk-label govuk-label--m" for="{{ widget.name }}">
+    {% with field=form_instance.fields|get_obj_index:widget.name %}
+      {{ field.label }}
+    {% endwith %}
+  </label>
+</h1>
+
+<div class="govuk-hint">
+  {% with field=form_instance.fields|get_obj_index:widget.name %}
+    {{ field.help_text }}
+  {% endwith %}
+</div>
+
+<input class="govuk-input" id="event-name" name="{{ widget.name }}" type="text"
+{% if widget.value != None %} value="{{ widget.value }}"{% endif %}
+{% include "django/forms/widgets/attrs.html" %}
+>

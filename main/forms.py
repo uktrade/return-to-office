@@ -4,10 +4,15 @@ from django import forms
 from django.utils.safestring import mark_safe
 
 from .models import Booking, Floor, Building
-from .widgets import GovUKCheckboxInput, GovUKRadioSelect
+from .widgets import GovUKCheckboxInput, GovUKRadioSelect, GovUKTextInput
 
 
 class BookingFormInitial(forms.Form):
+    on_behalf_of = forms.CharField(
+        required=False, widget=GovUKTextInput(), label="On behalf of",
+        help_text="If booking on behalf of someone else, please put their name here",
+    )
+
     booking_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     building = forms.ChoiceField(label="Building", widget=GovUKRadioSelect())
     directorate = forms.ChoiceField(label="Directorate", widget=GovUKRadioSelect())
@@ -17,6 +22,7 @@ class BookingFormInitial(forms.Form):
 
         self.fields["building"].widget.form_instance = self
         self.fields["directorate"].widget.form_instance = self
+        self.fields["on_behalf_of"].widget.form_instance = self
 
         self.fields['booking_date'].widget.attrs.update({
             "min": str(datetime.date.today()),
@@ -32,6 +38,7 @@ class BookingFormInitial(forms.Form):
             "Global Strategy Directorate",
             "Other / Visitor",
         ]]
+
 
     def clean_booking_date(self):
         booking_date = self.cleaned_data["booking_date"]
