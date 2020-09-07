@@ -8,9 +8,11 @@
 
     {% csrf_token %}
 
-    {% include "main/govuk_form.html" %}
+    {% include "main/govuk_form_errors.html" %}
 
-    <br>
+    {% include "main/govuk_form_field.html" with field=form.booking_date %}
+    {% include "main/govuk_form_field.html" with field=form.building hide_label=True %}
+    {% include "main/govuk_form_field.html" with field=form.directorate hide_label=True %}
 
     <input type="submit" value="Continue" class="govuk-button"/>
 
