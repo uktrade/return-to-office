@@ -1,14 +1,8 @@
 -r base.in
 
-Faker
-factory-boy
-selenium
-beautifulsoup4
 black
+pip-tools==5.3.1
 pytest
 pytest-cov
 pytest-django
 pytest-xdist
-behave-django
-pyperclip
-webdriver-manager
