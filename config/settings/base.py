@@ -81,14 +81,13 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# TODO: enable?
-# if env("ELASTIC_APM_ENVIRONMENT", default=None):
-#     ELASTIC_APM = {
-#         'SERVICE_NAME': 'fft',
-#         'SECRET_TOKEN': env.bool("ELASTIC_APM_SECRET_TOKEN", default=None),
-#         'SERVER_URL': 'https://apm.elk.uktrade.digital',
-#         'ENVIRONMENT': env("ELASTIC_APM_ENVIRONMENT", default=None)
-#     }
+if env("ELASTIC_APM_ENVIRONMENT", default=None):
+    ELASTIC_APM = {
+        'SERVICE_NAME': 'return-to-office',
+        'SECRET_TOKEN': env.bool("ELASTIC_APM_SECRET_TOKEN", default=None),
+        'SERVER_URL': 'https://apm.elk.uktrade.digital',
+        'ENVIRONMENT': env("ELASTIC_APM_ENVIRONMENT", default=None)
+    }
 
 VCAP_SERVICES = env.json('VCAP_SERVICES', default={})
 
@@ -151,10 +150,6 @@ LOGIN_REDIRECT_URL = "main:index"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
 
-# TODO: needed?
-# CAN_ELEVATE_SSO_USER_PERMISSIONS = False
-# CAN_CREATE_TEST_USER = False
-
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -178,7 +173,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "axes.middleware.AxesMiddleware",
-    # TODO: think about if this should be env-specific
     "authbroker_client.middleware.ProtectAllViewsMiddleware",
 ]
 

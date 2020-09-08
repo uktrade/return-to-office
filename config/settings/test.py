@@ -7,10 +7,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from django_log_formatter_ecs import ECSFormatter
 
 
-MIDDLEWARE += [
-    "authbroker_client.middleware.ProtectAllViewsMiddleware",
-]
-
 AUTHENTICATION_BACKENDS += [
     "main.backends.CustomAuthbrokerBackend",
 ]
@@ -26,9 +22,6 @@ X_ROBOTS_TAG = [
     'noindex',
     'nofollow',
 ]
-
-# Django staff SSO user migration process requires the following
-MIGRATE_EMAIL_USER_ON_LOGIN = True
 
 # TODO: needed?
 # CACHES = {
