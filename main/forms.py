@@ -31,12 +31,16 @@ class BookingFormInitial(forms.Form):
         self.fields["building"].choices = [(b.pk, str(b)) for b in Building.objects.all().order_by("name")]
 
         self.fields["directorate"].choices = [(x, x) for x in [
-            "Chief Operating Officer",
-            "Ministerial Strategy Directorate",
-            "Global Trade and Investment",
-            "Trade Policy Group",
-            "Global Strategy Directorate",
-            "Other / Visitor",
+            "Corporate Services",
+            "Comms and Marketing",
+            "Strategy Group",
+            "GSSEP",
+            "GREAT",
+            "GTI Sectors",
+            "GTI UK Regions and Central Operations",
+            "Policy and Negotiations",
+            "Trade Relations and Implementation",
+            "TRID",
         ]]
 
 
