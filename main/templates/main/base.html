@@ -46,6 +46,11 @@
           </span>
         </a>
       </div>
+      <div class="govuk-header__content">
+        {% if user.is_staff %}
+          <a href="/admin/" class="govuk-header__link">Admin</a>
+        {% endif %}
+      </div>
     </div>
   </header>
 
