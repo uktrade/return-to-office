@@ -1,3 +1,4 @@
+import os
 import sys
 
 from .base import *  # noqa
@@ -5,10 +6,6 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from django_log_formatter_ecs import ECSFormatter
-
-# MIDDLEWARE += [
-#     "authbroker_client.middleware.ProtectAllViewsMiddleware",
-# ]
 
 AUTHENTICATION_BACKENDS += [
     "main.backends.CustomAuthbrokerBackend",
@@ -75,15 +72,11 @@ LOGGING = {
     },
 }
 
-# TODO: enable
-# sentry_sdk.init(
-#     os.environ.get("SENTRY_DSN"),
-#     environment=os.environ.get("SENTRY_ENVIRONMENT"),
-#     integrations=[DjangoIntegration()],
-# )
-
-# Django staff SSO user migration process requires the following
-MIGRATE_EMAIL_USER_ON_LOGIN = True
+sentry_sdk.init(
+    os.environ.get("SENTRY_DSN"),
+    environment=os.environ.get("SENTRY_ENVIRONMENT"),
+    integrations=[DjangoIntegration()],
+)
 
 # HSTS (https://man.uktrade.io/docs/procedures/1st-go-live.html)
 SECURE_HSTS_SECONDS = 3600
