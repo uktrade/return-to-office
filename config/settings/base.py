@@ -31,29 +31,16 @@ INSTALLED_APPS = [
     "custom_usermodel",
     "authbroker_client",
     "pingdom.apps.PingdomConfig",
-    # "django_extensions",
-    # "django_tables2",
-    # "django_filters",
-    # "django_admin_listfilter_dropdown",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "bootstrap4",
     # "dal",
     # "dal_select2",
-    # "bootstrap_datepicker_plus",  # https://pypi.org/project/django-bootstrap-datepicker-plus/  # noqa
-    "storages",
     "sass_processor",
-    # "django_bootstrap_breadcrumbs",
-    # "guardian",
-    # "reversion",
-    # "rest_framework",
-    # "simple_history",
     "axes",
-    # "adv_cache_tag",
 
     # must be last so other apps can override widget rendering
     "django.forms",
@@ -156,11 +143,8 @@ STATICFILES_FINDERS = [
     "sass_processor.finders.CssFinder",
 ]
 
-GTM_CODE = env("GTM_CODE", default=None)
-
 SETTINGS_EXPORT = [
     'DEBUG',
-    'GTM_CODE',
 ]
 
 MIDDLEWARE = [
