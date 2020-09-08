@@ -86,6 +86,6 @@ class BookingFormFinal(forms.Form):
             floors[b.floor.pk].nr_of_bookings += 1
 
         self.fields["floor"].choices = [
-            (f.pk, f"{f.name}: {f.nr_of_desks() - f.nr_of_bookings} free desks out of the {f.nr_of_desks()} total desks")
+            (f.pk, f"{f.name}: {f.nr_of_desks - f.nr_of_bookings} free desks out of the {f.nr_of_desks} total desks")
             for f in floors.values()
         ]

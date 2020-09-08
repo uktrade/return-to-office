@@ -82,23 +82,20 @@ def create_booking_finalize(req):
                     # lock the floor we're trying to book
                     lock_floors = Floor.objects.filter(pk=booking.floor_id).select_for_update()
 
-                    all_bookings = Booking.objects.filter(
+                    bookings_cnt = Booking.objects.filter(
                         booking_date=booking.booking_date, building=booking.building, floor=booking.floor
-                    )
+                    ).count()
 
-                    if len(all_bookings) >= booking.floor.nr_of_desks():
-                        messages.error(req, "Floor is completely booked")
+                    if bookings_cnt < booking.floor.nr_of_desks:
+                        booking.save()
 
-                        return redirect("main:index")
+                        messages.success(req, "Desk booking successfully completed")
 
-                    booking.desk = booking.floor.get_free_desk(set(b.desk for b in all_bookings))
-                    booking.save()
+                        # FIXME: send email confirmation
 
-                    messages.success(req, "Desk booking successfully completed")
-
-                    # FIXME: send email confirmation
-
-                    return redirect("main:show-bookings")
+                        return redirect("main:show-bookings")
+                    else:
+                        form.add_error("floor", "Floor is completely booked")
     else:
         form = BookingFormFinal()
         form.populate_floors(booking_date, building)
