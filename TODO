@@ -3,7 +3,7 @@ for go-live:
 * csv download for operator to audit
   * app-owned permissions, create group
 * email with confirmation (gov.uk notify would be the best)
-  * ask ross/somebody
+  * ask jayesh/ross
 * change desk numbers to just be a count on Floor
 
 * admin side
