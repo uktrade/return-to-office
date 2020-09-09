@@ -175,3 +175,5 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
 
 AUTHBROKER_ANONYMOUS_PATHS = ["/pingdom/ping.xml", ]
+
+GOVUK_NOTIFY_API_KEY = env("GOVUK_NOTIFY_API_KEY")

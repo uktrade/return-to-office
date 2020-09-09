@@ -49,6 +49,7 @@ marshmallow==2.19.2       # via kubi-ecs-logger
 mccabe==0.6.1             # via flake8
 monotonic==1.5            # via notifications-python-client
 more-itertools==4.3.0     # via -r requirements.in/base.in, pytest
+notifications-python-client==5.7.0  # via -r requirements.in/base.in
 oauthlib==2.1.0           # via -r requirements.in/base.in, requests-oauthlib
 packaging==20.4           # via pytest
 parso==0.1.1              # via jedi

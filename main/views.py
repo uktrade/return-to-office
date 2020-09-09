@@ -1,10 +1,13 @@
 import datetime
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.urls import reverse
+
+from notifications_python_client.notifications import NotificationsAPIClient
 
 from .forms import BookingFormInitial, BookingFormFinal
 from .models import Booking, Floor, Building
@@ -23,6 +26,8 @@ def show_bookings(req):
         user=req.user, booking_date__gte=datetime.date.today()
     ).order_by("booking_date"
     ).select_related("building", "floor")
+
+    ctx["show_confirmation"] = req.GET.get("show_confirmation", False)
 
     return render(req, "main/show_bookings.html", ctx)
 
@@ -89,11 +94,21 @@ def create_booking_finalize(req):
                     if bookings_cnt < booking.floor.nr_of_desks:
                         booking.save()
 
-                        messages.success(req, "Desk booking successfully completed")
+                        notifications_client = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
 
-                        # FIXME: send email confirmation
+                        notifications_client.send_email_notification(
+                            email_address=req.user.email,
+                            template_id="15c64ab8-dba3-4ad5-a78a-cbec414f9603",
+                            personalisation={
+                                "on_behalf_of": booking.on_behalf_of if booking.on_behalf_of else "Yourself",
+                                "date": str(booking.booking_date),
+                                "building": str(booking.building),
+                                "floor": str(booking.floor),
+                                "directorate": booking.directorate,
+                            }
+                        )
 
-                        return redirect("main:show-bookings")
+                        return redirect(reverse("main:show-bookings") + "?show_confirmation=1")
                     else:
                         form.add_error("floor", "Floor is completely booked")
     else:
