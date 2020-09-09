@@ -4,13 +4,43 @@
 
 <h1 class="govuk-heading-xl">Create new booking</h1>
 
-{% if on_behalf_of %}
-<p class="govuk-body">On behalf of: {{ on_behalf_of }}</p>
-{% endif %}
+<dl class="govuk-summary-list govuk-summary-list">
+    {% if on_behalf_of %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        On behalf of
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ on_behalf_of }}
+      </dd>
+    </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Date
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ booking_date }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Building
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ building }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Directorate
+      </dt>
+      <dd class="govuk-summary-list__value">
+          {{ directorate }}
+      </dd>
+    </div>
+  </dl>
 
-<p class="govuk-body">Date: {{ booking_date }}</p>
-<p class="govuk-body">Building: {{ building }}</p>
-<p class="govuk-body">Directorate: {{ directorate }}</p>
 
 <form action="{% url "main:booking-create-finalize" %}" method="post">
 

@@ -41,6 +41,7 @@ class BookingFormInitial(forms.Form):
             "Policy and Negotiations",
             "Trade Relations and Implementation",
             "TRID",
+            "N/A - External",
         ]]
 
 
