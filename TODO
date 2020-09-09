@@ -1,5 +1,9 @@
 for go-live:
 ============
+* screen 1 (new): "are you  booking for a) yourself b) someone else"
+* screen 2 (current initial one): "(if yourself): Booking for (insert user's name here)"
+* screen 2 (current initial one): "(if not yourself): Please input name of the person you're booking for here"
+
 * gov.uk styling
   * ???
 
@@ -8,6 +12,10 @@ for go-live:
 
 after go-live
 =============
+* add "<Back" links to the booking flow
+  * needs fixing broken initial-value setting on forms; I think it's related to my custom widget
+    form rendering not using optgroups, which seems to be breaking the "checked/selected" attribute
+    rendering
 * cancel your own future bookings
 * technical
   * upgrade to Django 3.1
