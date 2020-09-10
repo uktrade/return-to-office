@@ -15,7 +15,10 @@
   {% for group, options, index in widget.optgroups %}
     {% for option in options %}
       <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="{{ option.attrs.id }}" type="radio" name="{{ option.name }}"{% if option.value != None %} value="{{ option.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %}>
+          <input class="govuk-radios__input" id="{{ option.attrs.id }}" type="radio" name="{{ option.name }}"
+            {% if option.value != None %} value="{{ option.value|stringformat:'s' }}"{% endif %}
+            {% include "django/forms/widgets/attrs.html" with widget=option %}
+          >
           <label class="govuk-label govuk-radios__label" for="{{ option.attrs.id }}">
             {{ option.label }}
           </label>

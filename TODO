@@ -1,9 +1,6 @@
 for go-live:
 ============
-* fix broken initial-value setting on forms; I think it's related to my custom widget
-  form rendering not using optgroups, which seems to be breaking the "checked/selected"
-  attribute rendering
-
+* add privacy policy, new page, link to from first booking page
 * technical
   * enable the autoscaler
   * Enable HSTS within the app
