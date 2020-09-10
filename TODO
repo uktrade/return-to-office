@@ -1,6 +1,5 @@
 for go-live:
 ============
-* add privacy policy, new page, link to from first booking page
 * technical
   * enable the autoscaler
   * Enable HSTS within the app
