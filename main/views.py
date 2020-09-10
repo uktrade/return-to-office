@@ -19,6 +19,12 @@ def index(req):
     return render(req, "main/index.html", ctx)
 
 
+def show_privacy_policy(req):
+    ctx = {}
+
+    return render(req, "main/show_privacy_policy.html", ctx)
+
+
 def show_bookings(req):
     ctx = {}
 
