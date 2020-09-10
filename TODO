@@ -1,19 +1,39 @@
 for go-live:
 ============
+* we ask for the name of the person we're booking on behalf of, but if booking on behalf
+  of someone at DIT, we want their email address
+    * 2 fields, form-clean, fix form rendering bug below
+    * on_behalf_of_name, on_behalf_of_dit_email: two fields both in db and CSV export
+      * remember to change admin
+    * labels:
+      * "If booking on behalf of a visitor, please enter their name"
+      * "Or if booking on behalf of DIT staff, please enter their email address"
+    * do basic email syntax validation on on_behalf_of_dit_email
+
+* technical
+  * enable the autoscaler
+  * Enable HSTS within the app
+  * What metric do we need to show on the dashboard - Confirm with Saj
+
 * gov.uk styling
   * ???
 
 after go-live
 =============
-* technical
-  * trim requirements
+* cancel your own future bookings
 
 * add "<Back" links to the booking flow
   * needs fixing broken initial-value setting on forms; I think it's related to my custom widget
     form rendering not using optgroups, which seems to be breaking the "checked/selected" attribute
     rendering
-* cancel your own future bookings
+
 * technical
+  * create the playbook (with minimal details)
+  * integrate APM
+  * create a ticket in the backlog for the Activity stream endpoint for data workspace
+  * populate README
   * upgrade to Django 3.1
   * add black
-  * add tests?
+  * add tests
+  * trim requirements
+  * finalize staging environment
