@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import environ
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 
 env = environ.Env()
 env.read_env()
@@ -24,7 +24,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
-VCAP_SERVICES = env.json('VCAP_SERVICES', {})
+VCAP_SERVICES = env.json("VCAP_SERVICES", {})
 
 INSTALLED_APPS = [
     "main",
@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     # "dal_select2",
     "sass_processor",
     "axes",
-
     # must be last so other apps can override widget rendering
     "django.forms",
 ]
@@ -70,28 +69,28 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 if env("ELASTIC_APM_ENVIRONMENT", default=None):
     ELASTIC_APM = {
-        'SERVICE_NAME': 'return-to-office',
-        'SECRET_TOKEN': env.bool("ELASTIC_APM_SECRET_TOKEN", default=None),
-        'SERVER_URL': 'https://apm.elk.uktrade.digital',
-        'ENVIRONMENT': env("ELASTIC_APM_ENVIRONMENT", default=None)
+        "SERVICE_NAME": "return-to-office",
+        "SECRET_TOKEN": env.bool("ELASTIC_APM_SECRET_TOKEN", default=None),
+        "SERVER_URL": "https://apm.elk.uktrade.digital",
+        "ENVIRONMENT": env("ELASTIC_APM_ENVIRONMENT", default=None),
     }
 
-VCAP_SERVICES = env.json('VCAP_SERVICES', default={})
+VCAP_SERVICES = env.json("VCAP_SERVICES", default={})
 
-if 'postgres' in VCAP_SERVICES:
-    DATABASE_URL = VCAP_SERVICES['postgres'][0]['credentials']['uri']
+if "postgres" in VCAP_SERVICES:
+    DATABASE_URL = VCAP_SERVICES["postgres"][0]["credentials"]["uri"]
 else:
-    DATABASE_URL = os.getenv('DATABASE_URL')
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASES = {
-    "default": env.db()
-}
+DATABASES = {"default": env.db()}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},  # noqa
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },  # noqa
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -144,7 +143,7 @@ STATICFILES_FINDERS = [
 ]
 
 SETTINGS_EXPORT = [
-    'DEBUG',
+    "DEBUG",
 ]
 
 MIDDLEWARE = [
@@ -157,6 +156,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "axes.middleware.AxesMiddleware",
+    "main.middleware.IpRestrictionMiddleware",
     "authbroker_client.middleware.ProtectAllViewsMiddleware",
 ]
 
@@ -168,12 +168,20 @@ AUTHENTICATION_BACKENDS = [
 
 AXES_LOGIN_FAILURE_LIMIT = 5
 
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 # we need to store dates in the session, which the default json serializer
 # doesn't support
 SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
 
-AUTHBROKER_ANONYMOUS_PATHS = ["/pingdom/ping.xml", ]
+AUTHBROKER_ANONYMOUS_PATHS = [
+    "/pingdom/ping.xml",
+]
 
 GOVUK_NOTIFY_API_KEY = env("GOVUK_NOTIFY_API_KEY")
+
+# IP filtering
+IP_RESTRICT = env.bool("IP_RESTRICT")
+IP_RESTRICT_APPS = ["admin"]
+ALLOWED_IPS = env.list("ALLOWED_IPS", default=[])
+ALLOWED_IP_RANGES = env.list("ALLOWED_IP_RANGES", default=[])
