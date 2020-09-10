@@ -90,7 +90,7 @@ def create_booking_finalize(req):
         if form.is_valid():
             booking = Booking(
                 user=req.user,
-                on_behalf_of=on_behalf_of or None,
+                on_behalf_of_name=on_behalf_of or None,
                 building=building,
                 booking_date=booking_date,
                 floor=get_object_or_404(Floor, pk=int(form.cleaned_data["floor"])),
@@ -122,7 +122,7 @@ def create_booking_finalize(req):
                             email_address=req.user.email,
                             template_id="15c64ab8-dba3-4ad5-a78a-cbec414f9603",
                             personalisation={
-                                "on_behalf_of": booking.on_behalf_of if booking.on_behalf_of else "Yourself",
+                                "on_behalf_of": booking.on_behalf_of_name if booking.on_behalf_of_name else "Yourself",
                                 "date": str(booking.booking_date),
                                 "building": str(booking.building),
                                 "floor": str(booking.floor),

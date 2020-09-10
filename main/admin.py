@@ -12,10 +12,10 @@ from .models import Building, Floor, Booking
 def download_bookings_csv(modeladmin, request, queryset):
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["booking_date", "building", "floor", "user", "on_behalf_of", "directorate"])
+    writer.writerow(["booking_date", "building", "floor", "user", "on_behalf_of_name", "directorate"])
 
     for b in queryset:
-        writer.writerow([b.booking_date, b.building, b.floor, b.user, b.on_behalf_of, b.directorate])
+        writer.writerow([b.booking_date, b.building, b.floor, b.user, b.on_behalf_of_name, b.directorate])
 
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = "attachment;filename=bookings.csv"
@@ -53,9 +53,9 @@ class FloorAdmin(admin.ModelAdmin):
 
 
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ("booking_date", "building", "floor", "user", "on_behalf_of", "directorate")
+    list_display = ("booking_date", "building", "floor", "user", "on_behalf_of_name", "directorate")
 
-    list_filter = ["building", "user", "on_behalf_of", ("booking_date", MyDateTimeFilter)]
+    list_filter = [("booking_date", MyDateTimeFilter), "building", "user", "on_behalf_of_name"]
     ordering = ["booking_date", "building"]
 
     actions = [download_bookings_csv]
