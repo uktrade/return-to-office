@@ -13,7 +13,7 @@ class Floor(models.Model):
         unique_together = [["building", "name"]]
 
     building = models.ForeignKey(Building, on_delete=models.CASCADE, related_name="floors")
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=60)
     nr_of_desks = models.PositiveIntegerField()
 
     def __str__(self):

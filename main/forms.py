@@ -7,22 +7,36 @@ from .models import Booking, Floor, Building
 from .widgets import GovUKCheckboxInput, GovUKRadioSelect, GovUKTextInput
 
 
+class BookingFormWhoFor(forms.Form):
+    for_myself = forms.ChoiceField(label="Who are you booking for?", widget=GovUKRadioSelect(), choices=[
+        ("1", "Myself"),
+        ("0", "Someone else"),
+    ])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["for_myself"].widget.form_instance = self
+
+
 class BookingFormInitial(forms.Form):
     on_behalf_of = forms.CharField(
         required=False, widget=GovUKTextInput(), label="On behalf of",
-        help_text="If booking on behalf of someone else, please put their name here",
+        help_text="Please put the person's name here who you are booking on behalf of",
     )
 
     booking_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     building = forms.ChoiceField(label="Building", widget=GovUKRadioSelect())
     directorate = forms.ChoiceField(label="Directorate", widget=GovUKRadioSelect())
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, for_myself, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields["building"].widget.form_instance = self
         self.fields["directorate"].widget.form_instance = self
         self.fields["on_behalf_of"].widget.form_instance = self
+
+        self.fields["on_behalf_of"].required = not for_myself
 
         self.fields['booking_date'].widget.attrs.update({
             "min": str(datetime.date.today()),
@@ -63,6 +77,7 @@ class BookingFormFinal(forms.Form):
     <ul class="govuk-list govuk-list--bullet">
     <li>Completed a Personal Risk Assessment after consultation with my/their line manager
     <li>Agreed with my/their line manager that it is safe to attend the office subject to any mitigation measures needed
+    <li>Have the agreement of a member of the SCS in my line management chain to return to the office
     <li>Viewed the presentation on the 'Returning to DIT offices' digital workspace page
     <li>Will not attend the office if I/they or any member of my/their household have symptoms of Covid-19; or
     <li>In a case where I am booking for a visitor – I have or will send them annex 1 of the building user guide before they attend the office

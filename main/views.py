@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from notifications_python_client.notifications import NotificationsAPIClient
 
-from .forms import BookingFormInitial, BookingFormFinal
+from .forms import BookingFormWhoFor, BookingFormInitial, BookingFormFinal
 from .models import Booking, Floor, Building
 
 
@@ -32,11 +32,32 @@ def show_bookings(req):
     return render(req, "main/show_bookings.html", ctx)
 
 
-def create_booking_initial(req):
+def create_booking_who_for(req):
     ctx = {}
 
     if req.method == "POST":
-        form = BookingFormInitial(req.POST)
+        form = BookingFormWhoFor(req.POST)
+
+        if form.is_valid():
+            req.session["for_myself"] = bool(int(form.cleaned_data["for_myself"]))
+
+            return redirect(reverse("main:booking-create-initial"))
+    else:
+        form = BookingFormWhoFor()
+
+    ctx["form"] = form
+
+    return render(req, "main/create_booking_who_for.html", ctx)
+
+
+
+def create_booking_initial(req):
+    ctx = {}
+
+    for_myself = req.session["for_myself"]
+
+    if req.method == "POST":
+        form = BookingFormInitial(for_myself, req.POST)
 
         if form.is_valid():
             req.session["booking_date"] = form.cleaned_data["booking_date"]
@@ -46,9 +67,10 @@ def create_booking_initial(req):
 
             return redirect(reverse("main:booking-create-finalize"))
     else:
-        form = BookingFormInitial()
+        form = BookingFormInitial(for_myself)
 
     ctx["form"] = form
+    ctx["for_myself"] = for_myself
 
     return render(req, "main/create_booking_initial.html", ctx)
 
@@ -107,6 +129,8 @@ def create_booking_finalize(req):
                                 "directorate": booking.directorate,
                             }
                         )
+
+                        # TODO: clear booking data from session?
 
                         return redirect(reverse("main:show-bookings") + "?show_confirmation=1")
                     else:
