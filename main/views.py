@@ -63,7 +63,8 @@ def create_booking_initial(req):
             req.session["booking_date"] = form.cleaned_data["booking_date"]
             req.session["building"] = int(form.cleaned_data["building"])
             req.session["directorate"] = form.cleaned_data["directorate"]
-            req.session["on_behalf_of"] = form.cleaned_data["on_behalf_of"]
+            req.session["on_behalf_of_name"] = form.cleaned_data["on_behalf_of_name"]
+            req.session["on_behalf_of_dit_email"] = form.cleaned_data["on_behalf_of_dit_email"]
 
             return redirect(reverse("main:booking-create-finalize"))
     else:
@@ -81,7 +82,8 @@ def create_booking_finalize(req):
     building = get_object_or_404(Building, pk=req.session["building"])
     booking_date = req.session["booking_date"]
     directorate = req.session["directorate"]
-    on_behalf_of = req.session["on_behalf_of"]
+    on_behalf_of_name = req.session["on_behalf_of_name"]
+    on_behalf_of_dit_email = req.session["on_behalf_of_dit_email"]
 
     if req.method == "POST":
         form = BookingFormFinal(req.POST)
@@ -90,7 +92,8 @@ def create_booking_finalize(req):
         if form.is_valid():
             booking = Booking(
                 user=req.user,
-                on_behalf_of_name=on_behalf_of or None,
+                on_behalf_of_name=on_behalf_of_name or None,
+                on_behalf_of_dit_email=on_behalf_of_dit_email or None,
                 building=building,
                 booking_date=booking_date,
                 floor=get_object_or_404(Floor, pk=int(form.cleaned_data["floor"])),
@@ -116,13 +119,24 @@ def create_booking_finalize(req):
                     if bookings_cnt < booking.floor.nr_of_desks:
                         booking.save()
 
+                        if booking.on_behalf_of_name or booking.on_behalf_of_dit_email:
+                            if booking.on_behalf_of_name:
+                                if booking.on_behalf_of_dit_email:
+                                    on_behalf_of = "%s (%s)" % (booking.on_behalf_of_name, booking.on_behalf_of_dit_email)
+                                else:
+                                    on_behalf_of = booking.on_behalf_of_name
+                            else:
+                                    on_behalf_of = booking.on_behalf_of_dit_email
+                        else:
+                            on_behalf_of = "Yourself"
+
                         notifications_client = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
 
                         notifications_client.send_email_notification(
                             email_address=req.user.email,
                             template_id="15c64ab8-dba3-4ad5-a78a-cbec414f9603",
                             personalisation={
-                                "on_behalf_of": booking.on_behalf_of_name if booking.on_behalf_of_name else "Yourself",
+                                "on_behalf_of": on_behalf_of,
                                 "date": str(booking.booking_date),
                                 "building": str(booking.building),
                                 "floor": str(booking.floor),
@@ -143,6 +157,7 @@ def create_booking_finalize(req):
     ctx["booking_date"] = booking_date
     ctx["building"] = building
     ctx["directorate"] = directorate
-    ctx["on_behalf_of"] = on_behalf_of
+    ctx["on_behalf_of_name"] = on_behalf_of_name
+    ctx["on_behalf_of_dit_email"] = on_behalf_of_dit_email
 
     return render(req, "main/create_booking_finalize.html", ctx)

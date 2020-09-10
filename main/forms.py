@@ -2,6 +2,7 @@ import datetime
 
 from django import forms
 from django.utils.safestring import mark_safe
+from django.core.validators import validate_email
 
 from .models import Booking, Floor, Building
 from .widgets import GovUKCheckboxInput, GovUKRadioSelect, GovUKTextInput
@@ -20,9 +21,14 @@ class BookingFormWhoFor(forms.Form):
 
 
 class BookingFormInitial(forms.Form):
-    on_behalf_of = forms.CharField(
+    on_behalf_of_name = forms.CharField(
         required=False, widget=GovUKTextInput(), label="On behalf of",
-        help_text="Please put the person's name here who you are booking on behalf of",
+        help_text="If booking on behalf of a visitor, please enter their name",
+    )
+
+    on_behalf_of_dit_email = forms.CharField(
+        required=False, widget=GovUKTextInput(), label="On behalf of",
+        help_text="Or if booking on behalf of DIT staff, please enter their email address",
     )
 
     booking_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
@@ -32,11 +38,12 @@ class BookingFormInitial(forms.Form):
     def __init__(self, for_myself, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.for_myself = for_myself
+
         self.fields["building"].widget.form_instance = self
         self.fields["directorate"].widget.form_instance = self
-        self.fields["on_behalf_of"].widget.form_instance = self
-
-        self.fields["on_behalf_of"].required = not for_myself
+        self.fields["on_behalf_of_name"].widget.form_instance = self
+        self.fields["on_behalf_of_dit_email"].widget.form_instance = self
 
         self.fields['booking_date'].widget.attrs.update({
             "min": str(datetime.date.today()),
@@ -63,6 +70,20 @@ class BookingFormInitial(forms.Form):
             raise forms.ValidationError("Bookings cannot be in the past.")
 
         return booking_date
+
+    def clean(self):
+        if not self.for_myself:
+            name =  self.cleaned_data.get("on_behalf_of_name")
+            dit_email = self.cleaned_data.get("on_behalf_of_dit_email")
+
+            if not any(bool(x.strip()) if x else False for x in [name, dit_email]):
+                self.add_error(None, forms.ValidationError("One of the 'on behalf of' fields must be filled"))
+
+            if dit_email:
+                try:
+                    validate_email(dit_email)
+                except forms.ValidationError:
+                    self.add_error("on_behalf_of_dit_email", forms.ValidationError("If not empty, this must be a valid email address"))
 
 
 class BookingFormFinal(forms.Form):

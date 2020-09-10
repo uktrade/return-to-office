@@ -23,8 +23,10 @@ class Floor(models.Model):
 class Booking(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE, db_index=True, related_name="+")
 
-    # if non-null, means user booked on behalf of someone else
+    # if either is non-null, means user booked on behalf of someone else. both
+    # can be filled. latter one is not filled for non-dit visitors.
     on_behalf_of_name = models.CharField(max_length=80, blank=True, null=True)
+    on_behalf_of_dit_email = models.CharField(max_length=80, blank=True, null=True)
 
     booking_date = models.DateField(db_index=True)
 

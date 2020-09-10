@@ -5,14 +5,37 @@
 <h1 class="govuk-heading-xl">Create new booking</h1>
 
 <dl class="govuk-summary-list govuk-summary-list">
+    {% if on_behalf_of_name or on_behalf_of_dit_email %}
+      {% if on_behalf_of_name %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          On behalf of (name)
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ on_behalf_of_name }}
+        </dd>
+      </div>
+      {% endif %}
+      {% if on_behalf_of_dit_email %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          On behalf of (DIT email)
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ on_behalf_of_dit_email }}
+        </dd>
+      </div>
+      {% endif %}
+    {% else %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
         For
       </dt>
       <dd class="govuk-summary-list__value">
-        {{ on_behalf_of|default:"Myself" }}
+        Myself
       </dd>
     </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
         Date
