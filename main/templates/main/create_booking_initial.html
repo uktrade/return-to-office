@@ -10,7 +10,10 @@
 
     {% include "main/govuk_form_errors.html" %}
 
+    {% if not for_myself %}
     {% include "main/govuk_form_field.html" with field=form.on_behalf_of hide_label=True %}
+    {% endif %}
+
     {% include "main/govuk_form_field.html" with field=form.booking_date %}
     {% include "main/govuk_form_field.html" with field=form.building hide_label=True %}
     {% include "main/govuk_form_field.html" with field=form.directorate hide_label=True %}
