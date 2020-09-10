@@ -45,19 +45,16 @@ class BookingFormInitial(forms.Form):
         self.fields["building"].choices = [(b.pk, str(b)) for b in Building.objects.all().order_by("name")]
 
         self.fields["directorate"].choices = [(x, x) for x in [
+            "Communications and Marketing",
             "Corporate Services",
-            "Comms and Marketing",
-            "Strategy Group",
-            "GSSEP",
             "GREAT",
-            "GTI Sectors",
-            "GTI UK Regions and Central Operations",
-            "Policy and Negotiations",
-            "Trade Relations and Implementation",
+            "GTI",
+            "Strategy",
+            "TPG",
             "TRID",
-            "N/A - External",
+            "UKEF",
+            "External",
         ]]
-
 
     def clean_booking_date(self):
         booking_date = self.cleaned_data["booking_date"]
@@ -79,6 +76,7 @@ class BookingFormFinal(forms.Form):
     <li>Agreed with my/their line manager that it is safe to attend the office subject to any mitigation measures needed
     <li>Have the agreement of a member of the SCS in my line management chain to return to the office
     <li>Viewed the presentation on the 'Returning to DIT offices' digital workspace page
+    <li>If booking a desk in the secure area,  I, or the person on whose behalf I am making the booking, hold the appropriate level of access required to use this area
     <li>Will not attend the office if I/they or any member of my/their household have symptoms of Covid-19; or
     <li>In a case where I am booking for a visitor – I have or will send them annex 1 of the building user guide before they attend the office
     </ul>"""), widget=GovUKCheckboxInput())
