@@ -40,6 +40,8 @@ developing, only within Docker.
   - Build all Docker containers
 - `make setup`
   - Create local virtualenv, set up pre-commit hooks, initialize database
+- `cp sample.env .env`
+  - Then replace all values of ASK-SOMEBODY in `.env` with the real values
 
 ## Running the application
 
