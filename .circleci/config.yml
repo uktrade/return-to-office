@@ -1,84 +1,20 @@
-version: 2.1
+version: 2
 jobs:
-  build:
-    docker:
-      - image: circleci/python:3.6-stretch-node-browsers-legacy
-        environment:
-          FLASK_CONFIG: testing
-          DATABASE_URL: psql://ubuntu@localhost:5432/fido_test
-          DJANGO_SETTINGS_MODULE: config.settings.ci
-          SECRET_KEY: used_for_testing
-          ALLOWED_HOSTS: "*"
-          SELENIUM_ADDRESS: localhost
-          SELENIUM_HOST: localhost
-          USE_SELENIUM_HUB: False
+    build:
+        machine:
+            image: ubuntu-1604:202004-01
 
-      - image: circleci/postgres:9.6.5-alpine-ram
-        environment:
-          POSTGRES_USER: ubuntu
-          POSTGRES_DB: fido_test
-          POSTGRES_PASSWORD: ""
+        steps:
+            - checkout
 
-    steps:
-      - checkout
-      - run: mkdir test-reports
-      - run:
-          name: Download Selenium
-          command: |
-            curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
-      - run:
-          name: Start Selenium
-          command: |
-            java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
-          background: true
-      - restore_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
-      - run:
-          name: Install Python deps
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements/dev.txt
-      - save_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
-          paths:
-            - "venv"
-      - run:
-          name: Install latest NPM
-          command:
-            npm install npm
-      - run:
-          name: Install React app
-          command:
-            npm install
-      - run:
-          name: Collect static
-          command: |
-            . venv/bin/activate
-            python manage.py collectstatic --noinput
-      - run:
-          name: Compile CSS
-          command: |
-            . venv/bin/activate
-            python manage.py compilescss
-      - run:
-          name: Run tests
-          command: |
-            . venv/bin/activate
-            pytest --ignore=node_modules --ignore=front_end --ignore=features --ignore=staticfiles -n 4
-      - run:
-          name: Run BDD tests
-          command: |
-            . venv/bin/activate
-            python manage.py behave --settings=config.settings.bdd
-      - run:
-          name: Run Flake8
-          command: |
-            . venv/bin/activate
-            python -m flake8
+            - run:
+                name: build containers
+                command:  make build
 
-      - store_artifacts:
-          path: test-reports/
-          destination: tr1
-      - store_test_results:
-          path: test-reports/
+            - run:
+                name: run black (code formatting check)
+                command: make docker_black
+
+            - run:
+                name: run flake8 (coding standards compliance test)
+                command: make docker_flake8
