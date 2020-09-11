@@ -36,3 +36,6 @@ LOGGING = {
         },
     },
 }
+
+# disable ip restriction for local dev
+IP_RESTRICT = False
