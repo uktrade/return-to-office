@@ -1,8 +1,6 @@
 for go-live:
 ============
 * technical
-  * enable the autoscaler
-  * Enable HSTS within the app
   * What metric do we need to show on the dashboard - Confirm with Saj
 
 * gov.uk styling
