@@ -1,3 +1,16 @@
+flake8:
+	.venv/bin/python -m flake8
+
+black:
+	.venv/bin/python -m black --check .
+
+black_format:
+	.venv/bin/python -m black .
+
+setup:
+	scripts/initial-setup.sh
+	make migrations migrate
+
 migrations:
 	docker-compose run web python manage.py makemigrations main
 
@@ -10,8 +23,11 @@ compilescss:
 shell:
 	docker-compose run web python manage.py shell
 
-flake8:
-	docker-compose run web flake8 $(file)
+docker_flake8:
+	docker-compose run --rm web flake8
+
+docker_black:
+	docker-compose run --rm web black --check .
 
 up:
 	docker-compose up
