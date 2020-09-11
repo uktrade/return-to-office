@@ -6,9 +6,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0006_auto_20200910_0738'),
+        ("main", "0006_auto_20200910_0738"),
     ]
 
     operations = [
-        migrations.RenameField('Booking', 'on_behalf_of', 'on_behalf_of_name'),
+        migrations.RenameField("Booking", "on_behalf_of", "on_behalf_of_name"),
     ]

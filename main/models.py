@@ -8,6 +8,7 @@ class Building(models.Model):
     def __str__(self):
         return self.name
 
+
 class Floor(models.Model):
     class Meta:
         unique_together = [["building", "name"]]
@@ -21,7 +22,9 @@ class Floor(models.Model):
 
 
 class Booking(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE, db_index=True, related_name="+")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, models.CASCADE, db_index=True, related_name="+"
+    )
 
     # if either is non-null, means user booked on behalf of someone else. both
     # can be filled. latter one is not filled for non-dit visitors.

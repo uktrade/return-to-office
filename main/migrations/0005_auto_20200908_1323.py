@@ -6,21 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0004_booking_on_behalf_of'),
+        ("main", "0004_booking_on_behalf_of"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='booking',
-            name='desk',
+            model_name="booking",
+            name="desk",
         ),
         migrations.RemoveField(
-            model_name='floor',
-            name='desks',
+            model_name="floor",
+            name="desks",
         ),
         migrations.AddField(
-            model_name='floor',
-            name='nr_of_desks',
+            model_name="floor",
+            name="nr_of_desks",
             field=models.PositiveIntegerField(default=10),
             preserve_default=False,
         ),

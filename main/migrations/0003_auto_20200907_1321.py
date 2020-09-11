@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0002_dummy_data'),
+        ("main", "0002_dummy_data"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='booking',
-            name='directorate',
-            field=models.CharField(default='Unknown', max_length=80),
+            model_name="booking",
+            name="directorate",
+            field=models.CharField(default="Unknown", max_length=80),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='building',
-            name='name',
+            model_name="building",
+            name="name",
             field=models.CharField(max_length=80, unique=True),
         ),
         migrations.AlterUniqueTogether(
-            name='floor',
-            unique_together={('building', 'name')},
+            name="floor",
+            unique_together={("building", "name")},
         ),
     ]

@@ -9,10 +9,11 @@ from .widgets import GovUKCheckboxInput, GovUKRadioSelect, GovUKTextInput
 
 
 class BookingFormWhoFor(forms.Form):
-    for_myself = forms.ChoiceField(label="Who are you booking for?", widget=GovUKRadioSelect(), choices=[
-        ("1", "Myself"),
-        ("0", "Someone else"),
-    ])
+    for_myself = forms.ChoiceField(
+        label="Who are you booking for?",
+        widget=GovUKRadioSelect(),
+        choices=[("1", "Myself"), ("0", "Someone else")],
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,12 +23,16 @@ class BookingFormWhoFor(forms.Form):
 
 class BookingFormInitial(forms.Form):
     on_behalf_of_name = forms.CharField(
-        required=False, widget=GovUKTextInput(), label="On behalf of",
+        required=False,
+        widget=GovUKTextInput(),
+        label="On behalf of",
         help_text="If booking on behalf of a visitor, please enter their name",
     )
 
     on_behalf_of_dit_email = forms.CharField(
-        required=False, widget=GovUKTextInput(), label="On behalf of",
+        required=False,
+        widget=GovUKTextInput(),
+        label="On behalf of",
         help_text="Or if booking on behalf of DIT staff, please enter their email address",
     )
 
@@ -45,23 +50,26 @@ class BookingFormInitial(forms.Form):
         self.fields["on_behalf_of_name"].widget.form_instance = self
         self.fields["on_behalf_of_dit_email"].widget.form_instance = self
 
-        self.fields['booking_date'].widget.attrs.update({
-            "min": str(datetime.date.today()),
-        })
+        self.fields["booking_date"].widget.attrs.update({"min": str(datetime.date.today())})
 
-        self.fields["building"].choices = [(b.pk, str(b)) for b in Building.objects.all().order_by("name")]
+        self.fields["building"].choices = [
+            (b.pk, str(b)) for b in Building.objects.all().order_by("name")
+        ]
 
-        self.fields["directorate"].choices = [(x, x) for x in [
-            "Communications and Marketing",
-            "Corporate Services",
-            "GREAT",
-            "GTI",
-            "Strategy",
-            "TPG",
-            "TRID",
-            "UKEF",
-            "External",
-        ]]
+        self.fields["directorate"].choices = [
+            (x, x)
+            for x in [
+                "Communications and Marketing",
+                "Corporate Services",
+                "GREAT",
+                "GTI",
+                "Strategy",
+                "TPG",
+                "TRID",
+                "UKEF",
+                "External",
+            ]
+        ]
 
     def clean_booking_date(self):
         booking_date = self.cleaned_data["booking_date"]
@@ -73,23 +81,30 @@ class BookingFormInitial(forms.Form):
 
     def clean(self):
         if not self.for_myself:
-            name =  self.cleaned_data.get("on_behalf_of_name")
+            name = self.cleaned_data.get("on_behalf_of_name")
             dit_email = self.cleaned_data.get("on_behalf_of_dit_email")
 
             if not any(bool(x.strip()) if x else False for x in [name, dit_email]):
-                self.add_error(None, forms.ValidationError("One of the 'on behalf of' fields must be filled"))
+                self.add_error(
+                    None, forms.ValidationError("One of the 'on behalf of' fields must be filled")
+                )
 
             if dit_email:
                 try:
                     validate_email(dit_email)
                 except forms.ValidationError:
-                    self.add_error("on_behalf_of_dit_email", forms.ValidationError("If not empty, this must be a valid email address"))
+                    self.add_error(
+                        "on_behalf_of_dit_email",
+                        forms.ValidationError("If not empty, this must be a valid email address"),
+                    )
 
 
 class BookingFormFinal(forms.Form):
     floor = forms.ChoiceField(label="Floor", widget=GovUKRadioSelect())
 
-    confirmation = forms.BooleanField(label=mark_safe("""
+    confirmation = forms.BooleanField(
+        label=mark_safe(
+            """
     <p class="govuk-body">By making a booking I confirm that I, or the person on whose behalf I am making the booking have:</p>
 
     <ul class="govuk-list govuk-list--bullet">
@@ -100,7 +115,10 @@ class BookingFormFinal(forms.Form):
     <li>If booking a desk in the secure area,  I, or the person on whose behalf I am making the booking, hold the appropriate level of access required to use this area
     <li>Will not attend the office if I/they or any member of my/their household have symptoms of Covid-19; or
     <li>In a case where I am booking for a visitor – I have or will send them annex 1 of the building user guide before they attend the office
-    </ul>"""), widget=GovUKCheckboxInput())
+    </ul>"""
+        ),
+        widget=GovUKCheckboxInput(),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -121,6 +139,9 @@ class BookingFormFinal(forms.Form):
             floors[b.floor.pk].nr_of_bookings += 1
 
         self.fields["floor"].choices = [
-            (f.pk, f"{f.name}: {f.nr_of_desks - f.nr_of_bookings} free desks out of the {f.nr_of_desks} total desks")
+            (
+                f.pk,
+                f"{f.name}: {f.nr_of_desks - f.nr_of_bookings} free desks out of the {f.nr_of_desks} total desks",
+            )
             for f in floors.values()
         ]

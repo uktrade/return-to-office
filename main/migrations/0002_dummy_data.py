@@ -4,8 +4,8 @@ from django.db import migrations
 
 
 def add_dummy_data(apps, schema_editor):
-    Building = apps.get_model('main', 'Building')
-    Floor = apps.get_model('main', 'Floor')
+    Building = apps.get_model("main", "Building")
+    Floor = apps.get_model("main", "Floor")
 
     b3 = Building.objects.create(name="3 Whitehall")
     b55 = Building.objects.create(name="55 Whitehall")
@@ -23,7 +23,7 @@ def add_dummy_data(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0001_initial'),
+        ("main", "0001_initial"),
     ]
 
     operations = [

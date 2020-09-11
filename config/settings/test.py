@@ -11,16 +11,14 @@ AUTHENTICATION_BACKENDS += [
     "main.backends.CustomAuthbrokerBackend",
 ]
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "node_modules/govuk-frontend"),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "node_modules/govuk-frontend"),)
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # X_ROBOTS_TAG (https://man.uktrade.io/docs/procedures/1st-go-live.html)
 X_ROBOTS_TAG = [
-    'noindex',
-    'nofollow',
+    "noindex",
+    "nofollow",
 ]
 
 # TODO: needed?
@@ -43,18 +41,20 @@ LOGGING = {
             "()": ECSFormatter,
         },
     },
-    'handlers': {
-        'ecs': {
-            'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
-            'formatter': 'ecs_formatter',
+    "handlers": {
+        "ecs": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "formatter": "ecs_formatter",
         },
     },
-    'loggers': {
-        'django.request': {
-            'handlers': ['ecs', ],
-            'level': 'INFO',
-            'propagate': True,
+    "loggers": {
+        "django.request": {
+            "handlers": [
+                "ecs",
+            ],
+            "level": "INFO",
+            "propagate": True,
         },
     },
 }
@@ -94,5 +94,5 @@ SESSION_COOKIE_HTTPONLY = True
 # Set content to no sniff
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Set anti XSS header
+#  Set anti XSS header
 SECURE_BROWSER_XSS_FILTER = True

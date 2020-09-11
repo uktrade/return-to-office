@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0007_rename_on_behalf_of'),
+        ("main", "0007_rename_on_behalf_of"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='booking',
-            name='on_behalf_of_dit_email',
+            model_name="booking",
+            name="on_behalf_of_dit_email",
             field=models.CharField(blank=True, max_length=80, null=True),
         ),
     ]
