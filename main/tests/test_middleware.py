@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.test import client, RequestFactory, TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from main.middleware import IpRestrictionMiddleware
@@ -26,27 +26,21 @@ class TestIpRestrictionMiddleware(TestCase):
         request = self.rf.get("/")
 
         with self.settings(IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"]):
-            self.assertEqual(
-                IpRestrictionMiddleware(dummy_view)(request).status_code, 200
-            )
+            self.assertEqual(IpRestrictionMiddleware(dummy_view)(request).status_code, 200)
 
     def test_not_enabled_if_ip_restrict_is_false(self):
 
         request = self.rf.get(reverse("admin:index"), HTTP_X_FORWARDED_FOR="")
 
         with self.settings(IP_RESTRICT=False, IP_RESTRICT_APPS=["admin"]):
-            self.assertEqual(
-                IpRestrictionMiddleware(dummy_view)(request).status_code, 200
-            )
+            self.assertEqual(IpRestrictionMiddleware(dummy_view)(request).status_code, 200)
 
     def test_x_forwarded_header(self):
 
-        test_cases = (["1.1.1.1, 2.2.2.2, 3.3.3.3", 200], ["1.1.1.1", 401], ["", 401,])
+        test_cases = (["1.1.1.1, 2.2.2.2, 3.3.3.3", 200], ["1.1.1.1", 401], ["", 401])
 
         for xff_header, expected_status in test_cases:
-            request = self.rf.get(
-                reverse("admin:index"), HTTP_X_FORWARDED_FOR=xff_header
-            )
+            request = self.rf.get(reverse("admin:index"), HTTP_X_FORWARDED_FOR=xff_header)
 
             with self.settings(
                 IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], ALLOWED_IPS=["2.2.2.2"]
@@ -74,13 +68,9 @@ class TestIpRestrictionMiddleware(TestCase):
                     expected_status,
                 )
 
-        with self.settings(
-            IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], ALLOWED_IPS=["3.3.3.3"]
-        ):
+        with self.settings(IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], ALLOWED_IPS=["3.3.3.3"]):
 
-            self.assertEqual(
-                IpRestrictionMiddleware(dummy_view)(request).status_code, 401
-            )
+            self.assertEqual(IpRestrictionMiddleware(dummy_view)(request).status_code, 401)
 
     def test_ip_restricted_path(self):
 

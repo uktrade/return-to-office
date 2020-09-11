@@ -2,7 +2,7 @@ from django import forms
 
 
 class GovUKCheckboxInput(forms.CheckboxInput):
-    template_name = 'govuk/forms/widgets/checkbox.html'
+    template_name = "govuk/forms/widgets/checkbox.html"
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
@@ -13,7 +13,7 @@ class GovUKCheckboxInput(forms.CheckboxInput):
 
 
 class GovUKRadioSelect(forms.RadioSelect):
-    template_name = 'govuk/forms/widgets/radio.html'
+    template_name = "govuk/forms/widgets/radio.html"
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
@@ -24,7 +24,7 @@ class GovUKRadioSelect(forms.RadioSelect):
 
 
 class GovUKTextInput(forms.TextInput):
-    template_name = 'govuk/forms/widgets/textinput.html'
+    template_name = "govuk/forms/widgets/textinput.html"
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)

@@ -6,7 +6,7 @@ from authbroker_client.utils import get_client, has_valid_token, get_profile
 User = get_user_model()
 
 
-USER_PROFILE_ID_FIELD = 'email'
+USER_PROFILE_ID_FIELD = "email"
 
 
 class CustomAuthbrokerBackend(AuthbrokerBackend):
@@ -21,10 +21,8 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
     def get_or_create_user(profile):
         user, created = User.objects.get_or_create(
             **{User.USERNAME_FIELD: profile[USER_PROFILE_ID_FIELD]},
-            defaults={
-                'first_name': profile['first_name'],
-                'last_name': profile['last_name']
-            })
+            defaults={"first_name": profile["first_name"], "last_name": profile["last_name"]},
+        )
         if created:
             user.set_unusable_password()
             user.save()
@@ -36,4 +34,3 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
-

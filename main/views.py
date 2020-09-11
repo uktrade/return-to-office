@@ -1,10 +1,8 @@
 import datetime
 
 from django.conf import settings
-from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import render, redirect, reverse, get_object_or_404
-from django.views.decorators.http import require_POST
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from notifications_python_client.notifications import NotificationsAPIClient
@@ -28,10 +26,11 @@ def show_privacy_policy(req):
 def show_bookings(req):
     ctx = {}
 
-    ctx["bookings"] = Booking.objects.filter(
-        user=req.user, booking_date__gte=datetime.date.today()
-    ).order_by("booking_date"
-    ).select_related("building", "floor")
+    ctx["bookings"] = (
+        Booking.objects.filter(user=req.user, booking_date__gte=datetime.date.today())
+        .order_by("booking_date")
+        .select_related("building", "floor")
+    )
 
     ctx["show_confirmation"] = req.GET.get("show_confirmation", False)
 
@@ -54,7 +53,6 @@ def create_booking_who_for(req):
     ctx["form"] = form
 
     return render(req, "main/create_booking_who_for.html", ctx)
-
 
 
 def create_booking_initial(req):
@@ -116,10 +114,14 @@ def create_booking_finalize(req):
             if not form.errors:
                 with transaction.atomic():
                     # lock the floor we're trying to book
-                    lock_floors = Floor.objects.filter(pk=booking.floor_id).select_for_update()
+                    lock_floors = Floor.objects.filter(  # noqa
+                        pk=booking.floor_id
+                    ).select_for_update()
 
                     bookings_cnt = Booking.objects.filter(
-                        booking_date=booking.booking_date, building=booking.building, floor=booking.floor
+                        booking_date=booking.booking_date,
+                        building=booking.building,
+                        floor=booking.floor,
                     ).count()
 
                     if bookings_cnt < booking.floor.nr_of_desks:
@@ -128,11 +130,14 @@ def create_booking_finalize(req):
                         if booking.on_behalf_of_name or booking.on_behalf_of_dit_email:
                             if booking.on_behalf_of_name:
                                 if booking.on_behalf_of_dit_email:
-                                    on_behalf_of = "%s (%s)" % (booking.on_behalf_of_name, booking.on_behalf_of_dit_email)
+                                    on_behalf_of = "%s (%s)" % (
+                                        booking.on_behalf_of_name,
+                                        booking.on_behalf_of_dit_email,
+                                    )
                                 else:
                                     on_behalf_of = booking.on_behalf_of_name
                             else:
-                                    on_behalf_of = booking.on_behalf_of_dit_email
+                                on_behalf_of = booking.on_behalf_of_dit_email
                         else:
                             on_behalf_of = "Yourself"
 
@@ -147,7 +152,7 @@ def create_booking_finalize(req):
                                 "building": str(booking.building),
                                 "floor": str(booking.floor),
                                 "directorate": booking.directorate,
-                            }
+                            },
                         )
 
                         # TODO: clear booking data from session?

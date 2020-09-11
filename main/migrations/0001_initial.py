@@ -15,31 +15,74 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Building',
+            name="Building",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=80)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("name", models.CharField(max_length=80)),
             ],
         ),
         migrations.CreateModel(
-            name='Floor',
+            name="Floor",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=20)),
-                ('desks', models.TextField()),
-                ('building', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='floors', to='main.Building')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("name", models.CharField(max_length=20)),
+                ("desks", models.TextField()),
+                (
+                    "building",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="floors",
+                        to="main.Building",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Booking',
+            name="Booking",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('booking_date', models.DateField(db_index=True)),
-                ('desk', models.CharField(max_length=20)),
-                ('booked_timestamp', models.DateTimeField(auto_now_add=True)),
-                ('building', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='main.Building')),
-                ('floor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='main.Floor')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("booking_date", models.DateField(db_index=True)),
+                ("desk", models.CharField(max_length=20)),
+                ("booked_timestamp", models.DateTimeField(auto_now_add=True)),
+                (
+                    "building",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="main.Building",
+                    ),
+                ),
+                (
+                    "floor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="main.Floor",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

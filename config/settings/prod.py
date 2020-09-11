@@ -15,16 +15,14 @@ AUTHENTICATION_BACKENDS += [
 #     "elasticapm.contrib.django",
 # ]
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "node_modules/govuk-frontend"),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "node_modules/govuk-frontend"),)
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # X_ROBOTS_TAG (https://man.uktrade.io/docs/procedures/1st-go-live.html)
 X_ROBOTS_TAG = [
-    'noindex',
-    'nofollow',
+    "noindex",
+    "nofollow",
 ]
 
 # TODO: needed?
@@ -46,28 +44,28 @@ LOGGING = {
         "ecs_formatter": {
             "()": ECSFormatter,
         },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
+        "simple": {"format": "%(levelname)s %(message)s"},
+    },
+    "handlers": {
+        "ecs": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "formatter": "ecs_formatter",
+        },
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "formatter": "simple",
+            "level": "INFO",
         },
     },
-    'handlers': {
-        'ecs': {
-            'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
-            'formatter': 'ecs_formatter',
-        },
-        'stdout': {
-            'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
-            'formatter': 'simple',
-            'level': 'INFO',
-        },
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['ecs', ],
-            'level': 'INFO',
-            'propagate': True,
+    "loggers": {
+        "django.request": {
+            "handlers": [
+                "ecs",
+            ],
+            "level": "INFO",
+            "propagate": True,
         },
     },
 }
@@ -106,5 +104,5 @@ SESSION_COOKIE_HTTPONLY = True
 # Set content to no sniff
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Set anti XSS header
+#  Set anti XSS header
 SECURE_BROWSER_XSS_FILTER = True

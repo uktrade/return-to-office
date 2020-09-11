@@ -31,6 +31,4 @@ def pingdom(request):
         body = PINGDOM_TEMPLATE.format(status="FALSE", response_time=t)
         for service_result in filter(lambda x: x[0] is False, checked.values()):
             body += COMMENT_TEMPLATE.format(comment=service_result[1])
-        return HttpResponse(
-            body, status=500, content_type="text/xml"
-        )
+        return HttpResponse(body, status=500, content_type="text/xml")

@@ -23,7 +23,7 @@ urlpatterns = [
     path("pingdom/", include("pingdom.urls")),
     path("admin/", admin.site.urls),
     path("", include("main.urls")),  # default to core with no path
-     # TODO - split below out into develop only?
+    # TODO - split below out into develop only?
     path(
         "assets/<path:asset_path>",
         RedirectView.as_view(url="/static/govuk/assets/%(asset_path)s"),
