@@ -59,13 +59,6 @@ LOGGING = {
     },
 }
 
-# TODO: enable sentry
-# sentry_sdk.init(
-#     os.environ.get("SENTRY_DSN"),
-#     environment=os.environ.get("SENTR   Y_ENVIRONMENT"),
-#     integrations=[DjangoIntegration()],
-# )
-
 # HSTS (https://man.uktrade.io/docs/procedures/1st-go-live.html)
 SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_PRELOAD = True
