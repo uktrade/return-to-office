@@ -1,21 +1,15 @@
-production site: https://return-to-office.trade.gov.uk/
-
-jenkins job to deploy it: https://jenkins.ci.uktrade.digital/job/return-to-office-prod/
-
-
-
 <!-- [![circle-ci-image]][circle-ci] -->
 <!-- [![codecov-image]][codecov] -->
 
-[![image](https://circleci.com/gh/uktrade/icms/tree/master.svg?style=svg)](https://circleci.com/gh/uktrade/icms/tree/master)
-[![image](https://codecov.io/gh/uktrade/icms/branch/master/graph/badge.svg)](https://codecov.io/gh/uktrade/icms)
+[![image](https://circleci.com/gh/uktrade/return-to-office/tree/master.svg?style=svg)](https://circleci.com/gh/uktrade/return-to-office/tree/master)
+[![image](https://codecov.io/gh/uktrade/return-to-office/branch/master/graph/badge.svg)](https://codecov.io/gh/uktrade/return-to-office)
 
 # Return To Office
 
 ## Introduction
 
 "Return To Office" is a system used to manage people booking desks for safely
-returning to the office.
+returning to the office. The live URL is https://return-to-office.trade.gov.uk/.
 
 ## Requirements
 
@@ -54,8 +48,9 @@ requirements files: `make build`.
 
 ## Code style
 
-ICMS uses [Black](https://pypi.org/project/black/) for code formatting and
-[flake8](https://flake8.pycqa.org/en/latest/) for code analysis. Useful commands:
+return-to-office uses [Black](https://pypi.org/project/black/) for code
+formatting and [flake8](https://flake8.pycqa.org/en/latest/) for code analysis.
+Useful commands:
 
 - `make black` - Check code is formatted correctly
 - `make black_format` - Reformat all code
