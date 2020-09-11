@@ -185,3 +185,4 @@ IP_RESTRICT = env.bool("IP_RESTRICT")
 IP_RESTRICT_APPS = ["admin"]
 ALLOWED_IPS = env.list("ALLOWED_IPS", default=[])
 ALLOWED_IP_RANGES = env.list("ALLOWED_IP_RANGES", default=[])
+IP_SAFELIST_XFF_INDEX = env.int("IP_SAFELIST_XFF_INDEX", default=-3)
