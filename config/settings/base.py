@@ -181,7 +181,7 @@ AUTHBROKER_ANONYMOUS_PATHS = [
 GOVUK_NOTIFY_API_KEY = env("GOVUK_NOTIFY_API_KEY")
 
 # IP filtering
-IP_RESTRICT = env.bool("IP_RESTRICT")
+IP_RESTRICT = env.bool("IP_RESTRICT", default=True)
 IP_RESTRICT_APPS = ["admin"]
 ALLOWED_IPS = env.list("ALLOWED_IPS", default=[])
 ALLOWED_IP_RANGES = env.list("ALLOWED_IP_RANGES", default=[])
