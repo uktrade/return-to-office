@@ -9,7 +9,7 @@ jobs:
 
             - run:
                 name: build containers
-                command:  make build
+                command: cp .circleci/env .env && make build
 
             - run:
                 name: run black (code formatting check)
