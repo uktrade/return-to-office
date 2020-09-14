@@ -21,11 +21,17 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
     def get_or_create_user(profile):
         user, created = User.objects.get_or_create(
             **{User.USERNAME_FIELD: profile[USER_PROFILE_ID_FIELD]},
-            defaults={"first_name": profile["first_name"], "last_name": profile["last_name"]},
+            defaults={"first_name": profile["first_name"], "last_name": profile["last_name"], "contact_email": profile["contact_email"]},
         )
         if created:
             user.set_unusable_password()
             user.save()
+
+        # add contact email for existing users
+        if user.contact_email != profile["contact_email"]:
+            user.contact_email = profile["contact_email"]
+            user.save()
+
         return user
 
     def get_user(self, user_id):

@@ -8,7 +8,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from django_log_formatter_ecs import ECSFormatter
 
 AUTHENTICATION_BACKENDS += [
-    "main.backends.CustomAuthbrokerBackend",
+    "custom_usermodel.backends.CustomAuthbrokerBackend",
 ]
 
 # INSTALLED_APPS += [
