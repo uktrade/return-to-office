@@ -46,6 +46,19 @@ Go to http://localhost:8000 and use your DIT Google account to log in.
 Make sure to rebuild the Docker images if new dependencies are added to the
 requirements files: `make build`.
 
+### Making yourself superuser
+
+After you login for the first time, do this to give yourself superuser access:
+
+```
+$ make shell
+import custom_usermodel
+me = custom_usermodel.models.User.objects.first()
+me.is_staff = True
+me.is_superuser = True
+me.save()
+```
+
 ## Code style
 
 return-to-office uses [Black](https://pypi.org/project/black/) for code

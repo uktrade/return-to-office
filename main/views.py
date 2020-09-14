@@ -1,6 +1,7 @@
 import datetime
 
 from django.conf import settings
+from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -27,14 +28,56 @@ def show_bookings(req):
     ctx = {}
 
     ctx["bookings"] = (
-        Booking.objects.filter(user=req.user, booking_date__gte=datetime.date.today())
+        Booking.objects.filter(
+            user=req.user, is_active=True, booking_date__gte=datetime.date.today()
+        )
         .order_by("booking_date")
         .select_related("building", "floor")
     )
 
     ctx["show_confirmation"] = req.GET.get("show_confirmation", False)
+    ctx["show_cancellation"] = req.GET.get("show_cancellation", False)
 
     return render(req, "main/show_bookings.html", ctx)
+
+
+def cancel_booking(req, pk):
+    with transaction.atomic():
+        b = get_object_or_404(Booking.objects.select_for_update(), pk=pk)
+        failed = False
+
+        if not b.is_active:
+            messages.error(req, "Booking has already been cancelled")
+            failed = True
+        elif b.booking_date < datetime.date.today():
+            messages.error(req, "Bookings in the past can not be cancelled")
+            failed = True
+        elif b.user != req.user:
+            messages.error(req, "You can only cancel booking made by yourself")
+            failed = True
+
+        if failed:
+            return redirect(reverse("main:show-bookings"))
+
+        b.is_active = False
+        b.canceled_timestamp = datetime.datetime.now()
+        b.save()
+
+        nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
+
+        nc.send_email_notification(
+            email_address=req.user.email,
+            template_id="e07222ce-dbae-49c3-8e73-e2e52f2735b2",
+            personalisation={
+                "on_behalf_of": b.get_on_behalf_of(),
+                "date": str(b.booking_date),
+                "building": str(b.building),
+                "floor": str(b.floor),
+                "directorate": b.directorate,
+            },
+        )
+
+        return redirect(reverse("main:show-bookings") + "?show_cancellation=1")
 
 
 def create_booking_who_for(req):
@@ -119,6 +162,7 @@ def create_booking_finalize(req):
                     ).select_for_update()
 
                     bookings_cnt = Booking.objects.filter(
+                        is_active=True,
                         booking_date=booking.booking_date,
                         building=booking.building,
                         floor=booking.floor,
@@ -127,27 +171,13 @@ def create_booking_finalize(req):
                     if bookings_cnt < booking.floor.nr_of_desks:
                         booking.save()
 
-                        if booking.on_behalf_of_name or booking.on_behalf_of_dit_email:
-                            if booking.on_behalf_of_name:
-                                if booking.on_behalf_of_dit_email:
-                                    on_behalf_of = "%s (%s)" % (
-                                        booking.on_behalf_of_name,
-                                        booking.on_behalf_of_dit_email,
-                                    )
-                                else:
-                                    on_behalf_of = booking.on_behalf_of_name
-                            else:
-                                on_behalf_of = booking.on_behalf_of_dit_email
-                        else:
-                            on_behalf_of = "Yourself"
+                        nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
 
-                        notifications_client = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
-
-                        notifications_client.send_email_notification(
+                        nc.send_email_notification(
                             email_address=req.user.email,
                             template_id="15c64ab8-dba3-4ad5-a78a-cbec414f9603",
                             personalisation={
-                                "on_behalf_of": on_behalf_of,
+                                "on_behalf_of": booking.get_on_behalf_of(),
                                 "date": str(booking.booking_date),
                                 "building": str(booking.building),
                                 "floor": str(booking.floor),

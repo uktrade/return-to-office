@@ -133,7 +133,9 @@ class BookingFormFinal(forms.Form):
         for f in floors.values():
             f.nr_of_bookings = 0
 
-        all_bookings = Booking.objects.filter(booking_date=booking_date, building=building)
+        all_bookings = Booking.objects.filter(
+            booking_date=booking_date, building=building, is_active=True
+        )
 
         for b in all_bookings:
             floors[b.floor.pk].nr_of_bookings += 1

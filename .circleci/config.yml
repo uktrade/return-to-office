@@ -18,3 +18,7 @@ jobs:
             - run:
                 name: run flake8 (coding standards compliance test)
                 command: make docker_flake8
+
+            - run:
+                name: run tests
+                command: ./run-tests.sh

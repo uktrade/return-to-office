@@ -11,4 +11,5 @@ urlpatterns = [
     path("booking/create-who-for", views.create_booking_who_for, name="booking-create-who-for"),
     path("booking/create-initial", views.create_booking_initial, name="booking-create-initial"),
     path("booking/create-finalize", views.create_booking_finalize, name="booking-create-finalize"),
+    path("booking/<int:pk>/cancel", views.cancel_booking, name="booking-cancel"),
 ]

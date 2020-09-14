@@ -17,9 +17,7 @@ class TestIpRestrictionMiddleware(TestCase):
         self.rf = RequestFactory()
 
     def test_middleware_is_enabled(self):
-        with self.settings(
-            IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2
-        ):
+        with self.settings(IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2):
             self.assertEqual(self.client.get(reverse("admin:index")).status_code, 401)
 
     def test_applies_to_specified_apps_only(self):
@@ -27,23 +25,15 @@ class TestIpRestrictionMiddleware(TestCase):
 
         request = self.rf.get("/")
 
-        with self.settings(
-            IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2
-        ):
-            self.assertEqual(
-                IpRestrictionMiddleware(dummy_view)(request).status_code, 200
-            )
+        with self.settings(IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2):
+            self.assertEqual(IpRestrictionMiddleware(dummy_view)(request).status_code, 200)
 
     def test_not_enabled_if_ip_restrict_is_false(self):
 
         request = self.rf.get(reverse("admin:index"), HTTP_X_FORWARDED_FOR="")
 
-        with self.settings(
-            IP_RESTRICT=False, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2
-        ):
-            self.assertEqual(
-                IpRestrictionMiddleware(dummy_view)(request).status_code, 200
-            )
+        with self.settings(IP_RESTRICT=False, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2):
+            self.assertEqual(IpRestrictionMiddleware(dummy_view)(request).status_code, 200)
 
     def test_x_forwarded_header(self):
 
