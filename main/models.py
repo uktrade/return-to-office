@@ -22,6 +22,9 @@ class Floor(models.Model):
 
 
 class Booking(models.Model):
+    # becomes False if booking is canceled
+    is_active = models.BooleanField(default=True)
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, models.CASCADE, db_index=True, related_name="+"
     )
@@ -40,3 +43,24 @@ class Booking(models.Model):
     directorate = models.CharField(max_length=80)
 
     booked_timestamp = models.DateTimeField(auto_now_add=True)
+    canceled_timestamp = models.DateTimeField(null=True)
+
+    def get_on_behalf_of(self):
+        """Return a string describing who the booking is on behalf of. It will be one of:
+
+        "Yourself"
+        "Donald Duck"
+        "donald.duck@digital.trade.gov.uk"
+        "Donald Duck (donald.duck@digital.trade.gov.uk)"
+        """
+
+        if self.on_behalf_of_name or self.on_behalf_of_dit_email:
+            if self.on_behalf_of_name:
+                if self.on_behalf_of_dit_email:
+                    return "%s (%s)" % (self.on_behalf_of_name, self.on_behalf_of_dit_email)
+                else:
+                    return self.on_behalf_of_name
+            else:
+                return self.on_behalf_of_dit_email
+        else:
+            return "Yourself"

@@ -2,13 +2,18 @@
 
 {% block content %}
 
-{% if show_confirmation %}
+{% if show_confirmation or show_cancellation %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <div class="govuk-panel govuk-panel--confirmation">
       <h1 class="govuk-panel__title">
-        Desk booking successfully completed.
-      </h1>
+        {% if show_confirmation %}
+          Desk booking successfully completed.
+        {% endif %}
+        {% if show_cancellation %}
+          Desk booking successfully cancelled.
+        {% endif %}
+        </h1>
       <div class="govuk-panel__body">
         An email confirmation has been sent to you.
       </div>
@@ -17,7 +22,7 @@
 </div>
 {% endif %}
 
-<h1 class="govuk-heading-xl">Your bookings</h1>
+<h1 class="govuk-heading-xl">Your upcoming bookings</h1>
 
 <ul class="govuk-list govuk-list--bullet">
 
@@ -34,6 +39,10 @@
     <li>Floor: {{ b.floor }}</li>
     <li>Directorate: {{ b.directorate }}</li>
     <li>Booked at: {{ b.booked_timestamp }}</li>
+    <li><form action="{% url "main:booking-cancel" pk=b.pk %}" method="post">
+      {% csrf_token %}
+      <input type="submit" value="Cancel booking" class="govuk-button govuk-button--secondary" data-module="govuk-button"/>
+      </form>
 </ul>
 {% endfor %}
 

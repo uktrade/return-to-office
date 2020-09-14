@@ -12,7 +12,6 @@ href="mailto:healthandsafetyteam@trade.gov.uk">healthandsafetyteam@trade.gov.uk<
 to discuss evacuation arrangements before proceeding with a booking.</p>
 
 <form action="{% url "main:booking-create-who-for" %}" method="post">
-
     {% csrf_token %}
 
     {% include "main/govuk_form_errors.html" %}
@@ -20,7 +19,6 @@ to discuss evacuation arrangements before proceeding with a booking.</p>
     {% include "main/govuk_form_field.html" with field=form.for_myself hide_label=True %}
 
     <input type="submit" value="Continue" class="govuk-button"/>
-
-    </form>
+</form>
 
 {% endblock %}
