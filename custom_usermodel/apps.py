@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class UsersConfig(AppConfig):
-    name = 'custom_usermodel'
+    name = "custom_usermodel"

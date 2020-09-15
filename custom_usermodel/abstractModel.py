@@ -8,26 +8,23 @@ from .managers import UserManager
 
 class DjangoIntegrationMixin(models.Model):
     is_active = models.BooleanField(
-        _('active'),
+        _("active"),
         default=True,
-        help_text=(
-            'enables user to login to site ( not the admin site! just a website)')
+        help_text=("enables user to login to site ( not the admin site! just a website)"),
     )
 
     is_staff = models.BooleanField(
-        _('staff'),
-        default=False,
-        help_text=('minimum permission required to login to admin site')
+        _("staff"), default=False, help_text=("minimum permission required to login to admin site")
     )
 
-    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
     class Meta:
         abstract = True
 
 
 class FirstNameMixin(models.Model):
-    first_name = models.CharField(_('first name'), max_length=254, blank=True)
+    first_name = models.CharField(_("first name"), max_length=254, blank=True)
 
     def get_first_name(self):
         return self.first_name
@@ -37,7 +34,7 @@ class FirstNameMixin(models.Model):
 
 
 class LastNameMixin(models.Model):
-    last_name = models.CharField(_('last name'), max_length=254, blank=True)
+    last_name = models.CharField(_("last name"), max_length=254, blank=True)
 
     def get_last_name(self):
         return self.last_name
@@ -47,9 +44,9 @@ class LastNameMixin(models.Model):
 
 
 class EmailAuthMixin(models.Model):
-    email = models.EmailField(_('email address'), max_length=254, unique=True)
-    EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'email'
+    email = models.EmailField(_("email address"), max_length=254, unique=True)
+    EMAIL_FIELD = "email"
+    USERNAME_FIELD = "email"
 
     def clean(self):
         super().clean()
@@ -59,18 +56,24 @@ class EmailAuthMixin(models.Model):
         abstract = True
 
 
-class AbstractUser(DjangoIntegrationMixin, FirstNameMixin, LastNameMixin, EmailAuthMixin,
-                   PermissionsMixin, AbstractBaseUser):
+class AbstractUser(
+    DjangoIntegrationMixin,
+    FirstNameMixin,
+    LastNameMixin,
+    EmailAuthMixin,
+    PermissionsMixin,
+    AbstractBaseUser,
+):
     objects = UserManager()
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ["first_name", "last_name"]
 
     def has_usable_password(self, request):
         return False
 
     def get_short_name(self):
-        return self.first_name + ' ' + self.last_name
+        return self.first_name + " " + self.last_name
 
     class Meta:
         abstract = True
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
