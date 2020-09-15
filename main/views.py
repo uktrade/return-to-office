@@ -66,7 +66,7 @@ def cancel_booking(req, pk):
         nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
 
         nc.send_email_notification(
-            email_address=req.user.email,
+            email_address=req.user.get_contact_email(),
             template_id="e07222ce-dbae-49c3-8e73-e2e52f2735b2",
             personalisation={
                 "on_behalf_of": b.get_on_behalf_of(),
@@ -174,7 +174,7 @@ def create_booking_finalize(req):
                         nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
 
                         nc.send_email_notification(
-                            email_address=req.user.email,
+                            email_address=req.user.get_contact_email(),
                             template_id="15c64ab8-dba3-4ad5-a78a-cbec414f9603",
                             personalisation={
                                 "on_behalf_of": booking.get_on_behalf_of(),
