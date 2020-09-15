@@ -8,7 +8,7 @@ from django_log_formatter_ecs import ECSFormatter
 
 
 AUTHENTICATION_BACKENDS += [
-    "main.backends.CustomAuthbrokerBackend",
+    "custom_usermodel.backends.CustomAuthbrokerBackend",
 ]
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "node_modules/govuk-frontend"),)

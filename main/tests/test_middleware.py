@@ -1,5 +1,5 @@
+import pytest
 from django.http import HttpResponse
-from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from main.middleware import IpRestrictionMiddleware
@@ -9,96 +9,82 @@ def dummy_view(_):
     return HttpResponse(status=200)
 
 
-class TestIpRestrictionMiddleware(TestCase):
+class TestIpRestrictionMiddleware:
+    def test_middleware_is_enabled(self, client, settings):
+        settings.IP_RESTRICT = True
+        settings.IP_RESTRICT_APPS = ["admin"]
+        settings.IP_SAFELIST_XFF_INDEX = -2
+        assert client.get(reverse("admin:index")).status_code == 401
 
-    rf = None
-
-    def setUp(self):
-        self.rf = RequestFactory()
-
-    def test_middleware_is_enabled(self):
-        with self.settings(IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2):
-            self.assertEqual(self.client.get(reverse("admin:index")).status_code, 401)
-
-    def test_applies_to_specified_apps_only(self):
+    def test_applies_to_specified_apps_only(self, rf, settings):
         """Only apps listed in `settings.IP_WHITELIST_APPS` should be ip restricted"""
 
-        request = self.rf.get("/")
+        settings.IP_RESTRICT = True
+        settings.IP_RESTRICT_APPS = ["admin"]
+        settings.IP_SAFELIST_XFF_INDEX = -2
 
-        with self.settings(IP_RESTRICT=True, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2):
-            self.assertEqual(IpRestrictionMiddleware(dummy_view)(request).status_code, 200)
+        request = rf.get("/")
 
-    def test_not_enabled_if_ip_restrict_is_false(self):
+        assert IpRestrictionMiddleware(dummy_view)(request).status_code == 200
 
-        request = self.rf.get(reverse("admin:index"), HTTP_X_FORWARDED_FOR="")
+    def test_not_enabled_ifip_restrict_is_false(self, rf, settings):
+        settings.IP_RESTRICT = False
+        settings.IP_RESTRICT_APPS = ["admin"]
+        settings.IP_SAFELIST_XFF_INDEX = -2
 
-        with self.settings(IP_RESTRICT=False, IP_RESTRICT_APPS=["admin"], IP_SAFELIST_XFF_INDEX=-2):
-            self.assertEqual(IpRestrictionMiddleware(dummy_view)(request).status_code, 200)
+        request = rf.get(reverse("admin:index"), HTTP_X_FORWARDED_FOR="")
 
-    def test_x_forwarded_header(self):
+        assert IpRestrictionMiddleware(dummy_view)(request).status_code == 200
 
-        test_cases = (["1.1.1.1, 2.2.2.2, 3.3.3.3", 200], ["1.1.1.1", 401], ["", 401])
+    @pytest.mark.parametrize(
+        "xff_header,expected_status",
+        (
+            ["1.1.1.1, 2.2.2.2, 3.3.3.3", 200],
+            ["1.1.1.1", 401],
+            [
+                "",
+                401,
+            ],
+        ),
+    )
+    def test_x_forwarded_header(self, rf, settings, xff_header, expected_status):
+        settings.IP_RESTRICT = True
+        settings.IP_RESTRICT_APPS = ["admin"]
+        settings.ALLOWED_IPS = ["2.2.2.2"]
+        settings.IP_SAFELIST_XFF_INDEX = -2
 
-        for xff_header, expected_status in test_cases:
-            request = self.rf.get(reverse("admin:index"), HTTP_X_FORWARDED_FOR=xff_header)
+        request = rf.get(reverse("admin:index"), HTTP_X_FORWARDED_FOR=xff_header)
 
-            with self.settings(
-                IP_RESTRICT=True,
-                IP_RESTRICT_APPS=["admin"],
-                ALLOWED_IPS=["2.2.2.2"],
-                IP_SAFELIST_XFF_INDEX=-2,
-            ):
-                self.assertEqual(
-                    IpRestrictionMiddleware(dummy_view)(request).status_code,
-                    expected_status,
-                )
+        assert IpRestrictionMiddleware(dummy_view)(request).status_code == expected_status
 
-    def test_ips(self):
+    @pytest.mark.parametrize(
+        "allowed_ips,expected_status", ([["2.2.2.2"], 200], [["1.1.1.1"], 401])
+    )
+    def test_ips(self, rf, settings, allowed_ips, expected_status):
+        settings.IP_RESTRICT = True
+        settings.IP_RESTRICT_APPS = ["admin"]
+        settings.ALLOWED_IPS = allowed_ips
+        settings.IP_SAFELIST_XFF_INDEX = -2
 
-        test_cases = ([["2.2.2.2"], 200], [["1.1.1.1"], 401])
+        request = rf.get(reverse("admin:index"), HTTP_X_FORWARDED_FOR="1.1.1.1, 2.2.2.2, 3.3.3.3")
 
-        for allowed_ips, expected_status in test_cases:
-            with self.settings(
-                IP_RESTRICT=True,
-                IP_RESTRICT_APPS=["admin"],
-                ALLOWED_IPS=allowed_ips,
-                IP_SAFELIST_XFF_INDEX=-2,
-            ):
-                request = self.rf.get(
-                    reverse("admin:index"),
-                    HTTP_X_FORWARDED_FOR="1.1.1.1, 2.2.2.2, 3.3.3.3",
-                )
+        assert IpRestrictionMiddleware(dummy_view)(request).status_code == expected_status
 
-                self.assertEqual(
-                    IpRestrictionMiddleware(dummy_view)(request).status_code,
-                    expected_status,
-                )
+        settings.ALLOWED_IPS = ["3.3.3.3"]
 
-        with self.settings(
-            IP_RESTRICT=True,
-            IP_RESTRICT_APPS=["admin"],
-            ALLOWED_IPS=["3.3.3.3"],
-            IP_SAFELIST_XFF_INDEX=-2,
-        ):
+        assert IpRestrictionMiddleware(dummy_view)(request).status_code == 401
 
-            self.assertEqual(IpRestrictionMiddleware(dummy_view)(request).status_code, 401)
+    @pytest.mark.parametrize(
+        "allowed_ips,expected_status", ([["2.2.2.2"], 200], [["1.1.1.1"], 401])
+    )
+    def test_ip_restricted_path(self, rf, settings, allowed_ips, expected_status):
+        settings.IP_RESTRICT = True
+        settings.IP_RESTRICT_PATH_NAMES = ["main:show-bookings"]
+        settings.ALLOWED_IPS = allowed_ips
+        settings.IP_SAFELIST_XFF_INDEX = -2
 
-    def test_ip_restricted_path(self):
+        request = rf.get(
+            reverse("main:show-bookings"), HTTP_X_FORWARDED_FOR="1.1.1.1, 2.2.2.2, 3.3.3.3"
+        )
 
-        test_cases = ([["2.2.2.2"], 200], [["1.1.1.1"], 401])
-
-        for allowed_ips, expected_status in test_cases:
-            with self.settings(
-                IP_RESTRICT=True,
-                IP_RESTRICT_PATH_NAMES=["main:show-bookings"],
-                ALLOWED_IPS=allowed_ips,
-                IP_SAFELIST_XFF_INDEX=-2,
-            ):
-                request = self.rf.get(
-                    reverse("main:show-bookings"),
-                    HTTP_X_FORWARDED_FOR="1.1.1.1, 2.2.2.2, 3.3.3.3",
-                )
-                self.assertEqual(
-                    IpRestrictionMiddleware(dummy_view)(request).status_code,
-                    expected_status,
-                )
+        assert IpRestrictionMiddleware(dummy_view)(request).status_code == expected_status

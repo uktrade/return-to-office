@@ -11,7 +11,7 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "node_modules/govuk-frontend"),)
 SASS_PROCESSOR_INCLUDE_DIRS = [os.path.join("/node_modules")]
 
 AUTHENTICATION_BACKENDS += [
-    "main.backends.CustomAuthbrokerBackend",
+    "custom_usermodel.backends.CustomAuthbrokerBackend",
 ]
 LOGGING = {
     "version": 1,
