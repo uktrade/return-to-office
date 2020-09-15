@@ -6,96 +6,76 @@
 #
 apipkg==1.5               # via execnet
 appdirs==1.4.4            # via black
-appnope==0.1.0            # via ipython
 attrs==18.1.0             # via -r requirements.in/base.in, pytest
 black==20.8b1             # via -r requirements.in/dev.in
 certifi==2018.8.24        # via elastic-apm, requests, sentry-sdk
 chardet==3.0.4            # via -r requirements.in/base.in, requests
 click==7.1.2              # via black, pip-tools
 coverage==5.2             # via pytest-cov
-decorator==4.2.1          # via -r requirements.in/base.in, ipython, traitlets
-diff-match-patch==20121119  # via -r requirements.in/base.in
 dj-database-url==0.5.0    # via -r requirements.in/base.in
-django-appconf==1.0.4     # via -r requirements.in/base.in, django-axes, django-compressor
+django-appconf==1.0.4     # via django-axes, django-compressor
 django-autocomplete-light==3.3.2  # via -r requirements.in/base.in
 django-axes==5.3.2        # via -r requirements.in/base.in
 django-compressor==2.4    # via -r requirements.in/base.in
 django-environ==0.4.5     # via -r requirements.in/base.in
-django-ipware==2.1.0      # via -r requirements.in/base.in, django-axes, django-log-formatter-ecs
+django-ipware==2.1.0      # via django-axes, django-log-formatter-ecs
 django-log-formatter-ecs==0.0.3  # via -r requirements.in/base.in
-django-pivot==1.7         # via -r requirements.in/base.in
 django-sass-processor==0.8  # via -r requirements.in/base.in
 django-settings-export==1.2.1  # via -r requirements.in/base.in
 django-staff-sso-client==2.2.1  # via -r requirements.in/base.in
 django-webpack-loader==0.7.0  # via -r requirements.in/base.in
-django==2.2.16            # via -r requirements.in/base.in, django-appconf, django-axes, django-pivot, django-settings-export, django-staff-sso-client
+django==2.2.16            # via -r requirements.in/base.in, django-appconf, django-axes, django-settings-export, django-staff-sso-client
 docopt==0.6.2             # via notifications-python-client
-docutils==0.14            # via -r requirements.in/base.in
 elastic-apm==5.6.0        # via -r requirements.in/base.in
-et-xmlfile==1.0.1         # via -r requirements.in/base.in
 execnet==1.7.1            # via pytest-xdist
 flake8==3.8.3             # via -r requirements.in/dev.in
-future==0.18.2            # via -r requirements.in/base.in, notifications-python-client
+future==0.18.2            # via notifications-python-client
 gunicorn==19.9.0          # via -r requirements.in/base.in
 idna==2.7                 # via requests
 importlib-metadata==1.6.0  # via flake8, pluggy, pytest
-ipython-genutils==0.2.0   # via -r requirements.in/base.in, traitlets
-ipython==6.2.1            # via -r requirements.in/base.in
-jedi==0.11.1              # via ipython
+iniconfig==1.0.1          # via pytest
 kubi-ecs-logger==0.0.6    # via django-log-formatter-ecs
 libsass==0.20.0           # via -r requirements.in/base.in
 marshmallow==2.19.2       # via kubi-ecs-logger
 mccabe==0.6.1             # via flake8
 monotonic==1.5            # via notifications-python-client
-more-itertools==4.3.0     # via -r requirements.in/base.in, pytest
+more-itertools==4.3.0     # via pytest
 mypy-extensions==0.4.3    # via black
 notifications-python-client==5.7.0  # via -r requirements.in/base.in
 oauthlib==2.1.0           # via -r requirements.in/base.in, requests-oauthlib
 packaging==20.4           # via pytest
-parso==0.1.1              # via jedi
 pathspec==0.8.0           # via black
-pexpect==4.4.0            # via ipython
-pickleshare==0.7.4        # via -r requirements.in/base.in, ipython
 pip-tools==5.3.1          # via -r requirements.in/dev.in
 pluggy==0.13.1            # via pytest
-prompt-toolkit==1.0.15    # via ipython
 psycopg2-binary==2.7.4    # via -r requirements.in/base.in
 psycopg2==2.7.4           # via -r requirements.in/base.in
-ptyprocess==0.5.2         # via pexpect
-py==1.6.0                 # via pytest
+py==1.9.0                 # via pytest
 pycodestyle==2.6.0        # via flake8
-pydot==1.2.4              # via -r requirements.in/base.in
 pyflakes==2.2.0           # via flake8
-pygments==2.2.0           # via -r requirements.in/base.in, ipython
 pyjwt==1.7.1              # via notifications-python-client
-pyparsing==2.2.0          # via -r requirements.in/base.in, packaging, pydot
-pytest-cov==2.10.0        # via -r requirements.in/dev.in
-pytest-django==3.9.0      # via -r requirements.in/dev.in
+pyparsing==2.2.0          # via packaging
+pytest-cov==2.10.1        # via -r requirements.in/dev.in
+pytest-django==3.10.0     # via -r requirements.in/dev.in
 pytest-forked==1.2.0      # via pytest-xdist
-pytest-xdist==1.33.0      # via -r requirements.in/dev.in
-pytest==5.4.3             # via -r requirements.in/dev.in, pytest-cov, pytest-django, pytest-forked, pytest-xdist
+pytest-xdist==2.1.0       # via -r requirements.in/dev.in
+pytest==6.0.2             # via -r requirements.in/dev.in, pytest-cov, pytest-django, pytest-forked, pytest-xdist
 python-dateutil==2.7.3    # via -r requirements.in/base.in
 python-dotenv==0.9.1      # via -r requirements.in/base.in
 pytz==2018.3              # via -r requirements.in/base.in, django
-raven==6.9.0              # via -r requirements.in/base.in
 rcssmin==1.0.6            # via django-compressor
 regex==2020.6.8           # via black
 requests-oauthlib==1.0.0  # via -r requirements.in/base.in, django-staff-sso-client
 requests==2.21.0          # via -r requirements.in/base.in, notifications-python-client, requests-oauthlib
 rjsmin==1.1.0             # via django-compressor
-sentry-sdk==0.10.2        # via -r requirements.in/base.in
-simplegeneric==0.8.1      # via ipython
-six==1.15.0               # via django-compressor, django-pivot, libsass, more-itertools, packaging, pip-tools, prompt-toolkit, pytest-xdist, python-dateutil, traitlets
+sentry-sdk==0.17.5        # via -r requirements.in/base.in
+six==1.15.0               # via django-compressor, libsass, more-itertools, packaging, pip-tools, python-dateutil
 sqlparse==0.2.4           # via django
-toml==0.10.1              # via black
-traitlets==4.3.2          # via ipython
+toml==0.10.1              # via black, pytest
 typed-ast==1.4.1          # via black
 typing-extensions==3.7.4.3  # via black
 urllib3==1.24.2           # via elastic-apm, requests, sentry-sdk
-wcwidth==0.1.7            # via prompt-toolkit, pytest
-whitenoise==4.1           # via -r requirements.in/base.in
+whitenoise==5.2.0         # via -r requirements.in/base.in
 zipp==3.1.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
-# setuptools
