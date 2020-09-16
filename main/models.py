@@ -1,5 +1,43 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
+
+
+def validate_business_units(value):
+    business_units = [x.strip() for x in value.strip().split("\n") if x.strip()] if value else []
+
+    if not business_units:
+        raise ValidationError("At least one business unit must be defined")
+
+
+class DitGroup(models.Model):
+    class Meta:
+        verbose_name = "DIT Group"
+        verbose_name_plural = "DIT Groups"
+
+    name = models.CharField(max_length=80, unique=True)
+
+    business_units = models.TextField(
+        help_text="One business unit per line", validators=[validate_business_units]
+    )
+
+    def __str__(self):
+        return self.name
+
+    def get_business_units(self):
+        """Get a list of business units for this group."""
+
+        business_units = (
+            [x.strip() for x in self.business_units.strip().split("\n") if x.strip()]
+            if self.business_units
+            else []
+        )
+
+        if not business_units:
+            # should not happen, but let's not fall over if it does
+            business_units.append("Unknown")
+
+        return business_units
 
 
 class Building(models.Model):
@@ -41,6 +79,10 @@ class Booking(models.Model):
     floor = models.ForeignKey(Floor, on_delete=models.CASCADE, related_name="+")
 
     directorate = models.CharField(max_length=80)
+
+    # TODO: take out blank/null=True once new code is verified to be deployed and working
+    group = models.CharField(max_length=80, blank=True, null=True)
+    business_unit = models.CharField(max_length=80, blank=True, null=True)
 
     booked_timestamp = models.DateTimeField(auto_now_add=True)
     canceled_timestamp = models.DateTimeField(null=True)

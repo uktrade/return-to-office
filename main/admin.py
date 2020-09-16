@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.contrib.admin.filters import DateFieldListFilter
 from django.http import HttpResponse
 
-from .models import Building, Floor, Booking
+from .models import DitGroup, Building, Floor, Booking
 
 
 def download_bookings_csv(modeladmin, request, queryset):
@@ -19,6 +19,8 @@ def download_bookings_csv(modeladmin, request, queryset):
             "floor",
             "user",
             "directorate",
+            "group",
+            "business_unit",
             "on_behalf_of_name",
             "on_behalf_of_dit_email",
         ]
@@ -32,6 +34,8 @@ def download_bookings_csv(modeladmin, request, queryset):
                 b.floor,
                 b.user,
                 b.directorate,
+                b.group,
+                b.business_unit,
                 b.on_behalf_of_name,
                 b.on_behalf_of_dit_email,
             ]
@@ -62,6 +66,10 @@ class MyDateTimeFilter(DateFieldListFilter):
                 },
             ),
         )
+
+
+class DitGroupAdmin(admin.ModelAdmin):
+    ordering = ["name"]
 
 
 class BuildingAdmin(admin.ModelAdmin):
@@ -98,6 +106,7 @@ class BookingAdmin(admin.ModelAdmin):
     actions = [download_bookings_csv]
 
 
+admin.site.register(DitGroup, DitGroupAdmin)
 admin.site.register(Building, BuildingAdmin)
 admin.site.register(Floor, FloorAdmin)
 admin.site.register(Booking, BookingAdmin)
