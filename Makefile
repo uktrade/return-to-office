@@ -14,16 +14,16 @@ setup:
 	make collectstatic
 
 migrations:
-	docker-compose run web python manage.py makemigrations main
+	docker-compose run --rm web python manage.py makemigrations main
 
 migrate:
-	docker-compose run web python manage.py migrate
+	docker-compose run --rm web python manage.py migrate
 
 compilescss:
-	docker-compose run web python manage.py compilescss
+	docker-compose run --rm web python manage.py compilescss
 
 shell:
-	docker-compose run web python manage.py shell
+	docker-compose run --rm web python manage.py shell
 
 docker_flake8:
 	docker-compose run --rm web flake8
@@ -44,10 +44,10 @@ build:
 	docker-compose build
 
 elevate:
-	docker-compose run web python manage.py elevate_sso_user_permissions
+	docker-compose run --rm web python manage.py elevate_sso_user_permissions
 
 collectstatic:
-	docker-compose run web python manage.py collectstatic --noinput
+	docker-compose run --rm web python manage.py collectstatic --noinput
 
 dev-requirements:
 	pip-compile --output-file requirements/base.txt requirements.in/base.in
