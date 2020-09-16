@@ -29,6 +29,7 @@ idna==2.7                 # via requests
 kubi-ecs-logger==0.1.0    # via django-log-formatter-ecs
 libsass==0.20.0           # via -r requirements.in/base.in
 marshmallow==3.6.1        # via kubi-ecs-logger
+mohawk==1.1.0             # via -r requirements.in/base.in
 monotonic==1.5            # via notifications-python-client
 notifications-python-client==5.7.0  # via -r requirements.in/base.in
 oauthlib==2.1.0           # via -r requirements.in/base.in, requests-oauthlib
@@ -43,7 +44,7 @@ requests-oauthlib==1.0.0  # via -r requirements.in/base.in, django-staff-sso-cli
 requests==2.21.0          # via -r requirements.in/base.in, notifications-python-client, requests-oauthlib
 rjsmin==1.1.0             # via django-compressor
 sentry-sdk==0.17.5        # via -r requirements.in/base.in
-six==1.15.0               # via django-compressor, libsass, python-dateutil
+six==1.15.0               # via django-compressor, libsass, mohawk, python-dateutil
 sqlparse==0.2.4           # via django
 urllib3==1.24.2           # via elastic-apm, requests, sentry-sdk
 whitenoise==5.2.0         # via -r requirements.in/base.in

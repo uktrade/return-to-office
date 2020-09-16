@@ -30,16 +30,19 @@ django==3.1.1             # via -r requirements.in/base.in, django-appconf, djan
 docopt==0.6.2             # via notifications-python-client
 elastic-apm==5.6.0        # via -r requirements.in/base.in
 execnet==1.7.1            # via pytest-xdist
+factory-boy==3.0.1        # via -r requirements.in/dev.in
+faker==4.1.3              # via factory-boy
 flake8==3.8.3             # via -r requirements.in/dev.in
+freezegun==1.0.0          # via -r requirements.in/dev.in
 future==0.18.2            # via notifications-python-client
 gunicorn==19.9.0          # via -r requirements.in/base.in
 idna==2.7                 # via requests
-importlib-metadata==1.6.0  # via flake8, pluggy, pytest
 iniconfig==1.0.1          # via pytest
 kubi-ecs-logger==0.1.0    # via django-log-formatter-ecs
 libsass==0.20.0           # via -r requirements.in/base.in
 marshmallow==3.6.1        # via kubi-ecs-logger
 mccabe==0.6.1             # via flake8
+mohawk==1.1.0             # via -r requirements.in/base.in
 monotonic==1.5            # via notifications-python-client
 more-itertools==4.3.0     # via pytest
 mypy-extensions==0.4.3    # via black
@@ -62,7 +65,7 @@ pytest-django==3.10.0     # via -r requirements.in/dev.in
 pytest-forked==1.2.0      # via pytest-xdist
 pytest-xdist==2.1.0       # via -r requirements.in/dev.in
 pytest==6.0.2             # via -r requirements.in/dev.in, pytest-cov, pytest-django, pytest-forked, pytest-xdist
-python-dateutil==2.7.3    # via -r requirements.in/base.in
+python-dateutil==2.7.3    # via -r requirements.in/base.in, faker, freezegun
 python-dotenv==0.9.1      # via -r requirements.in/base.in
 pytz==2018.3              # via -r requirements.in/base.in, django
 rcssmin==1.0.6            # via django-compressor
@@ -71,15 +74,15 @@ requests-oauthlib==1.0.0  # via -r requirements.in/base.in, django-staff-sso-cli
 requests==2.21.0          # via -r requirements.in/base.in, notifications-python-client, requests-oauthlib
 rjsmin==1.1.0             # via django-compressor
 sentry-sdk==0.17.5        # via -r requirements.in/base.in
-six==1.15.0               # via django-compressor, libsass, more-itertools, packaging, pip-tools, python-dateutil
+six==1.15.0               # via django-compressor, libsass, mohawk, more-itertools, packaging, pip-tools, python-dateutil
 sqlparse==0.2.4           # via django
 terminaltables==3.1.0     # via pip-check
+text-unidecode==1.3       # via faker
 toml==0.10.1              # via black, pytest
 typed-ast==1.4.1          # via black
 typing-extensions==3.7.4.3  # via black
 urllib3==1.24.2           # via elastic-apm, requests, sentry-sdk
 whitenoise==5.2.0         # via -r requirements.in/base.in
-zipp==3.1.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

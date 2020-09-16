@@ -17,4 +17,7 @@ urlpatterns = [
     ),
     path("booking/create-finalize", views.create_booking_finalize, name="booking-create-finalize"),
     path("booking/<int:pk>/cancel", views.cancel_booking, name="booking-cancel"),
+    path(
+        "activity-stream/bookings", views.activity_stream_bookings, name="activity-stream-bookings"
+    ),
 ]

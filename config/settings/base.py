@@ -174,6 +174,7 @@ SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
 
 AUTHBROKER_ANONYMOUS_PATHS = [
     "/pingdom/ping.xml",
+    "/activity-stream/bookings",
 ]
 
 GOVUK_NOTIFY_API_KEY = env("GOVUK_NOTIFY_API_KEY")
@@ -184,3 +185,10 @@ IP_RESTRICT_APPS = ["admin"]
 ALLOWED_IPS = env.list("ALLOWED_IPS", default=[])
 ALLOWED_IP_RANGES = env.list("ALLOWED_IP_RANGES", default=[])
 IP_SAFELIST_XFF_INDEX = env.int("IP_SAFELIST_XFF_INDEX", default=-3)
+
+ACTIVITY_STREAM_ITEMS_PER_PAGE = 50
+ACTIVITY_STREAM_HAWK_CREDENTIALS = {
+    "id": env("ACTIVITY_STREAM_HAWK_ID"),
+    "key": env("ACTIVITY_STREAM_HAWK_SECRET"),
+    "algorithm": "sha256",
+}
