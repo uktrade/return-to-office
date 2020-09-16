@@ -10,6 +10,8 @@ black_format:
 setup:
 	scripts/initial-setup.sh
 	make migrations migrate
+	make compilescss
+	make collectstatic
 
 migrations:
 	docker-compose run web python manage.py makemigrations main
@@ -29,6 +31,9 @@ docker_flake8:
 docker_black:
 	docker-compose run --rm web black --check .
 
+pip-check:
+	docker-compose run --rm web pip-check
+
 up:
 	docker-compose up
 
@@ -42,7 +47,7 @@ elevate:
 	docker-compose run web python manage.py elevate_sso_user_permissions
 
 collectstatic:
-	docker-compose run web python manage.py collectstatic
+	docker-compose run web python manage.py collectstatic --noinput
 
 dev-requirements:
 	pip-compile --output-file requirements/base.txt requirements.in/base.in
