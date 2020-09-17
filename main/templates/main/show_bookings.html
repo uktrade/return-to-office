@@ -37,13 +37,18 @@
     {% endif %}
     <li>Building: {{ b.building }}</li>
     <li>Floor: {{ b.floor }}</li>
-    <li>Directorate: {{ b.directorate }}</li>
+    <li>DIT group: {{ b.group }}</li>
+    <li>DIT business unit: {{ b.business_unit }}</li>
     <li>Booked at: {{ b.booked_timestamp }}</li>
     <li><form action="{% url "main:booking-cancel" pk=b.pk %}" method="post">
       {% csrf_token %}
       <input type="submit" value="Cancel booking" class="govuk-button govuk-button--secondary" data-module="govuk-button"/>
       </form>
 </ul>
+{% empty %}
+
+<p class="govuk-body">You have no upcoming bookings.</p>
+
 {% endfor %}
 
 </ul>
