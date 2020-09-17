@@ -3,7 +3,7 @@
 {% block content %}
 
 {% if show_confirmation or show_cancellation %}
-<div class="govuk-grid-row">
+<div class="govuk-grid-row" style="margin-bottom: 2rem">
   <div class="govuk-grid-column-two-thirds">
     <div class="govuk-panel govuk-panel--confirmation">
       <h1 class="govuk-panel__title">
@@ -24,33 +24,70 @@
 
 <h1 class="govuk-heading-xl">Your upcoming bookings</h1>
 
-<ul class="govuk-list govuk-list--bullet">
+{% if bookings %}
 
 {% for b in bookings %}
-<li>Date: {{ b.booking_date }}</li>
-<ul class="govuk-list govuk-list--bullet">
-    {% if b.on_behalf_of_name %}
-    <li>On behalf of (name): {{ b.on_behalf_of_name }}</li>
-    {% endif %}
-    {% if b.on_behalf_of_dit_email %}
-    <li>On behalf of (DIT email): {{ b.on_behalf_of_dit_email }}</li>
-    {% endif %}
-    <li>Building: {{ b.building }}</li>
-    <li>Floor: {{ b.floor }}</li>
-    <li>DIT group: {{ b.group }}</li>
-    <li>DIT business unit: {{ b.business_unit }}</li>
-    <li>Booked at: {{ b.booked_timestamp }}</li>
-    <li><form action="{% url "main:booking-cancel" pk=b.pk %}" method="post">
-      {% csrf_token %}
-      <input type="submit" value="Cancel booking" class="govuk-button govuk-button--secondary" data-module="govuk-button"/>
-      </form>
-</ul>
-{% empty %}
+<div style="border: 2px #b1b4b6 solid; padding: 1em 1em 0em 1em; margin-bottom: 3em;">
 
-<p class="govuk-body">You have no upcoming bookings.</p>
+<h1 class="govuk-heading-m">Date: {{ b.booking_date }}</p>
 
+<dl class="govuk-summary-list govuk-summary-list--no-border">
+
+{% if b.on_behalf_of_name %}
+<div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">On behalf of (name)</dt>
+  <dd class="govuk-summary-list__value">{{ b.on_behalf_of_name }}</dd>
+</div>
+{% endif %}
+{% if b.on_behalf_of_dit_email %}
+<div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">On behalf of (DIT email)</dt>
+  <dd class="govuk-summary-list__value">{{ b.on_behalf_of_dit_email }}</dd>
+</div>
+{% endif %}
+
+<div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">Building</dt>
+  <dd class="govuk-summary-list__value">{{ b.building }}</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">Floor</dt>
+  <dd class="govuk-summary-list__value">{{ b.floor }}</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">DIT group</dt>
+  <dd class="govuk-summary-list__value">{{ b.group }}</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">DIT business unit</dt>
+  <dd class="govuk-summary-list__value">{{ b.business_unit }}</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">Booked at</dt>
+  <dd class="govuk-summary-list__value">{{ b.booked_timestamp }}</dd>
+</div>
+
+</dl>
+
+<form action="{% url "main:booking-cancel" pk=b.pk %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Cancel booking" class="govuk-button govuk-button" data-module="govuk-button"
+   style="margin: 0"
+  />
+</form>
+
+</div>
 {% endfor %}
 
-</ul>
+
+{% else %}
+
+  <p class="govuk-body">You have no upcoming bookings.</p>
+
+{% endif %}
 
 {% endblock %}
