@@ -54,16 +54,24 @@
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
-        Directorate
+        DIT group
       </dt>
       <dd class="govuk-summary-list__value">
-          {{ directorate }}
+          {{ dit_group }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Business unit
+      </dt>
+      <dd class="govuk-summary-list__value">
+          {{ business_unit }}
       </dd>
     </div>
   </dl>
 
 
-<form action="{% url "main:booking-create-finalize" %}" method="post">
+<form action="{% url "main:booking-create-finalize" %}" method="post" novalidate>
     {% csrf_token %}
 
     {% include "main/govuk_form_errors.html" %}

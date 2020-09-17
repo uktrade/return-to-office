@@ -8,8 +8,8 @@ from django.urls import reverse
 
 from notifications_python_client.notifications import NotificationsAPIClient
 
-from .forms import BookingFormWhoFor, BookingFormInitial, BookingFormFinal
-from .models import Booking, Floor, Building
+from .forms import BookingFormWhoFor, BookingFormInitial, BookingFormFinal, BookingFormBusinessUnit
+from .models import Booking, Floor, Building, DitGroup
 
 
 def index(req):
@@ -67,13 +67,14 @@ def cancel_booking(req, pk):
 
         nc.send_email_notification(
             email_address=req.user.get_contact_email(),
-            template_id="e07222ce-dbae-49c3-8e73-e2e52f2735b2",
+            template_id="349eaf4a-c0d1-4e02-a263-6b85ee2557a9",
             personalisation={
                 "on_behalf_of": b.get_on_behalf_of(),
                 "date": str(b.booking_date),
                 "building": str(b.building),
                 "floor": str(b.floor),
-                "directorate": b.directorate,
+                "dit_group": b.group,
+                "business_unit": b.business_unit,
             },
         )
 
@@ -109,11 +110,11 @@ def create_booking_initial(req):
         if form.is_valid():
             req.session["booking_date"] = form.cleaned_data["booking_date"]
             req.session["building"] = int(form.cleaned_data["building"])
-            req.session["directorate"] = form.cleaned_data["directorate"]
+            req.session["dit_group"] = int(form.cleaned_data["dit_group"])
             req.session["on_behalf_of_name"] = form.cleaned_data["on_behalf_of_name"]
             req.session["on_behalf_of_dit_email"] = form.cleaned_data["on_behalf_of_dit_email"]
 
-            return redirect(reverse("main:booking-create-finalize"))
+            return redirect(reverse("main:booking-create-business-unit"))
     else:
         form = BookingFormInitial(for_myself)
 
@@ -123,12 +124,33 @@ def create_booking_initial(req):
     return render(req, "main/create_booking_initial.html", ctx)
 
 
+def create_booking_business_unit(req):
+    ctx = {}
+
+    dit_group = req.session["dit_group"]
+
+    if req.method == "POST":
+        form = BookingFormBusinessUnit(dit_group, req.POST)
+
+        if form.is_valid():
+            req.session["business_unit"] = form.cleaned_data["business_unit"]
+
+            return redirect(reverse("main:booking-create-finalize"))
+    else:
+        form = BookingFormBusinessUnit(dit_group)
+
+    ctx["form"] = form
+
+    return render(req, "main/create_booking_business_unit.html", ctx)
+
+
 def create_booking_finalize(req):
     ctx = {}
 
     building = get_object_or_404(Building, pk=req.session["building"])
     booking_date = req.session["booking_date"]
-    directorate = req.session["directorate"]
+    dit_group = get_object_or_404(DitGroup, pk=req.session["dit_group"]).name
+    business_unit = req.session["business_unit"]
     on_behalf_of_name = req.session["on_behalf_of_name"]
     on_behalf_of_dit_email = req.session["on_behalf_of_dit_email"]
 
@@ -144,7 +166,8 @@ def create_booking_finalize(req):
                 building=building,
                 booking_date=booking_date,
                 floor=get_object_or_404(Floor, pk=int(form.cleaned_data["floor"])),
-                directorate=directorate,
+                group=dit_group,
+                business_unit=business_unit,
             )
 
             if booking.booking_date < datetime.date.today():
@@ -175,13 +198,14 @@ def create_booking_finalize(req):
 
                         nc.send_email_notification(
                             email_address=req.user.get_contact_email(),
-                            template_id="15c64ab8-dba3-4ad5-a78a-cbec414f9603",
+                            template_id="8df6e4a2-a29a-48f4-a03e-d00b9c5b3f49",
                             personalisation={
                                 "on_behalf_of": booking.get_on_behalf_of(),
                                 "date": str(booking.booking_date),
                                 "building": str(booking.building),
                                 "floor": str(booking.floor),
-                                "directorate": booking.directorate,
+                                "dit_group": booking.group,
+                                "business_unit": booking.business_unit,
                             },
                         )
 
@@ -197,7 +221,8 @@ def create_booking_finalize(req):
     ctx["form"] = form
     ctx["booking_date"] = booking_date
     ctx["building"] = building
-    ctx["directorate"] = directorate
+    ctx["dit_group"] = dit_group
+    ctx["business_unit"] = business_unit
     ctx["on_behalf_of_name"] = on_behalf_of_name
     ctx["on_behalf_of_dit_email"] = on_behalf_of_dit_email
 

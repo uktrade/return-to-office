@@ -4,7 +4,7 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.core.validators import validate_email
 
-from .models import Booking, Floor, Building
+from .models import Booking, Floor, Building, DitGroup
 from .widgets import GovUKCheckboxInput, GovUKRadioSelect, GovUKTextInput
 
 
@@ -38,7 +38,7 @@ class BookingFormInitial(forms.Form):
 
     booking_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     building = forms.ChoiceField(label="Building", widget=GovUKRadioSelect())
-    directorate = forms.ChoiceField(label="Directorate", widget=GovUKRadioSelect())
+    dit_group = forms.ChoiceField(label="DIT group", widget=GovUKRadioSelect())
 
     def __init__(self, for_myself, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -46,7 +46,7 @@ class BookingFormInitial(forms.Form):
         self.for_myself = for_myself
 
         self.fields["building"].widget.form_instance = self
-        self.fields["directorate"].widget.form_instance = self
+        self.fields["dit_group"].widget.form_instance = self
         self.fields["on_behalf_of_name"].widget.form_instance = self
         self.fields["on_behalf_of_dit_email"].widget.form_instance = self
 
@@ -56,19 +56,8 @@ class BookingFormInitial(forms.Form):
             (b.pk, str(b)) for b in Building.objects.all().order_by("name")
         ]
 
-        self.fields["directorate"].choices = [
-            (x, x)
-            for x in [
-                "Communications and Marketing",
-                "Corporate Services",
-                "GREAT",
-                "GTI",
-                "Strategy",
-                "TPG",
-                "TRID",
-                "UKEF",
-                "External",
-            ]
+        self.fields["dit_group"].choices = [
+            (dg.pk, str(dg)) for dg in DitGroup.objects.all().order_by("name")
         ]
 
     def clean_booking_date(self):
@@ -97,6 +86,19 @@ class BookingFormInitial(forms.Form):
                         "on_behalf_of_dit_email",
                         forms.ValidationError("If not empty, this must be a valid email address"),
                     )
+
+
+class BookingFormBusinessUnit(forms.Form):
+    business_unit = forms.ChoiceField(label="Business unit", widget=GovUKRadioSelect())
+
+    def __init__(self, dit_group, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["business_unit"].widget.form_instance = self
+
+        self.fields["business_unit"].choices = [
+            (x, x) for x in DitGroup.objects.get(pk=dit_group).get_business_units()
+        ]
 
 
 class BookingFormFinal(forms.Form):

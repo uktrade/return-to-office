@@ -78,9 +78,10 @@ class Booking(models.Model):
 
     floor = models.ForeignKey(Floor, on_delete=models.CASCADE, related_name="+")
 
-    directorate = models.CharField(max_length=80)
+    # old bookings
+    directorate = models.CharField(max_length=80, blank=True, null=True)
 
-    # TODO: take out blank/null=True once new code is verified to be deployed and working
+    # new bookings
     group = models.CharField(max_length=80, blank=True, null=True)
     business_unit = models.CharField(max_length=80, blank=True, null=True)
 

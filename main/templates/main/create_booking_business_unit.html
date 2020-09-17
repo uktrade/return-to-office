@@ -1,0 +1,17 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<h1 class="govuk-heading-xl">Create new booking</h1>
+
+<form action="{% url "main:booking-create-business-unit" %}" method="post" novalidate>
+    {% csrf_token %}
+
+    {% include "main/govuk_form_errors.html" %}
+
+    {% include "main/govuk_form_field.html" with field=form.business_unit hide_label=True %}
+
+    <input type="submit" value="Continue" class="govuk-button"/>
+</form>
+
+{% endblock %}
