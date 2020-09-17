@@ -8,65 +8,37 @@
     {% if on_behalf_of_name or on_behalf_of_dit_email %}
       {% if on_behalf_of_name %}
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          On behalf of (name)
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ on_behalf_of_name }}
-        </dd>
+        <dt class="govuk-summary-list__key">On behalf of (name)</dt>
+        <dd class="govuk-summary-list__value">{{ on_behalf_of_name }}</dd>
       </div>
       {% endif %}
       {% if on_behalf_of_dit_email %}
       <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          On behalf of (DIT email)
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ on_behalf_of_dit_email }}
-        </dd>
+        <dt class="govuk-summary-list__key">On behalf of (DIT email)</dt>
+        <dd class="govuk-summary-list__value">{{ on_behalf_of_dit_email }}</dd>
       </div>
       {% endif %}
     {% else %}
     <div class="govuk-summary-list__row">
-      <dt class="govuk-summary-list__key">
-        For
-      </dt>
-      <dd class="govuk-summary-list__value">
-        Myself
-      </dd>
+      <dt class="govuk-summary-list__key">For</dt>
+      <dd class="govuk-summary-list__value">Myself</dd>
     </div>
     {% endif %}
     <div class="govuk-summary-list__row">
-      <dt class="govuk-summary-list__key">
-        Date
-      </dt>
-      <dd class="govuk-summary-list__value">
-        {{ booking_date }}
-      </dd>
+      <dt class="govuk-summary-list__key">Date</dt>
+      <dd class="govuk-summary-list__value">{{ booking_date }}</dd>
     </div>
     <div class="govuk-summary-list__row">
-      <dt class="govuk-summary-list__key">
-        Building
-      </dt>
-      <dd class="govuk-summary-list__value">
-        {{ building }}
-      </dd>
+      <dt class="govuk-summary-list__key">Building</dt>
+      <dd class="govuk-summary-list__value">{{ building }}</dd>
     </div>
     <div class="govuk-summary-list__row">
-      <dt class="govuk-summary-list__key">
-        DIT group
-      </dt>
-      <dd class="govuk-summary-list__value">
-          {{ dit_group }}
-      </dd>
+      <dt class="govuk-summary-list__key">DIT group</dt>
+      <dd class="govuk-summary-list__value">{{ dit_group }}</dd>
     </div>
     <div class="govuk-summary-list__row">
-      <dt class="govuk-summary-list__key">
-        Business unit
-      </dt>
-      <dd class="govuk-summary-list__value">
-          {{ business_unit }}
-      </dd>
+      <dt class="govuk-summary-list__key">Business unit</dt>
+      <dd class="govuk-summary-list__value">{{ business_unit }}</dd>
     </div>
   </dl>
 

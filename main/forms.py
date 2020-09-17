@@ -25,14 +25,14 @@ class BookingFormInitial(forms.Form):
     on_behalf_of_name = forms.CharField(
         required=False,
         widget=GovUKTextInput(),
-        label="On behalf of",
+        label="On behalf of an external visitor",
         help_text="If booking on behalf of a visitor, please enter their name",
     )
 
     on_behalf_of_dit_email = forms.CharField(
         required=False,
         widget=GovUKTextInput(),
-        label="On behalf of",
+        label="On behalf of DIT staff",
         help_text="Or if booking on behalf of DIT staff, please enter their email address",
     )
 
@@ -50,7 +50,9 @@ class BookingFormInitial(forms.Form):
         self.fields["on_behalf_of_name"].widget.form_instance = self
         self.fields["on_behalf_of_dit_email"].widget.form_instance = self
 
-        self.fields["booking_date"].widget.attrs.update({"min": str(datetime.date.today())})
+        self.fields["booking_date"].widget.attrs.update(
+            {"min": str(datetime.date.today()), "class": "govuk-input", "style": "width: 250px"}
+        )
 
         self.fields["building"].choices = [
             (b.pk, str(b)) for b in Building.objects.all().order_by("name")
