@@ -73,8 +73,8 @@ def cancel_booking(req, pk):
                 "date": str(b.booking_date),
                 "building": str(b.building),
                 "floor": str(b.floor),
-                "dit_group": b.group,
-                "business_unit": b.business_unit,
+                "dit_group": b.group or "Unknown",
+                "business_unit": b.business_unit or "Unknown",
             },
         )
 
