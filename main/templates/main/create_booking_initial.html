@@ -2,6 +2,8 @@
 
 {% block content %}
 
+ <a class="govuk-back-link" href="{% url 'main:booking-create-who-for' %}?back=1">Back</a></p>
+
 <h1 class="govuk-heading-xl">Create new booking</h1>
 
 <form action="{% url "main:booking-create-initial" %}" method="post" novalidate>
