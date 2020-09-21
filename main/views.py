@@ -92,7 +92,13 @@ def create_booking_who_for(req):
 
             return redirect(reverse("main:booking-create-initial"))
     else:
-        form = BookingFormWhoFor()
+        if not req.GET.get("back", False):
+            clear_booking_session_variables(req)
+            initial = None
+        else:
+            initial = {"for_myself": str(int(req.session["for_myself"]))}
+
+        form = BookingFormWhoFor(initial=initial)
 
     ctx["form"] = form
 
@@ -116,7 +122,18 @@ def create_booking_initial(req):
 
             return redirect(reverse("main:booking-create-business-unit"))
     else:
-        form = BookingFormInitial(for_myself)
+        if not req.GET.get("back", False):
+            initial = None
+        else:
+            initial = {
+                "booking_date": req.session["booking_date"].isoformat(),
+                "building": req.session["building"],
+                "dit_group": req.session["dit_group"],
+                "on_behalf_of_name": req.session["on_behalf_of_name"],
+                "on_behalf_of_dit_email": req.session["on_behalf_of_dit_email"],
+            }
+
+        form = BookingFormInitial(for_myself, initial=initial)
 
     ctx["form"] = form
     ctx["for_myself"] = for_myself
@@ -137,7 +154,14 @@ def create_booking_business_unit(req):
 
             return redirect(reverse("main:booking-create-finalize"))
     else:
-        form = BookingFormBusinessUnit(dit_group)
+        if not req.GET.get("back", False):
+            initial = None
+        else:
+            initial = {
+                "business_unit": req.session["business_unit"],
+            }
+
+        form = BookingFormBusinessUnit(dit_group, initial=initial)
 
     ctx["form"] = form
 
@@ -209,7 +233,7 @@ def create_booking_finalize(req):
                             },
                         )
 
-                        # TODO: clear booking data from session?
+                        clear_booking_session_variables(req)
 
                         return redirect(reverse("main:show-bookings") + "?show_confirmation=1")
                     else:
@@ -227,3 +251,19 @@ def create_booking_finalize(req):
     ctx["on_behalf_of_dit_email"] = on_behalf_of_dit_email
 
     return render(req, "main/create_booking_finalize.html", ctx)
+
+
+def clear_booking_session_variables(req):
+    """Clear booking flow related session variables."""
+
+    for key in [
+        "for_myself",
+        "booking_date",
+        "building",
+        "dit_group",
+        "business_unit",
+        "on_behalf_of_name",
+        "on_behalf_of_dit_email",
+    ]:
+        if key in req.session:
+            req.session.delete(key)

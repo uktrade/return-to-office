@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<a class="govuk-back-link" href="{% url 'main:booking-create-business-unit' %}?back=1">Back</a></p>
+
 <h1 class="govuk-heading-xl">Create new booking</h1>
 
 <dl class="govuk-summary-list govuk-summary-list">
@@ -43,7 +45,7 @@
   </dl>
 
 
-<form action="{% url "main:booking-create-finalize" %}" method="post" novalidate>
+  <form action="{% url "main:booking-create-finalize" %}" method="post" novalidate>
     {% csrf_token %}
 
     {% include "main/govuk_form_errors.html" %}
