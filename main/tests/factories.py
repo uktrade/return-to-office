@@ -37,6 +37,8 @@ class BookingFactory(factory.django.DjangoModelFactory):
     building = factory.SubFactory(BuildingFactory)
     floor = factory.SubFactory(FloorFactory)
     directorate = factory.fuzzy.FuzzyText()
+    group = factory.fuzzy.FuzzyText()
+    business_unit = factory.fuzzy.FuzzyText()
 
     class Meta:
         model = "main.Booking"

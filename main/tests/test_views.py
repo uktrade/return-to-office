@@ -26,6 +26,8 @@ def expected_booking_data(booking):
             "dit:ReturnToOffice:Booking:building": booking.building.name,
             "dit:ReturnToOffice:Booking:floor": booking.floor.name,
             "dit:ReturnToOffice:Booking:directorate": booking.directorate,
+            "dit:ReturnToOffice:Booking:group": booking.group,
+            "dit:ReturnToOffice:Booking:businessUnit": booking.business_unit,
             "dit:ReturnToOffice:Booking:created": booking.booked_timestamp.strftime(
                 "%Y-%m-%dT%H:%M:%SZ"
             ),

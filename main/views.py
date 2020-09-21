@@ -342,6 +342,8 @@ def activity_stream_bookings(request):
                     "dit:ReturnToOffice:Booking:building": booking.building.name,
                     "dit:ReturnToOffice:Booking:floor": booking.floor.name,
                     "dit:ReturnToOffice:Booking:directorate": booking.directorate,
+                    "dit:ReturnToOffice:Booking:group": booking.group,
+                    "dit:ReturnToOffice:Booking:businessUnit": booking.business_unit,
                     "dit:ReturnToOffice:Booking:created": booking.booked_timestamp,
                     "dit:ReturnToOffice:Booking:cancelled": booking.canceled_timestamp,
                 },
