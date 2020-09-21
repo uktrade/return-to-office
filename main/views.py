@@ -363,4 +363,3 @@ def activity_stream_bookings(request):
         data=page,
         status=200,
     )
-
