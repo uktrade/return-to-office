@@ -1,10 +1,14 @@
 import datetime
+import hmac
 
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from mohawk import Receiver
+from mohawk.exc import CredentialsLookupError, MacMismatch, MissingAuthorization
 
 from notifications_python_client.notifications import NotificationsAPIClient
 
@@ -267,3 +271,95 @@ def clear_booking_session_variables(req):
     ]:
         if key in req.session:
             req.session.delete(key)
+
+
+def activity_stream_bookings(request):
+    def forbidden():
+        return JsonResponse(
+            data={},
+            status=403,
+        )
+
+    # Ensure not accessed via public networking
+    via_public_internet = "x-forwarded-for" in request.headers
+    if via_public_internet:
+        return forbidden()
+
+    def lookup_credentials(passed_id):
+        return (
+            settings.ACTIVITY_STREAM_HAWK_CREDENTIALS
+            if hmac.compare_digest(passed_id, settings.ACTIVITY_STREAM_HAWK_CREDENTIALS["id"])
+            else None
+        )
+
+    try:
+        Receiver(
+            lookup_credentials,
+            request.headers.get("Authorization"),
+            request.build_absolute_uri(),
+            request.method,
+            content=request.body,
+            content_type=request.headers.get("Content-Type"),
+        )
+    except (MissingAuthorization, CredentialsLookupError, MacMismatch):
+        return forbidden()
+
+    # Get cursor
+    after_ts_str, after_booking_id_str = request.GET.get("cursor", "0.0_0").split("_")
+    after_ts = datetime.datetime.fromtimestamp(float(after_ts_str))
+
+    bookings = list(
+        Booking.objects.extra(
+            where=[
+                "booked_timestamp > %s",
+                "booked_timestamp < STATEMENT_TIMESTAMP() - INTERVAL '1 second'",
+            ],
+            params=(after_ts,),
+        ).order_by("booked_timestamp")[: settings.ACTIVITY_STREAM_ITEMS_PER_PAGE]
+    )
+
+    abs_url = request.build_absolute_uri(reverse("main:activity-stream-bookings"))
+
+    page = {
+        "@context": [
+            "https://www.w3.org/ns/activitystreams",
+            {"dit": "https://www.trade.gov.uk/ns/activitystreams/v1"},
+        ],
+        "type": "Collection",
+        "orderedItems": [
+            {
+                "id": f"dit:ReturnToOffice:Booking:{booking.id}:Update",
+                "published": booking.booked_timestamp,
+                "object": {
+                    "id": f"dit:ReturnToOffice:Booking:{booking.id}",
+                    "type": "dit:ReturnToOffice:Booking",
+                    "dit:ReturnToOffice:Booking:userId": booking.user_id,
+                    "dit:ReturnToOffice:Booking:userEmail": booking.user.email,
+                    "dit:ReturnToOffice:Booking:userFullName": booking.user.get_short_name(),
+                    "dit:ReturnToOffice:Booking:onBehalfOfName": booking.on_behalf_of_name,
+                    "dit:ReturnToOffice:Booking:onBehalfOfEmail": booking.on_behalf_of_dit_email,
+                    "dit:ReturnToOffice:Booking:bookingDate": booking.booking_date,
+                    "dit:ReturnToOffice:Booking:building": booking.building.name,
+                    "dit:ReturnToOffice:Booking:floor": booking.floor.name,
+                    "dit:ReturnToOffice:Booking:directorate": booking.directorate,
+                    "dit:ReturnToOffice:Booking:group": booking.group,
+                    "dit:ReturnToOffice:Booking:businessUnit": booking.business_unit,
+                    "dit:ReturnToOffice:Booking:created": booking.booked_timestamp,
+                    "dit:ReturnToOffice:Booking:cancelled": booking.canceled_timestamp,
+                },
+            }
+            for booking in bookings
+        ],
+        **(
+            {
+                "next": f"{abs_url}?cursor={bookings[-1].booked_timestamp.timestamp()}_{bookings[-1].id}"
+            }
+            if bookings
+            else {}
+        ),
+    }
+
+    return JsonResponse(
+        data=page,
+        status=200,
+    )
