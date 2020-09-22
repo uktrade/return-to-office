@@ -208,9 +208,9 @@ def create_booking_finalize(req):
             if not form.errors:
                 with transaction.atomic():
                     # lock the floor we're trying to book
-                    lock_floors = Floor.objects.filter(  # noqa
+                    locked_floor = Floor.objects.select_for_update().get(  # noqa
                         pk=booking.floor_id
-                    ).select_for_update()
+                    )
 
                     bookings_cnt = Booking.objects.filter(
                         is_active=True,
@@ -221,27 +221,31 @@ def create_booking_finalize(req):
 
                     if bookings_cnt < booking.floor.nr_of_desks:
                         booking.save()
-
-                        nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
-
-                        nc.send_email_notification(
-                            email_address=req.user.get_contact_email(),
-                            template_id="8df6e4a2-a29a-48f4-a03e-d00b9c5b3f49",
-                            personalisation={
-                                "on_behalf_of": booking.get_on_behalf_of(),
-                                "date": str(booking.booking_date),
-                                "building": str(booking.building),
-                                "floor": str(booking.floor),
-                                "dit_group": booking.group,
-                                "business_unit": booking.business_unit,
-                            },
-                        )
-
-                        clear_booking_session_variables(req)
-
-                        return redirect(reverse("main:show-bookings") + "?show_confirmation=1")
+                        floor_has_space = True
                     else:
-                        form.add_error("floor", "Floor is completely booked")
+                        floor_has_space = False
+
+                if floor_has_space:
+                    nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
+
+                    nc.send_email_notification(
+                        email_address=req.user.get_contact_email(),
+                        template_id="8df6e4a2-a29a-48f4-a03e-d00b9c5b3f49",
+                        personalisation={
+                            "on_behalf_of": booking.get_on_behalf_of(),
+                            "date": str(booking.booking_date),
+                            "building": str(booking.building),
+                            "floor": str(booking.floor),
+                            "dit_group": booking.group,
+                            "business_unit": booking.business_unit,
+                        },
+                    )
+
+                    clear_booking_session_variables(req)
+
+                    return redirect(reverse("main:show-bookings") + "?show_confirmation=1")
+                else:
+                    form.add_error("floor", "Floor is completely booked")
     else:
         form = BookingFormFinal()
         form.populate_floors(booking_date, building)
