@@ -219,13 +219,30 @@ def create_booking_finalize(req):
                         floor=booking.floor,
                     ).count()
 
-                    if bookings_cnt < booking.floor.nr_of_desks:
-                        booking.save()
-                        floor_has_space = True
-                    else:
-                        floor_has_space = False
+                    success = False
 
-                if floor_has_space:
+                    if bookings_cnt < booking.floor.nr_of_desks:
+                        duplicate_bookings_cnt = Booking.objects.filter(
+                            is_active=True,
+                            booking_date=booking.booking_date,
+                            building=booking.building,
+                            floor=booking.floor,
+                            user=booking.user,
+                            on_behalf_of_name=booking.on_behalf_of_name,
+                            on_behalf_of_dit_email=booking.on_behalf_of_dit_email,
+                        ).count()
+
+                        if duplicate_bookings_cnt == 0:
+                            booking.save()
+
+                            success = True
+                        else:
+                            form.add_error("floor", "Cannot add duplicate booking")
+
+                    else:
+                        form.add_error("floor", "Floor is completely booked")
+
+                if success:
                     nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
 
                     nc.send_email_notification(
@@ -244,8 +261,6 @@ def create_booking_finalize(req):
                     clear_booking_session_variables(req)
 
                     return redirect(reverse("main:show-bookings") + "?show_confirmation=1")
-                else:
-                    form.add_error("floor", "Floor is completely booked")
     else:
         form = BookingFormFinal()
         form.populate_floors(booking_date, building)
