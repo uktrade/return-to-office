@@ -274,17 +274,6 @@ def clear_booking_session_variables(req):
 
 
 def activity_stream_bookings(request):
-    def forbidden():
-        return JsonResponse(
-            data={},
-            status=403,
-        )
-
-    # Ensure not accessed via public networking
-    via_public_internet = "x-forwarded-for" in request.headers
-    if via_public_internet:
-        return forbidden()
-
     def lookup_credentials(passed_id):
         return (
             settings.ACTIVITY_STREAM_HAWK_CREDENTIALS
@@ -302,7 +291,10 @@ def activity_stream_bookings(request):
             content_type=request.headers.get("Content-Type"),
         )
     except (MissingAuthorization, CredentialsLookupError, MacMismatch):
-        return forbidden()
+        return JsonResponse(
+            data={},
+            status=403,
+        )
 
     # Get cursor
     after_ts_str, after_booking_id_str = request.GET.get("cursor", "0.0_0").split("_")
