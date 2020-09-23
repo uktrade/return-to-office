@@ -344,6 +344,7 @@ def activity_stream_bookings(request):
                 "object": {
                     "id": f"dit:ReturnToOffice:Booking:{booking.id}",
                     "type": "dit:ReturnToOffice:Booking",
+                    "dit:ReturnToOffice:Booking:bookingId": booking.id,
                     "dit:ReturnToOffice:Booking:userId": booking.user_id,
                     "dit:ReturnToOffice:Booking:userEmail": booking.user.email,
                     "dit:ReturnToOffice:Booking:userFullName": booking.user.get_short_name(),
