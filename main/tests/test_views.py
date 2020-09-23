@@ -17,6 +17,7 @@ def expected_booking_data(booking):
         "object": {
             "id": f"dit:ReturnToOffice:Booking:{booking.id}",
             "type": "dit:ReturnToOffice:Booking",
+            "dit:ReturnToOffice:Booking:bookingId": booking.id,
             "dit:ReturnToOffice:Booking:userId": booking.user.id,
             "dit:ReturnToOffice:Booking:userEmail": booking.user.email,
             "dit:ReturnToOffice:Booking:userFullName": f"{booking.user.first_name} {booking.user.last_name}",
