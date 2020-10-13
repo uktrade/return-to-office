@@ -11,6 +11,14 @@
     </h1>
   </legend>
 
+  {% with field=form_instance.fields|get_obj_index:widget.name %}
+    {% if field.help_text %}
+      <div class="govuk-hint">
+      {{ field.help_text }}
+      </div>
+    {% endif %}
+  {% endwith %}
+
   <div class="govuk-radios--small"{% if id %} id="{{ id }}"{% endif %}>
   {% for group, options, index in widget.optgroups %}
     {% for option in options %}

@@ -8,11 +8,13 @@
   </label>
 </h1>
 
-<div class="govuk-hint">
-  {% with field=form_instance.fields|get_obj_index:widget.name %}
+{% with field=form_instance.fields|get_obj_index:widget.name %}
+  {% if field.help_text %}
+    <div class="govuk-hint">
     {{ field.help_text }}
-  {% endwith %}
-</div>
+    </div>
+  {% endif %}
+{% endwith %}
 
 <input class="govuk-input" id="{{ widget.name }}" name="{{ widget.name }}" type="text"
 {% if widget.value != None %} value="{{ widget.value }}"{% endif %}

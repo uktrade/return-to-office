@@ -107,3 +107,64 @@ class Booking(models.Model):
                 return self.on_behalf_of_dit_email
         else:
             return "Yourself"
+
+
+class PRA(models.Model):
+    """Personal risk assessment form."""
+
+    # risk category values
+    RC_HIGH_RISK = "high_risk"
+    RC_LIVES_WITH_HIGH_RISK = "lives_with_high_risk"
+    RC_MODERATE_RISK = "moderate_risk"
+    RC_ELEVATED_RISK = "elevated_risk"
+    RC_NO_CATEGORY = "no_category"
+    RC_PREFER_NOT_TO_SAY = "prefer_not_to_say"
+
+    RC_MAPPING = {
+        RC_HIGH_RISK: "High risk (clinically extremely vulnerable) due to existing health conditions",
+        RC_LIVES_WITH_HIGH_RISK: "Lives with someone at high risk (clinically extremely vulnerable) due to existing health conditions",
+        RC_MODERATE_RISK: "Moderate risk (clinically vulnerable)",
+        RC_ELEVATED_RISK: "Falls into one of the categories where evidence suggests that risk may be elevated",
+        RC_NO_CATEGORY: "Does not fall into any of the above categories",
+        RC_PREFER_NOT_TO_SAY: "The staff member would prefer not to say",
+    }
+
+    # mitigation outcome values
+    MO_APPROVE_NO_MITIGATION = "approve_no_mitigation"
+    MO_APPROVE_MITIGATION_REQUIRED = "approve_mitigation_required"
+    MO_DO_NOT_APPROVE = "do_not_approve"
+
+    MO_MAPPING = {
+        MO_APPROVE_NO_MITIGATION: "I approve - no mitigation measures required",
+        MO_APPROVE_MITIGATION_REQUIRED: "I approve - mitigation measures required",
+        MO_DO_NOT_APPROVE: "I do not approve - mitigation measures explored but considered insufficient",
+    }
+
+    staff_member = models.ForeignKey(
+        settings.AUTH_USER_MODEL, models.CASCADE, db_index=True, related_name="pra_forms"
+    )
+
+    line_manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL, models.CASCADE, db_index=True, related_name="+"
+    )
+
+    # HR business process
+    hrbp_email = models.CharField(max_length=255)
+
+    # SCS = senior civil service
+    scs_email = models.CharField(max_length=255)
+
+    # director general/director
+    director = models.CharField(max_length=80)
+
+    authorized_reason = models.CharField(max_length=80)
+
+    business_area = models.CharField(max_length=80)
+
+    risk_category = models.CharField(max_length=80)
+
+    mitigation_outcome = models.CharField(max_length=40, blank=True, default="")
+
+    mitigation_measures = models.TextField(blank=True, default="")
+
+    # FIXME: add date submitted, since these are only valid for 3 months
