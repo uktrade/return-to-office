@@ -1,0 +1,19 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<a class="govuk-back-link" href="{% url 'main:pra-create-initial' %}?back=1">Back</a></p>
+
+<h1 class="govuk-heading-xl">Personal Risk Assessment</h1>
+
+<form action="{% url "main:pra-create-director" %}" method="post" novalidate>
+    {% csrf_token %}
+
+    {% include "main/govuk_form_errors.html" %}
+
+    {% include "main/govuk_form_field.html" with field=form.director hide_label=True %}
+
+    <input type="submit" value="Continue" class="govuk-button"/>
+</form>
+
+{% endblock %}

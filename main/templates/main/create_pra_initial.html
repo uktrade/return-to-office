@@ -1,0 +1,38 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<h1 class="govuk-heading-xl">Create new Personal Risk Assessment form</h1>
+
+<p class="govuk-body">This form should be completed by the line manager after
+the risk assessment discussion has taken place with the member of staff, or
+contractor.</p>
+
+<p class="govuk-body">Once the form has been submitted, the member of staff will
+be sent a copy and invited to confirm its accuracy, and to give consent for the
+information processed in line with the privacy notice. It will then go to the
+nominated SCS to approve.</p>
+
+<p class="govuk-body">External links:</p>
+<ul class="govuk-list govuk-list--bullet">
+    <li><a href="https://dbis.sharepoint.com/:b:/s/doc/Ed65FwQr9F1AgqchtWVnJ20BfLflqPzA1trK2Ww_TWZH2Q?e=P3HRUR" target="_blank">Line manager's guidance</a>
+    <li><a href="https://dbis.sharepoint.com/:b:/s/doc/EVEQqmGamf1KkmfLyUZeB-UBDluQl7VOBQHcY-hK-l1-sg?e=5vnyNz" target="_blank">Privacy notice</a>
+</ul>
+
+<p class="govuk-body">If you cannot access the privacy notice, please contact
+<a href="mailto:opscentre@trade.gov.uk">opscentre@trade.gov.uk</a> to request a
+copy.</p>
+
+<form action="{% url "main:pra-create-initial" %}" method="post" novalidate>
+    {% csrf_token %}
+
+    {% include "main/govuk_form_errors.html" %}
+
+    {% include "main/govuk_form_field.html" with field=form.staff_member_email hide_label=True %}
+    {% include "main/govuk_form_field.html" with field=form.scs_email hide_label=True %}
+    {% include "main/govuk_form_field.html" with field=form.hrbp_email hide_label=True %}
+
+    <input type="submit" value="Continue" class="govuk-button"/>
+</form>
+
+{% endblock %}

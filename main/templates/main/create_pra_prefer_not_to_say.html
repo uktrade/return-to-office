@@ -1,0 +1,29 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<a class="govuk-back-link" href="{% url 'main:pra-create-risk-category' %}?back=1">Back</a></p>
+
+<h1 class="govuk-heading-xl">Personal Risk Assessment</h1>
+
+<h3 class="govuk-heading-m">The staff member would prefer not to say</h3>
+
+<p class="govuk-body">
+    You have indicated that the member of staff did not wish to say which risk
+    category they fall into. Without being able to understand the level of risk
+    presented, it won't be possible to allow the member of staff, visitor or
+    contractor to enter the office at present. Please consult your HRBP for
+    further advice.
+</p>
+
+<p class="govuk-body">
+    If you wish to continue, please click SUBMIT below.
+</p>
+
+<form action="{% url "main:pra-create-submit" %}" method="post" novalidate>
+    {% csrf_token %}
+
+    <input type="submit" value="Submit" class="govuk-button"/>
+</form>
+
+{% endblock %}

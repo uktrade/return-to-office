@@ -25,6 +25,9 @@ compilescss:
 shell:
 	docker-compose run --rm web python manage.py shell
 
+psql:
+	PGPASSWORD=password psql -h localhost -U postgres rto
+
 docker_flake8:
 	docker-compose run --rm web flake8
 

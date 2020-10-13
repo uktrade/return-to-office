@@ -32,3 +32,14 @@ class GovUKTextInput(forms.TextInput):
         ctx.update({"form_instance": self.form_instance})
 
         return ctx
+
+
+class GovUKTextArea(forms.Textarea):
+    template_name = "govuk/forms/widgets/textarea.html"
+
+    def get_context(self, name, value, attrs):
+        ctx = super().get_context(name, value, attrs)
+
+        ctx.update({"form_instance": self.form_instance})
+
+        return ctx
