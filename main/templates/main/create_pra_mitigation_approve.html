@@ -1,0 +1,21 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<a class="govuk-back-link" href="{% url 'main:pra-create-mitigation' %}?back=1">Back</a></p>
+
+<h1 class="govuk-heading-xl">Personal Risk Assessment</h1>
+
+<h2 class="govuk-heading-l">Mitigation measures — approve</h2>
+
+<form action="{% url "main:pra-create-mitigation-approve" %}" method="post" novalidate>
+    {% csrf_token %}
+
+    {% include "main/govuk_form_errors.html" %}
+
+    {% include "main/govuk_form_field.html" with field=form.mitigation_measures hide_label=True %}
+
+    <input type="submit" value="Submit" class="govuk-button"/>
+</form>
+
+{% endblock %}

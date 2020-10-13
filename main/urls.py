@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from . import views, views_pra
 
 app_name = "main"
 
@@ -20,4 +20,36 @@ urlpatterns = [
     path(
         "activity-stream/bookings", views.activity_stream_bookings, name="activity-stream-bookings"
     ),
+    # PRA views
+    path("pra/create-initial", views_pra.create_pra_initial, name="pra-create-initial"),
+    path("pra/create-director", views_pra.create_pra_director, name="pra-create-director"),
+    path("pra/create-reason", views_pra.create_pra_reason, name="pra-create-reason"),
+    path(
+        "pra/create-business-area",
+        views_pra.create_pra_business_area,
+        name="pra-create-business-area",
+    ),
+    path(
+        "pra/create-risk-category",
+        views_pra.create_pra_risk_category,
+        name="pra-create-risk-category",
+    ),
+    path(
+        "pra/create-prefer-not-to-say",
+        views_pra.create_pra_prefer_not_to_say,
+        name="pra-create-prefer-not-to-say",
+    ),
+    path("pra/create-submit", views_pra.create_pra_submit, name="pra-create-submit"),
+    path("pra/create-mitigation", views_pra.create_pra_mitigation, name="pra-create-mitigation"),
+    path(
+        "pra/create-mitigation-approve",
+        views_pra.create_pra_mitigation_approve,
+        name="pra-create-mitigation-approve",
+    ),
+    path(
+        "pra/create-mitigation-do-not-approve",
+        views_pra.create_pra_mitigation_do_not_approve,
+        name="pra-create-mitigation-do-not-approve",
+    ),
+    path("pra/submitted", views_pra.pra_show_thanks, name="pra-show-thanks"),
 ]
