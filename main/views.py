@@ -289,7 +289,7 @@ def clear_booking_session_variables(req):
         "on_behalf_of_dit_email",
     ]:
         if key in req.session:
-            req.session.delete(key)
+            del req.session[key]
 
 
 def activity_stream_bookings(request):
