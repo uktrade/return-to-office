@@ -14,7 +14,7 @@
   {% endwith %}
 </div>
 
-<input class="govuk-input" id="event-name" name="{{ widget.name }}" type="text"
+<input class="govuk-input" id="{{ widget.name }}" name="{{ widget.name }}" type="text"
 {% if widget.value != None %} value="{{ widget.value }}"{% endif %}
 {% include "django/forms/widgets/attrs.html" %}
 >
