@@ -22,18 +22,11 @@ class PRAFormInitial(forms.Form):
         help_text="Please enter your own email address if you, the line manager, are an SCS member.",
     )
 
-    hrbp_email = forms.CharField(
-        widget=GovUKTextInput(),
-        label="HRBP email address",
-        validators=[validate_email],
-    )
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields["staff_member_email"].widget.form_instance = self
         self.fields["scs_email"].widget.form_instance = self
-        self.fields["hrbp_email"].widget.form_instance = self
 
     def clean_staff_member_email(self):
         addr = self.cleaned_data["staff_member_email"]
@@ -95,7 +88,6 @@ class PRAFormReason(forms.Form):
     authorized_reason = forms.ChoiceField(
         widget=GovUKRadioSelect(),
         label="Authorised reason for office attendance",
-        help_text="Please only use 'personal circumstances' if the office access has been approved by your HRBP.",
     )
 
     def __init__(self, *args, **kwargs):
@@ -106,10 +98,7 @@ class PRAFormReason(forms.Form):
         self.fields["authorized_reason"].choices = [
             ("Information access requirements", "Information access requirements"),
             ("Essential corporate enabler support", "Essential corporate enabler support"),
-            (
-                "Personal circumstances",
-                "Personal circumstances (use only if approved by HRBP)",
-            ),
+            ("Personal circumstances", "Personal circumstances"),
             ("Support to Ministers or Cabinet Office", "Support to Ministers or Cabinet Office"),
             ("Trade negotiations", "Trade negotiations"),
             ("Visitor", "Visitor"),

@@ -25,7 +25,6 @@ def create_pra_initial(req):
         if form.is_valid():
             req.session["pra_staff_member_email"] = form.cleaned_data["staff_member_email"]
             req.session["pra_scs_email"] = form.cleaned_data["scs_email"]
-            req.session["pra_hrbp_email"] = form.cleaned_data["hrbp_email"]
 
             return redirect(reverse("main:pra-create-director"))
     else:
@@ -36,7 +35,6 @@ def create_pra_initial(req):
             initial = {
                 "staff_member_email": req.session["pra_staff_member_email"],
                 "scs_email": req.session["pra_scs_email"],
-                "hrbp_email": req.session["pra_hrbp_email"],
             }
 
         form = PRAFormInitial(initial=initial)
@@ -245,7 +243,6 @@ def clear_pra_session_variables(req):
     for key in [
         "pra_staff_member_email",
         "pra_scs_email",
-        "pra_hrbp_email",
         "pra_director",
         "pra_authorized_reason",
         "pra_business_area",
