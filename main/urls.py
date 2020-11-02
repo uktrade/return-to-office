@@ -22,12 +22,12 @@ urlpatterns = [
     ),
     # PRA views
     path("pra/create-initial", views_pra.create_pra_initial, name="pra-create-initial"),
-    path("pra/create-reason", views_pra.create_pra_reason, name="pra-create-reason"),
     path(
-        "pra/create-business-area",
-        views_pra.create_pra_business_area,
-        name="pra-create-business-area",
+        "pra/create-business-unit",
+        views_pra.create_pra_business_unit,
+        name="pra-create-business-unit",
     ),
+    path("pra/create-reason", views_pra.create_pra_reason, name="pra-create-reason"),
     path(
         "pra/create-risk-category",
         views_pra.create_pra_risk_category,

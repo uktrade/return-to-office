@@ -5,7 +5,7 @@ from django.core.validators import validate_email
 
 from custom_usermodel.models import User
 
-from .models import PRA
+from .models import PRA, DitGroup
 
 from .widgets import GovUKTextInput, GovUKRadioSelect, GovUKTextArea
 
@@ -22,11 +22,18 @@ class PRAFormInitial(forms.Form):
         help_text="Please enter your own email address if you, the line manager, are an SCS member.",
     )
 
+    dit_group = forms.ChoiceField(label="DIT group", widget=GovUKRadioSelect())
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields["staff_member_email"].widget.form_instance = self
         self.fields["scs_email"].widget.form_instance = self
+        self.fields["dit_group"].widget.form_instance = self
+
+        self.fields["dit_group"].choices = [
+            (dg.pk, str(dg)) for dg in DitGroup.objects.all().order_by("name")
+        ]
 
     def clean_staff_member_email(self):
         addr = self.cleaned_data["staff_member_email"]
@@ -79,36 +86,16 @@ class PRAFormReason(forms.Form):
         ]
 
 
-class PRAFormBusinessArea(forms.Form):
-    business_area = forms.ChoiceField(
-        widget=GovUKRadioSelect(),
-        label="Staff member business area",
-    )
+class PRAFormBusinessUnit(forms.Form):
+    business_unit = forms.ChoiceField(label="Business unit", widget=GovUKRadioSelect())
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, dit_group, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields["business_area"].widget.form_instance = self
+        self.fields["business_unit"].widget.form_instance = self
 
-        self.fields["business_area"].choices = [
-            ("COO", "COO"),
-            ("Communications and Marketing", "Communications and Marketing"),
-            ("GTI", "GTI"),
-            ("MSD", "MSD"),
-            ("TPG", "TPG"),
-            ("TRID", "TRID"),
-            ("UKEF", "UKEF"),
-            ("GREAT Team", "GREAT Team"),
-            ("DIT Legal", "DIT Legal"),
-            ("GSSEP", "GSSEP"),
-            ("Departmental Operations Centre", "Departmental Operations Centre"),
-            ("External - Enquiry Unit", "External - Enquiry Unit"),
-            ("External - Ex employee", "External - Ex employee"),
-            ("External - GRS", "External - GRS"),
-            ("External - OGD", "External - OGD"),
-            ("External - Other", "External - Other"),
-            ("External - SSCL", "External - SSCL"),
-            ("External - UKSBS", "External - UKSBS"),
+        self.fields["business_unit"].choices = [
+            (x, x) for x in DitGroup.objects.get(pk=dit_group).get_business_units()
         ]
 
 
