@@ -9,7 +9,7 @@ from .forms_pra import (
     PRAFormMitigationApprove,
     PRAFormMitigationDoNotApprove,
     PRAFormReason,
-    PRAFormBusinessArea,
+    PRAFormBusinessUnit,
 )
 
 from .models import PRA
@@ -24,8 +24,9 @@ def create_pra_initial(req):
         if form.is_valid():
             req.session["pra_staff_member_email"] = form.cleaned_data["staff_member_email"]
             req.session["pra_scs_email"] = form.cleaned_data["scs_email"]
+            req.session["pra_dit_group"] = int(form.cleaned_data["dit_group"])
 
-            return redirect(reverse("main:pra-create-reason"))
+            return redirect(reverse("main:pra-create-business-unit"))
     else:
         if not req.GET.get("back", False):
             clear_pra_session_variables(req)
@@ -34,6 +35,7 @@ def create_pra_initial(req):
             initial = {
                 "staff_member_email": req.session["pra_staff_member_email"],
                 "scs_email": req.session["pra_scs_email"],
+                "dit_group": req.session["pra_dit_group"],
             }
 
         form = PRAFormInitial(initial=initial)
@@ -41,6 +43,31 @@ def create_pra_initial(req):
     ctx["form"] = form
 
     return render(req, "main/create_pra_initial.html", ctx)
+
+
+def create_pra_business_unit(req):
+    ctx = {}
+
+    dit_group = req.session["pra_dit_group"]
+
+    if req.method == "POST":
+        form = PRAFormBusinessUnit(dit_group, req.POST)
+
+        if form.is_valid():
+            req.session["pra_business_unit"] = form.cleaned_data["business_unit"]
+
+            return redirect(reverse("main:pra-create-reason"))
+    else:
+        if not req.GET.get("back", False):
+            initial = None
+        else:
+            initial = {"business_unit": req.session["pra_business_unit"]}
+
+        form = PRAFormBusinessUnit(dit_group, initial=initial)
+
+    ctx["form"] = form
+
+    return render(req, "main/create_pra_business_unit.html", ctx)
 
 
 def create_pra_reason(req):
@@ -52,7 +79,7 @@ def create_pra_reason(req):
         if form.is_valid():
             req.session["pra_authorized_reason"] = form.cleaned_data["authorized_reason"]
 
-            return redirect(reverse("main:pra-create-business-area"))
+            return redirect(reverse("main:pra-create-risk-category"))
     else:
         if not req.GET.get("back", False):
             initial = None
@@ -64,29 +91,6 @@ def create_pra_reason(req):
     ctx["form"] = form
 
     return render(req, "main/create_pra_reason.html", ctx)
-
-
-def create_pra_business_area(req):
-    ctx = {}
-
-    if req.method == "POST":
-        form = PRAFormBusinessArea(req.POST)
-
-        if form.is_valid():
-            req.session["pra_business_area"] = form.cleaned_data["business_area"]
-
-            return redirect(reverse("main:pra-create-risk-category"))
-    else:
-        if not req.GET.get("back", False):
-            initial = None
-        else:
-            initial = {"business_area": req.session["pra_business_area"]}
-
-        form = PRAFormBusinessArea(initial=initial)
-
-    ctx["form"] = form
-
-    return render(req, "main/create_pra_business_area.html", ctx)
 
 
 def create_pra_risk_category(req):
@@ -220,12 +224,15 @@ def pra_show_thanks(req):
 def clear_pra_session_variables(req):
     """Clear PRA flow related session variables."""
 
-    # TODO: add missing fields here
     for key in [
         "pra_staff_member_email",
         "pra_scs_email",
+        "pra_dit_group",
         "pra_authorized_reason",
-        "pra_business_area",
+        "pra_business_unit",
+        "pra_risk_category",
+        "pra_mitigation_outcome",
+        "pra_mitigation_measures",
     ]:
         if key in req.session:
             del req.session[key]
