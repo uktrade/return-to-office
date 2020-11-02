@@ -22,7 +22,6 @@ urlpatterns = [
     ),
     # PRA views
     path("pra/create-initial", views_pra.create_pra_initial, name="pra-create-initial"),
-    path("pra/create-director", views_pra.create_pra_director, name="pra-create-director"),
     path("pra/create-reason", views_pra.create_pra_reason, name="pra-create-reason"),
     path(
         "pra/create-business-area",

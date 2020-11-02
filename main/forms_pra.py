@@ -55,35 +55,6 @@ class PRAFormInitial(forms.Form):
             )
 
 
-class PRAFormDirector(forms.Form):
-    director = forms.ChoiceField(
-        widget=GovUKRadioSelect(),
-        label="Your DG/Director",
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["director"].widget.form_instance = self
-
-        self.fields["director"].choices = [
-            ("Catherine Vaughan", "Catherine Vaughan"),
-            ("Andrew Mitchell", "Andrew Mitchell"),
-            ("Anthony Green", "Anthony Green"),
-            ("Antonia Romeo", "Antonia Romeo"),
-            ("Chris Allen", "Chris Allen"),
-            ("Crawford Falconer", "Crawford Falconer"),
-            ("Darren Tierney", "Darren Tierney"),
-            ("John Alty", "John Alty"),
-            ("John Mahon", "John Mahon"),
-            ("Louis Taylor", "Louis Taylor"),
-            ("Mark Slaughter", "Mark Slaughter"),
-            ("Martin Kent", "Martin Kent (For WTO Campaign Only)"),
-            ("Sallie Langrish/Bridget Palmer", "Sallie Langrish/Bridget Palmer"),
-            ("Toby Orr", "Toby Orr"),
-        ]
-
-
 class PRAFormReason(forms.Form):
     authorized_reason = forms.ChoiceField(
         widget=GovUKRadioSelect(),
