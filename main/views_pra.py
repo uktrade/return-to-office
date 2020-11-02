@@ -8,7 +8,6 @@ from .forms_pra import (
     PRAFormMitigation,
     PRAFormMitigationApprove,
     PRAFormMitigationDoNotApprove,
-    PRAFormDirector,
     PRAFormReason,
     PRAFormBusinessArea,
 )
@@ -26,7 +25,7 @@ def create_pra_initial(req):
             req.session["pra_staff_member_email"] = form.cleaned_data["staff_member_email"]
             req.session["pra_scs_email"] = form.cleaned_data["scs_email"]
 
-            return redirect(reverse("main:pra-create-director"))
+            return redirect(reverse("main:pra-create-reason"))
     else:
         if not req.GET.get("back", False):
             clear_pra_session_variables(req)
@@ -42,29 +41,6 @@ def create_pra_initial(req):
     ctx["form"] = form
 
     return render(req, "main/create_pra_initial.html", ctx)
-
-
-def create_pra_director(req):
-    ctx = {}
-
-    if req.method == "POST":
-        form = PRAFormDirector(req.POST)
-
-        if form.is_valid():
-            req.session["pra_director"] = form.cleaned_data["director"]
-
-            return redirect(reverse("main:pra-create-reason"))
-    else:
-        if not req.GET.get("back", False):
-            initial = None
-        else:
-            initial = {"director": req.session["pra_director"]}
-
-        form = PRAFormDirector(initial=initial)
-
-    ctx["form"] = form
-
-    return render(req, "main/create_pra_director.html", ctx)
 
 
 def create_pra_reason(req):
@@ -240,10 +216,10 @@ def pra_show_thanks(req):
 def clear_pra_session_variables(req):
     """Clear PRA flow related session variables."""
 
+    # TODO: add missing fields here
     for key in [
         "pra_staff_member_email",
         "pra_scs_email",
-        "pra_director",
         "pra_authorized_reason",
         "pra_business_area",
     ]:

@@ -151,9 +151,6 @@ class PRA(models.Model):
     # SCS = senior civil service
     scs_email = models.CharField(max_length=255)
 
-    # director general/director
-    director = models.CharField(max_length=80)
-
     authorized_reason = models.CharField(max_length=80)
 
     business_area = models.CharField(max_length=80)
