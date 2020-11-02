@@ -148,9 +148,6 @@ class PRA(models.Model):
         settings.AUTH_USER_MODEL, models.CASCADE, db_index=True, related_name="+"
     )
 
-    # HR business process
-    hrbp_email = models.CharField(max_length=255)
-
     # SCS = senior civil service
     scs_email = models.CharField(max_length=255)
 
