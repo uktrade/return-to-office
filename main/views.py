@@ -161,9 +161,7 @@ def create_booking_business_unit(req):
         if not req.GET.get("back", False):
             initial = None
         else:
-            initial = {
-                "business_unit": req.session["business_unit"],
-            }
+            initial = {"business_unit": req.session["business_unit"]}
 
         form = BookingFormBusinessUnit(dit_group, initial=initial)
 

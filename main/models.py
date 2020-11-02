@@ -155,7 +155,9 @@ class PRA(models.Model):
 
     authorized_reason = models.CharField(max_length=80)
 
-    business_area = models.CharField(max_length=80)
+    # these are identical to the ones in Booking and come from DitGroup
+    group = models.CharField(max_length=80, blank=True, null=True)
+    business_unit = models.CharField(max_length=80, blank=True, null=True)
 
     risk_category = models.CharField(max_length=80)
 
