@@ -101,7 +101,11 @@ def create_pra_risk_category(req):
 
             if rc == PRA.RC_PREFER_NOT_TO_SAY:
                 return redirect(reverse("main:pra-create-prefer-not-to-say"))
-            elif rc in (PRA.RC_MODERATE_RISK, PRA.RC_ELEVATED_RISK):
+            elif rc in (
+                PRA.RC_LIVES_WITH_MODERATE_RISK,
+                PRA.RC_MODERATE_RISK,
+                PRA.RC_ELEVATED_RISK,
+            ):
                 return redirect(reverse("main:pra-create-mitigation"))
             elif rc in (PRA.RC_HIGH_RISK, PRA.RC_LIVES_WITH_HIGH_RISK, PRA.RC_NO_CATEGORY):
                 return create_pra_submit(req)
