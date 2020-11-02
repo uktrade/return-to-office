@@ -115,6 +115,7 @@ class PRA(models.Model):
     # risk category values
     RC_HIGH_RISK = "high_risk"
     RC_LIVES_WITH_HIGH_RISK = "lives_with_high_risk"
+    RC_LIVES_WITH_MODERATE_RISK = "lives_with_moderate_risk"
     RC_MODERATE_RISK = "moderate_risk"
     RC_ELEVATED_RISK = "elevated_risk"
     RC_NO_CATEGORY = "no_category"
@@ -123,6 +124,7 @@ class PRA(models.Model):
     RC_MAPPING = {
         RC_HIGH_RISK: "High risk (clinically extremely vulnerable) due to existing health conditions",
         RC_LIVES_WITH_HIGH_RISK: "Lives with someone at high risk (clinically extremely vulnerable) due to existing health conditions",
+        RC_LIVES_WITH_MODERATE_RISK: "Lives with someone at moderate risk (clinically vulnerable)",
         RC_MODERATE_RISK: "Moderate risk (clinically vulnerable)",
         RC_ELEVATED_RISK: "Falls into one of the categories where evidence suggests that risk may be elevated",
         RC_NO_CATEGORY: "Does not fall into any of the above categories",
