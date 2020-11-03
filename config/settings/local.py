@@ -39,3 +39,6 @@ LOGGING = {
 
 # disable ip restriction for local dev
 IP_RESTRICT = False
+
+# can't develop if we disallow this
+PRA_ALLOW_STAFF_MEMBER_TO_BE_SCS = True

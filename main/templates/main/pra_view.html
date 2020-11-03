@@ -1,0 +1,102 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<h1 class="govuk-heading-xl">Personal Risk Assessment</h1>
+
+<div style="border: 2px #b1b4b6 solid; padding: 1em 1em 0em 1em; margin-bottom: 3em;">
+
+<h1 class="govuk-heading-m">Date: {{ pra.created_timestamp }}</p>
+
+<dl class="govuk-summary-list govuk-summary-list--no-border">
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Days of validity left</dt>
+    <dd class="govuk-summary-list__value">{{ pra.days_left_valid_for }}</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Staff member</dt>
+    <dd class="govuk-summary-list__value">{{ pra.staff_member.full_name }} ({{ pra.staff_member.get_contact_email }})</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Line manager</dt>
+    <dd class="govuk-summary-list__value">{{ pra.line_manager.full_name }} ({{ pra.line_manager.get_contact_email }})</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">SCS</dt>
+    <dd class="govuk-summary-list__value">{{ pra.scs.full_name }} ({{ pra.scs.get_contact_email }})</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Authorized reason</dt>
+    <dd class="govuk-summary-list__value">{{ pra.authorized_reason }}</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">DIT group</dt>
+    <dd class="govuk-summary-list__value">{{ pra.group }}</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Business unit</dt>
+    <dd class="govuk-summary-list__value">{{ pra.business_unit }}</dd>
+</div>
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Risk category</dt>
+    <dd class="govuk-summary-list__value">{{ pra.risk_category_desc }}</dd>
+</div>
+
+{% if pra.mitigation_outcome %}
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Mitigation outcome</dt>
+    <dd class="govuk-summary-list__value">{{ pra.mitigation_outcome_desc }}</dd>
+</div>
+{% endif %}
+
+{% if pra.mitigation_measures %}
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Mitigation measures</dt>
+    <dd class="govuk-summary-list__value">{{ pra.mitigation_measures }}</dd>
+</div>
+{% endif %}
+
+{% if pra.approved_staff_member is not None %}
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Approved by staff member</dt>
+    <dd class="govuk-summary-list__value">{{ pra.approved_staff_member|yesno:"Yes,No,Not yet" }}</dd>
+</div>
+{% endif %}
+
+{% if pra.approved_scs is not None %}
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Approved by SCS</dt>
+    <dd class="govuk-summary-list__value">{{ pra.approved_scs|yesno:"Yes,No,Not yet" }}</dd>
+</div>
+{% endif %}
+
+</dl>
+
+{% if request.user == pra.staff_member and pra.needs_staff_member_approval %}
+<form action="{% url "main:pra-staff-member-approve" pk=pra.pk %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="I approve this PRA as the staff member" class="govuk-button govuk-button" data-module="govuk-button"
+    />
+  </form>
+
+  <form action="{% url "main:pra-staff-member-do-not-approve" pk=pra.pk %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="I do not approve this PRA as the staff member" class="govuk-button govuk-button" data-module="govuk-button"
+    />
+  </form>
+
+{% endif %}
+
+<!-- FIXME: add buttons for SCS approval/disapproval -->
+
+</div>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django import forms
 
-# from django.utils.safestring import mark_safe
+from django.conf import settings
 from django.core.validators import validate_email
 
 from custom_usermodel.models import User
@@ -39,9 +39,6 @@ class PRAFormInitial(forms.Form):
         addr = self.cleaned_data["staff_member_email"]
         self._check_user_exists(addr)
 
-        # TODO: should we check staff member does not already have an existing,
-        # active PRA in the DB? waiting for sajid to check this with someone
-
         return addr
 
     def clean_scs_email(self):
@@ -50,13 +47,20 @@ class PRAFormInitial(forms.Form):
 
         return addr
 
+    def clean(self):
+        if not settings.PRA_ALLOW_STAFF_MEMBER_TO_BE_SCS:
+            staff_member_email = self.cleaned_data.get("staff_member_email")
+            scs_email = self.cleaned_data.get("scs_email")
+
+            if staff_member_email and scs_email and (staff_member_email == scs_email):
+                self.add_error(
+                    None, forms.ValidationError("Staff member and SCS cannot be the same person")
+                )
+
     def _check_user_exists(self, email):
         validate_email(email)
 
-        if (
-            not User.objects.filter(contact_email=email).first()
-            and not User.objects.filter(email=email).first()
-        ):
+        if not User.get_by_email(email):
             raise forms.ValidationError(
                 "User not found; please make sure they have logged in to the system at least once"
             )

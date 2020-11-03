@@ -1,3 +1,5 @@
+import datetime
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -112,6 +114,9 @@ class Booking(models.Model):
 class PRA(models.Model):
     """Personal risk assessment form."""
 
+    # how many months are PRAs valid for
+    MONTHS_VALID_FOR = 6
+
     # risk category values
     RC_HIGH_RISK = "high_risk"
     RC_LIVES_WITH_HIGH_RISK = "lives_with_high_risk"
@@ -151,7 +156,9 @@ class PRA(models.Model):
     )
 
     # SCS = senior civil service
-    scs_email = models.CharField(max_length=255)
+    scs = models.ForeignKey(
+        settings.AUTH_USER_MODEL, models.CASCADE, db_index=True, related_name="+"
+    )
 
     authorized_reason = models.CharField(max_length=80)
 
@@ -165,4 +172,47 @@ class PRA(models.Model):
 
     mitigation_measures = models.TextField(blank=True, default="")
 
-    # FIXME: add date submitted, since these are only valid for 3 months
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+
+    # these start out as None, then become True/False when the staff_member/scs
+    # makes a decision
+    approved_staff_member = models.BooleanField(null=True)
+    approved_scs = models.BooleanField(null=True)
+
+    def risk_category_desc(self):
+        return self.RC_MAPPING[self.risk_category]
+
+    def mitigation_outcome_desc(self):
+        return self.MO_MAPPING[self.mitigation_outcome]
+
+    def needs_staff_member_approval(self) -> bool:
+        """Does this PRA need to be approved by the staff member?"""
+
+        if (self.risk_category == self.RC_PREFER_NOT_TO_SAY) or (
+            self.mitigation_outcome == self.MO_DO_NOT_APPROVE
+        ):
+            return False
+
+        if self.approved_staff_member is None:
+            return True
+
+        return False
+
+    def days_left_valid_for(self) -> str:
+        """Return how many days this PRA is still valid for, or "Expired"."""
+
+        today = datetime.date.today()
+        today = datetime.date(2021, 5, 4)
+
+        days_left = (
+            (
+                self.created_timestamp.date()
+                + datetime.timedelta(weeks=self.MONTHS_VALID_FOR * 4.3333)
+            )
+            - today
+        ).days - 1
+
+        if days_left <= 0:
+            return "Expired"
+        else:
+            return str(days_left)
