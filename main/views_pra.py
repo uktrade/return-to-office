@@ -1,6 +1,14 @@
-from django.shortcuts import render, redirect  # , get_object_or_404
+from django.http import HttpRequest, HttpResponse
+from django.conf import settings
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django import forms
+
+from notifications_python_client.notifications import NotificationsAPIClient
+
+from custom_usermodel.models import User
 
 from .forms_pra import (
     PRAFormInitial,
@@ -12,7 +20,7 @@ from .forms_pra import (
     PRAFormBusinessUnit,
 )
 
-from .models import PRA
+from .models import PRA, DitGroup
 
 
 def create_pra_initial(req):
@@ -112,7 +120,13 @@ def create_pra_risk_category(req):
             ):
                 return redirect(reverse("main:pra-create-mitigation"))
             elif rc in (PRA.RC_HIGH_RISK, PRA.RC_LIVES_WITH_HIGH_RISK, PRA.RC_NO_CATEGORY):
-                return create_pra_submit(req)
+                errors_or_redirect = create_pra_submit(req)
+
+                if isinstance(errors_or_redirect, list):
+                    for error in errors_or_redirect:
+                        form.add_error(None, error)
+                else:
+                    return redirect(errors_or_redirect)
             else:
                 raise Exception(f"Unknown risk category '{rc}'")
     else:
@@ -131,6 +145,22 @@ def create_pra_risk_category(req):
 def create_pra_prefer_not_to_say(req):
     ctx = {}
 
+    if req.method == "POST":
+        form = forms.Form(req.POST)
+
+        if form.is_valid():
+            errors_or_redirect = create_pra_submit(req)
+
+            if isinstance(errors_or_redirect, list):
+                for error in errors_or_redirect:
+                    form.add_error(None, error)
+            else:
+                return redirect(errors_or_redirect)
+    else:
+        form = forms.Form()
+
+    ctx["form"] = form
+
     return render(req, "main/create_pra_prefer_not_to_say.html", ctx)
 
 
@@ -145,7 +175,13 @@ def create_pra_mitigation(req):
             req.session["pra_mitigation_outcome"] = mo
 
             if mo == PRA.MO_APPROVE_NO_MITIGATION:
-                return create_pra_submit(req)
+                errors_or_redirect = create_pra_submit(req)
+
+                if isinstance(errors_or_redirect, list):
+                    for error in errors_or_redirect:
+                        form.add_error(None, error)
+                else:
+                    return redirect(errors_or_redirect)
             elif mo == PRA.MO_APPROVE_MITIGATION_REQUIRED:
                 return redirect(reverse("main:pra-create-mitigation-approve"))
             elif mo == PRA.MO_DO_NOT_APPROVE:
@@ -174,7 +210,13 @@ def create_pra_mitigation_approve(req):
         if form.is_valid():
             req.session["pra_mitigation_measures"] = form.cleaned_data["mitigation_measures"]
 
-            return create_pra_submit(req)
+            errors_or_redirect = create_pra_submit(req)
+
+            if isinstance(errors_or_redirect, list):
+                for error in errors_or_redirect:
+                    form.add_error(None, error)
+            else:
+                return redirect(errors_or_redirect)
     else:
         form = PRAFormMitigationApprove()
 
@@ -192,7 +234,13 @@ def create_pra_mitigation_do_not_approve(req):
         if form.is_valid():
             req.session["pra_mitigation_measures"] = form.cleaned_data["mitigation_measures"]
 
-            return create_pra_submit(req)
+            errors_or_redirect = create_pra_submit(req)
+
+            if isinstance(errors_or_redirect, list):
+                for error in errors_or_redirect:
+                    form.add_error(None, error)
+            else:
+                return redirect(errors_or_redirect)
     else:
         form = PRAFormMitigationDoNotApprove()
 
@@ -201,24 +249,115 @@ def create_pra_mitigation_do_not_approve(req):
     return render(req, "main/create_pra_mitigation_do_not_approve.html", ctx)
 
 
-@require_POST
-def create_pra_submit(req):
-    # FIXME: impl:
-    #   -check all data is valid
-    #     -parse into model format
-    #     -check users exist
-    #     -check staff member does not have an active PRA in the DB
-    #   -save PRA in db
-    #   -send email to staff member with link to approve/disapprove the PRA
-    #   -clear session variables (clear_pra_session_variables(req))
+def create_pra_submit(req: HttpRequest):
+    """ Returns either a list[str] of errors, or a str which is a redirect URL."""
 
-    return redirect(reverse("main:pra-show-thanks"))
+    staff_member_email = req.session["pra_staff_member_email"]
+    scs_email = req.session["pra_scs_email"]
+    dit_group = get_object_or_404(DitGroup, pk=req.session["pra_dit_group"]).name
+    business_unit = req.session["pra_business_unit"]
+    authorized_reason = req.session["pra_authorized_reason"]
+    risk_category = req.session["pra_risk_category"]
+    mitigation_outcome = req.session.get("pra_mitigation_outcome", "")
+    mitigation_measures = req.session.get("pra_mitigation_measures", "")
+
+    errors = []
+
+    staff_member = User.get_by_email(staff_member_email)
+    scs = User.get_by_email(scs_email)
+
+    if not staff_member:
+        errors.append(
+            f"Staff member '{staff_member_email}' not found; please make sure they have logged in to the system at least once"
+        )
+
+    if not scs:
+        errors.append(
+            f"SCS '{scs_email}' not found; please make sure they have logged in to the system at least once"
+        )
+
+    if errors:
+        return errors
+
+    pra = PRA(
+        staff_member=staff_member,
+        scs=scs,
+        line_manager=req.user,
+        group=dit_group,
+        business_unit=business_unit,
+        authorized_reason=authorized_reason,
+        risk_category=risk_category,
+        mitigation_outcome=mitigation_outcome,
+        mitigation_measures=mitigation_measures,
+    )
+
+    pra.save()
+    clear_pra_session_variables(req)
+
+    nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
+
+    if pra.needs_staff_member_approval():
+        link = req.build_absolute_uri(reverse("main:pra-view", kwargs={"pk": pra.pk}))
+
+        nc.send_email_notification(
+            email_address=staff_member.get_contact_email(),
+            template_id="7c663f35-276c-4737-91c5-c0f4b02122bb",
+            personalisation={
+                "link": link,
+            },
+        )
+    else:
+        # PRA rejected immediately, do not even ask staff_member for approval, just notify them
+        nc.send_email_notification(
+            email_address=staff_member.get_contact_email(),
+            template_id="72760c96-cc22-4a55-89c0-b5d9dcd6a8ab",
+        )
+
+    return reverse("main:pra-show-thanks")
 
 
 def pra_show_thanks(req):
     ctx = {}
 
     return render(req, "main/pra_show_thanks.html", ctx)
+
+
+def pra_view(req, pk):
+    ctx = {}
+
+    pra = get_object_or_404(PRA, pk=pk)
+
+    if req.user not in (pra.staff_member, pra.line_manager, pra.scs):
+        raise PermissionDenied
+
+    ctx["pra"] = pra
+
+    return render(req, "main/pra_view.html", ctx)
+
+
+@require_POST
+def pra_staff_member_approve(req, pk):
+    return _mark_pra_staff_member_approval(req, pk, True)
+
+
+@require_POST
+def pra_staff_member_do_not_approve(req, pk):
+    return _mark_pra_staff_member_approval(req, pk, False)
+
+
+def _mark_pra_staff_member_approval(req: HttpRequest, pk: int, approval: bool) -> HttpResponse:
+    pra = get_object_or_404(PRA, pk=pk)
+
+    if req.user != pra.staff_member:
+        raise PermissionDenied
+
+    if not pra.needs_staff_member_approval():
+        raise Exception("PRA does not need staff member approval")
+
+    pra.approved_staff_member = approval
+    pra.save()
+
+    return redirect(reverse("main:pra-view", kwargs={"pk": pra.pk}))
 
 
 def clear_pra_session_variables(req):

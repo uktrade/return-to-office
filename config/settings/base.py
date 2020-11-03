@@ -192,3 +192,6 @@ ACTIVITY_STREAM_HAWK_CREDENTIALS = {
     "key": env("ACTIVITY_STREAM_HAWK_SECRET"),
     "algorithm": "sha256",
 }
+
+# whether to allow the "staff member" and "SCS" fields in the PRA form be the same
+PRA_ALLOW_STAFF_MEMBER_TO_BE_SCS = False
