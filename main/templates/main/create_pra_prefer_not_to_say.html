@@ -20,8 +20,10 @@
     If you wish to continue, please click SUBMIT below.
 </p>
 
-<form action="{% url "main:pra-create-submit" %}" method="post" novalidate>
+<form action="{% url "main:pra-create-prefer-not-to-say" %}" method="post" novalidate>
     {% csrf_token %}
+
+    {% include "main/govuk_form_errors.html" %}
 
     <input type="submit" value="Submit" class="govuk-button"/>
 </form>

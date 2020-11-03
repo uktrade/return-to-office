@@ -21,6 +21,17 @@ urlpatterns = [
         "activity-stream/bookings", views.activity_stream_bookings, name="activity-stream-bookings"
     ),
     # PRA views
+    path("pra/<int:pk>/view", views_pra.pra_view, name="pra-view"),
+    path(
+        "pra/<int:pk>/staff-member-approve",
+        views_pra.pra_staff_member_approve,
+        name="pra-staff-member-approve",
+    ),
+    path(
+        "pra/<int:pk>/staff-member-do-not-approve",
+        views_pra.pra_staff_member_do_not_approve,
+        name="pra-staff-member-do-not-approve",
+    ),
     path("pra/create-initial", views_pra.create_pra_initial, name="pra-create-initial"),
     path(
         "pra/create-business-unit",
@@ -38,7 +49,6 @@ urlpatterns = [
         views_pra.create_pra_prefer_not_to_say,
         name="pra-create-prefer-not-to-say",
     ),
-    path("pra/create-submit", views_pra.create_pra_submit, name="pra-create-submit"),
     path("pra/create-mitigation", views_pra.create_pra_mitigation, name="pra-create-mitigation"),
     path(
         "pra/create-mitigation-approve",

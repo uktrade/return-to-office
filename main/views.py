@@ -13,11 +13,17 @@ from mohawk.exc import CredentialsLookupError, MacMismatch, MissingAuthorization
 from notifications_python_client.notifications import NotificationsAPIClient
 
 from .forms import BookingFormWhoFor, BookingFormInitial, BookingFormFinal, BookingFormBusinessUnit
-from .models import Booking, Floor, Building, DitGroup
+from .models import Booking, Floor, Building, DitGroup, PRA
 
 
 def index(req):
     ctx = {}
+
+    recent_pra = PRA.objects.filter(staff_member=req.user).order_by("-created_timestamp").first()
+
+    ctx["recent_pra_link"] = (
+        reverse("main:pra-view", kwargs={"pk": recent_pra.pk}) if recent_pra else None
+    )
 
     return render(req, "main/index.html", ctx)
 
