@@ -198,11 +198,26 @@ class PRA(models.Model):
 
         return False
 
+    def needs_scs_approval(self) -> bool:
+        """Does this PRA need to be approved by SCS?"""
+
+        if (self.risk_category == self.RC_PREFER_NOT_TO_SAY) or (
+            self.mitigation_outcome == self.MO_DO_NOT_APPROVE
+        ):
+            return False
+
+        if self.approved_staff_member is not True:
+            return False
+
+        if self.approved_scs is None:
+            return True
+
+        return False
+
     def days_left_valid_for(self) -> str:
         """Return how many days this PRA is still valid for, or "Expired"."""
 
         today = datetime.date.today()
-        today = datetime.date(2021, 5, 4)
 
         days_left = (
             (

@@ -92,10 +92,21 @@
     <input type="submit" value="I do not approve this PRA as the staff member" class="govuk-button govuk-button" data-module="govuk-button"
     />
   </form>
-
 {% endif %}
 
-<!-- FIXME: add buttons for SCS approval/disapproval -->
+{% if request.user == pra.scs and pra.needs_scs_approval %}
+<form action="{% url "main:pra-scs-approve" pk=pra.pk %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="I approve this PRA as SCS" class="govuk-button govuk-button" data-module="govuk-button"
+    />
+  </form>
+
+  <form action="{% url "main:pra-scs-do-not-approve" pk=pra.pk %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="I do not approve this PRA as SCS" class="govuk-button govuk-button" data-module="govuk-button"
+    />
+  </form>
+{% endif %}
 
 </div>
 

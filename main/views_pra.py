@@ -357,6 +357,37 @@ def _mark_pra_staff_member_approval(req: HttpRequest, pk: int, approval: bool) -
     pra.approved_staff_member = approval
     pra.save()
 
+    # FIXME: notify line manager of staff member decision (email with link to PRA)
+
+    # FIXME: send SCS email if staff member approves PRA (with link to PRA)
+
+    return redirect(reverse("main:pra-view", kwargs={"pk": pra.pk}))
+
+
+@require_POST
+def pra_scs_approve(req, pk):
+    return _mark_pra_scs_approval(req, pk, True)
+
+
+@require_POST
+def pra_scs_do_not_approve(req, pk):
+    return _mark_pra_scs_approval(req, pk, False)
+
+
+def _mark_pra_scs_approval(req: HttpRequest, pk: int, approval: bool) -> HttpResponse:
+    pra = get_object_or_404(PRA, pk=pk)
+
+    if req.user != pra.scs:
+        raise PermissionDenied
+
+    if not pra.needs_scs_approval():
+        raise Exception("PRA does not need SCS approval")
+
+    pra.approved_scs = approval
+    pra.save()
+
+    # FIXME: notify line manager of SCS decision (email with link to PRA)
+
     return redirect(reverse("main:pra-view", kwargs={"pk": pra.pk}))
 
 
