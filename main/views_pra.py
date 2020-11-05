@@ -304,6 +304,7 @@ def create_pra_submit(req: HttpRequest):
             template_id="7c663f35-276c-4737-91c5-c0f4b02122bb",
             personalisation={
                 "link": link,
+                "line_manager": pra.line_manager.full_name(),
             },
         )
     else:
@@ -311,6 +312,9 @@ def create_pra_submit(req: HttpRequest):
         nc.send_email_notification(
             email_address=staff_member.get_contact_email(),
             template_id="72760c96-cc22-4a55-89c0-b5d9dcd6a8ab",
+            personalisation={
+                "line_manager": pra.line_manager.full_name(),
+            },
         )
 
     return reverse("main:pra-show-thanks")
@@ -372,7 +376,16 @@ def _mark_pra_staff_member_approval(req: HttpRequest, pk: int, approval: bool) -
         },
     )
 
-    # FIXME: send SCS email if staff member approves PRA (with link to PRA)
+    if approval:
+        nc.send_email_notification(
+            email_address=pra.scs.get_contact_email(),
+            template_id="9bae5273-ff86-43fd-b67b-1abdc0bea513",
+            personalisation={
+                "link": link,
+                "staff_member": pra.staff_member.full_name(),
+                "line_manager": pra.line_manager.full_name(),
+            },
+        )
 
     return redirect(reverse("main:pra-view", kwargs={"pk": pra.pk}))
 
