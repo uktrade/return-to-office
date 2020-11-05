@@ -357,7 +357,20 @@ def _mark_pra_staff_member_approval(req: HttpRequest, pk: int, approval: bool) -
     pra.approved_staff_member = approval
     pra.save()
 
-    # FIXME: notify line manager of staff member decision (email with link to PRA)
+    link = req.build_absolute_uri(reverse("main:pra-view", kwargs={"pk": pra.pk}))
+
+    nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
+
+    nc.send_email_notification(
+        email_address=pra.line_manager.get_contact_email(),
+        template_id="3c4dfc7b-d978-4268-9c2e-517a41c24b64",
+        personalisation={
+            "link": link,
+            "role": "A staff member",
+            "who": pra.staff_member.full_name(),
+            "action": "approved" if approval else "rejected",
+        },
+    )
 
     # FIXME: send SCS email if staff member approves PRA (with link to PRA)
 
@@ -386,7 +399,20 @@ def _mark_pra_scs_approval(req: HttpRequest, pk: int, approval: bool) -> HttpRes
     pra.approved_scs = approval
     pra.save()
 
-    # FIXME: notify line manager of SCS decision (email with link to PRA)
+    link = req.build_absolute_uri(reverse("main:pra-view", kwargs={"pk": pra.pk}))
+
+    nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
+
+    nc.send_email_notification(
+        email_address=pra.line_manager.get_contact_email(),
+        template_id="3c4dfc7b-d978-4268-9c2e-517a41c24b64",
+        personalisation={
+            "link": link,
+            "role": "SCS",
+            "who": pra.scs.full_name(),
+            "action": "approved" if approval else "rejected",
+        },
+    )
 
     return redirect(reverse("main:pra-view", kwargs={"pk": pra.pk}))
 
