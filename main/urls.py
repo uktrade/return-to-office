@@ -32,6 +32,16 @@ urlpatterns = [
         views_pra.pra_staff_member_do_not_approve,
         name="pra-staff-member-do-not-approve",
     ),
+    path(
+        "pra/<int:pk>/scs-approve",
+        views_pra.pra_scs_approve,
+        name="pra-scs-approve",
+    ),
+    path(
+        "pra/<int:pk>/scs-do-not-approve",
+        views_pra.pra_scs_do_not_approve,
+        name="pra-scs-do-not-approve",
+    ),
     path("pra/create-initial", views_pra.create_pra_initial, name="pra-create-initial"),
     path(
         "pra/create-business-unit",
