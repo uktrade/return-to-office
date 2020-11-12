@@ -179,6 +179,9 @@ class PRA(models.Model):
     approved_staff_member = models.BooleanField(null=True)
     approved_scs = models.BooleanField(null=True)
 
+    # was this record migrated from the legacy system?
+    migrated = models.BooleanField()
+
     def risk_category_desc(self):
         return self.RC_MAPPING[self.risk_category]
 

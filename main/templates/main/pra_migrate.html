@@ -1,0 +1,43 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<h1 class="govuk-heading-xl">Import old PRA data</h1>
+
+<p class="govuk-body">This page is used to import old PRA data from the legacy system.</p>
+
+<form enctype="multipart/form-data" action="{% url "main:pra-migrate" %}" method="post" novalidate>
+    {% csrf_token %}
+
+    {% include "main/govuk_form_errors.html" %}
+
+    {% include "main/govuk_form_field.html" with field=form.action hide_label=True %}
+    {% include "main/govuk_form_field.html" with field=form.csv_data hide_label=True %}
+
+    <input type="submit" value="Upload" class="govuk-button"/>
+</form>
+
+{% if old_pras %}
+<table border=1>
+<tr>
+  <th>Staff member email</th>
+  <th>Staff member exists in new system</th>
+  <th>Migrate?</th>
+  <th>Description</th>
+  <th>Status</th>
+</tr>
+
+{% for pra in old_pras %}
+<tr>
+    <td>{{ pra.staff_member_email }}</td>
+    <td>{{ pra.staff_member|yesno:"yes,no,no" }}</td>
+    <td>{{ pra.do_migrate|yesno }}</td>
+    <td>{{ pra.desc }}</td>
+    <td>{{ pra.status }}</td>
+  </tr>
+{% endfor %}
+
+</table>
+{% endif %}
+
+{% endblock %}
