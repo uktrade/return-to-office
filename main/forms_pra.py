@@ -166,3 +166,19 @@ class PRAFormMitigationDoNotApprove(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.fields["mitigation_measures"].widget.form_instance = self
+
+
+class PRAFormMigrate(forms.Form):
+    action = forms.ChoiceField(widget=GovUKRadioSelect(), label="Action")
+
+    csv_data = forms.FileField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["action"].widget.form_instance = self
+
+        self.fields["action"].choices = [
+            ("check", "Check - do not import anything"),
+            ("import", "Import - import PRA data, send emails as necessary"),
+        ]

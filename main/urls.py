@@ -71,4 +71,6 @@ urlpatterns = [
         name="pra-create-mitigation-do-not-approve",
     ),
     path("pra/submitted", views_pra.pra_show_thanks, name="pra-show-thanks"),
+    # TODO: this can be deleted after migration of data from legacy form has been done
+    path("pra/migrate", views_pra.pra_migrate, name="pra-migrate"),
 ]

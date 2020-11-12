@@ -1,6 +1,13 @@
-from django.http import HttpRequest, HttpResponse
+import csv
+import datetime
+import io
+
+from operator import attrgetter
+
+from django.http import HttpRequest, HttpResponse, StreamingHttpResponse
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
+from django.core.validators import validate_email
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
@@ -18,9 +25,213 @@ from .forms_pra import (
     PRAFormMitigationDoNotApprove,
     PRAFormReason,
     PRAFormBusinessUnit,
+    PRAFormMigrate,
 )
 
 from .models import PRA, DitGroup
+
+
+# TODO: this can be deleted after migration of data from legacy form has been done
+class LegacyPRA:
+    RC_MAPPING = {
+        "High risk (clinically extremely vulnerable) due to existing health conditions": PRA.RC_HIGH_RISK,
+        "Lives with someone at high risk (clinically extremely vulnerable) due to existing health conditions": PRA.RC_LIVES_WITH_HIGH_RISK,
+        "Lives with someone at moderate risk (clinically vulnerable)": PRA.RC_LIVES_WITH_MODERATE_RISK,
+        "Moderate risk (clinically vulnerable)": PRA.RC_MODERATE_RISK,
+        "Falls into one of the categories where evidence suggests that risk may be elevated": PRA.RC_ELEVATED_RISK,
+        "Does not fall into any of the above categories ": PRA.RC_NO_CATEGORY,
+        "The staff member would prefer not to say": PRA.RC_PREFER_NOT_TO_SAY,
+    }
+
+    MO_MAPPING = {
+        "I approve - mitigation measures required": PRA.MO_APPROVE_MITIGATION_REQUIRED,
+        "N/A - High Risk": PRA.MO_APPROVE_MITIGATION_REQUIRED,
+        "I approve  - no mitigation measures required": PRA.MO_APPROVE_NO_MITIGATION,
+        "N/A - No Risk Identified": PRA.MO_APPROVE_NO_MITIGATION,
+        "I do not approve - mitigation measures explored but considered insufficient ": PRA.MO_DO_NOT_APPROVE,
+    }
+
+    # cache for creating new users. key = email, value = User object
+    user_cache = {}
+
+    def __init__(self, row_nr, row):
+        self.row_nr = row_nr
+        self.staff_member_email = row["Staff Member Email Address"].replace(" ", "")
+        self.staff_member_name = row["Staff Member Name"]
+        self.line_manager_email = row["Line Manager Email Address"].replace(" ", "")
+        self.scs_email = row["SCS Email Address"].replace(" ", "")
+        self.status = row["Status"]
+        self.risk_category = row["Risk Catagory"]
+        self.authorized_reason = row["Authorised Reason"]
+        self.created = datetime.datetime.strptime(row["Created"], "%d/%m/%Y %H:%M")
+        self.mitigation_measures = row["Mitigation Measures Recommended/Considered"]
+        self.manager_rec = row["Manager's Recommendation"]
+
+        # str describing action taken/not-taken
+        self.desc = ""
+
+        # whether to migrate this record
+        self.do_migrate = False
+
+        if self.status in [
+            "Approved - Added to Access List",
+            "SCS Approve",
+            "Pending Staff Member",
+            "Pending SCS",
+            "Staff Approve",
+        ]:
+            self.do_migrate = True
+
+        elif self.status in [
+            "Tech Fail",
+            "Closed - High Risk",
+            "Closed - Pending Further Submission",
+            "Staff and SCS EMail Match",
+            "Closed - LM did not approve",
+            "Deleted Record Placeholder",
+            "Closed - Refused to take part",
+        ]:
+            self.desc = "Status in 'do-not-migrate' list"
+        else:
+            self.desc = f"Unknown status '{self.status}'"
+
+        if self.do_migrate:
+            try:
+                validate_email(self.staff_member_email)
+                validate_email(self.line_manager_email)
+                validate_email(self.scs_email)
+            except ValidationError:
+                self.do_migrate = False
+                self.desc = "Invalid staff/line-manager/SCS email address"
+
+        if self.do_migrate:
+            # only do these for migrating rows, there's too much crap in the
+            # data in the non-migrated rows, it falls over horribly
+            self.risk_category = self.RC_MAPPING[self.risk_category]
+            self.mitigation_outcome = self.MO_MAPPING[self.manager_rec]
+
+        if self.do_migrate and (self.mitigation_outcome == PRA.MO_DO_NOT_APPROVE):
+            self.do_migrate = False
+            self.desc = "Manager did not approve"
+
+        if self.do_migrate:
+            self.staff_member = User.get_by_email(self.staff_member_email)
+
+            if self.staff_member and self.staff_member.pra_forms.exists():
+                self.do_migrate = False
+                self.desc = "PRA already exists in the new system"
+
+    def __str__(self):
+        return f"LegacyPRA(staff_member_email={self.staff_member_email}, row_nr={self.row_nr})"
+
+    def __repr__(self):
+        return str(self)
+
+    def get_or_create_user(self, email):
+        user = self.user_cache.get(email)
+
+        if user:
+            return user
+
+        user = User.get_by_email(email)
+
+        if user:
+            self.user_cache[email] = user
+            return user
+
+        user = User.objects.create(email=email)
+        user.set_unusable_password()
+
+        self.user_cache[email] = user
+
+        return user
+
+    @classmethod
+    def clear_cached_users(cls):
+        cls.user_cache.clear()
+
+    @classmethod
+    def save_cached_users(cls):
+        for user in cls.user_cache.values():
+            user.save()
+
+    def prepare_migrate(self):
+        assert self.do_migrate
+
+        if not self.staff_member:
+            self.staff_member = self.get_or_create_user(self.staff_member_email)
+
+        self.line_manager = self.get_or_create_user(self.line_manager_email)
+        self.scs = self.get_or_create_user(self.scs_email)
+
+        if self.status in [
+            "Pending Staff Member",
+        ]:
+            approved_staff_member = None
+            approved_scs = None
+        elif self.status in [
+            "Pending SCS",
+            "Staff Approve",
+        ]:
+            approved_staff_member = True
+            approved_scs = None
+        elif self.status in [
+            "Approved - Added to Access List",
+            "SCS Approve",
+        ]:
+            approved_staff_member = True
+            approved_scs = True
+        else:
+            raise Exception(f"Unexpected status {self.status}")
+
+        self.new_pra = PRA(
+            staff_member=self.staff_member,
+            scs=self.scs,
+            line_manager=self.line_manager,
+            group="Unknown (migrated)",
+            business_unit="Unknown (migrated)",
+            authorized_reason=self.authorized_reason,
+            risk_category=self.risk_category,
+            mitigation_outcome=self.mitigation_outcome,
+            mitigation_measures=self.mitigation_measures,
+            approved_staff_member=approved_staff_member,
+            approved_scs=approved_scs,
+            migrated=True,
+        )
+
+    def execute_migrate(self, req):
+        assert self.do_migrate
+
+        self.new_pra.save()
+        nc = NotificationsAPIClient(settings.GOVUK_NOTIFY_API_KEY)
+        link = req.build_absolute_uri(reverse("main:pra-view", kwargs={"pk": self.new_pra.pk}))
+
+        if self.new_pra.approved_staff_member is None:
+            nc.send_email_notification(
+                email_address=self.new_pra.staff_member.get_contact_email(),
+                template_id="7c663f35-276c-4737-91c5-c0f4b02122bb",
+                personalisation={
+                    "link": link,
+                    "line_manager": self.new_pra.line_manager.full_name(),
+                },
+            )
+
+            return "Emailed staff member for approval"
+
+        elif self.new_pra.approved_scs is None:
+            nc.send_email_notification(
+                email_address=self.new_pra.scs.get_contact_email(),
+                template_id="9bae5273-ff86-43fd-b67b-1abdc0bea513",
+                personalisation={
+                    "link": link,
+                    "staff_member": self.new_pra.staff_member.full_name(),
+                    "line_manager": self.new_pra.line_manager.full_name(),
+                },
+            )
+
+            return "Emailed SCS for approval"
+
+        return "Approved PRA saved"
 
 
 def create_pra_initial(req):
@@ -289,6 +500,7 @@ def create_pra_submit(req: HttpRequest):
         risk_category=risk_category,
         mitigation_outcome=mitigation_outcome,
         mitigation_measures=mitigation_measures,
+        migrated=False,
     )
 
     pra.save()
@@ -428,6 +640,74 @@ def _mark_pra_scs_approval(req: HttpRequest, pk: int, approval: bool) -> HttpRes
     )
 
     return redirect(reverse("main:pra-view", kwargs={"pk": pra.pk}))
+
+
+# TODO: this can be deleted after migration of data from legacy form has been done
+def pra_migrate(req):
+    ctx = {}
+
+    if not req.user.is_staff:
+        raise PermissionDenied
+
+    if req.method == "POST":
+        form = PRAFormMigrate(req.POST, req.FILES)
+
+        if form.is_valid():
+            csv_data = io.StringIO(req.FILES["csv_data"].read().decode("utf-8"))
+            action = form.cleaned_data["action"]
+
+            # key = staff_member_email, value = LegacyPRA (newest)
+            old_pras = {}
+
+            reader = csv.DictReader(csv_data)
+
+            LegacyPRA.clear_cached_users()
+
+            for i, row in enumerate(reader):
+                legacy_pra = LegacyPRA(i, row)
+                existing_old_pra = old_pras.get(legacy_pra.staff_member_email)
+
+                if existing_old_pra:
+                    if legacy_pra.created > existing_old_pra.created:
+                        old_pras[legacy_pra.staff_member_email] = legacy_pra
+                else:
+                    old_pras[legacy_pra.staff_member_email] = legacy_pra
+
+            old_pras = list(old_pras.values())
+            old_pras.sort(key=attrgetter("desc"))
+
+            for old_pra in old_pras:
+                if old_pra.do_migrate:
+                    old_pra.prepare_migrate()
+
+            if action == "check":
+                ctx["old_pras"] = old_pras
+            elif action == "import":
+                # remove ones we don't need to do anything with
+                old_pras = [x for x in old_pras if x.do_migrate]
+
+                def process():
+                    yield f"Pre-populating {len(LegacyPRA.user_cache)} users...\n"
+                    LegacyPRA.save_cached_users()
+
+                    for i, old_pra in enumerate(old_pras):
+                        yield f"Processing {i+1}/{len(old_pras)}: {old_pra.staff_member_name} ({old_pra.staff_member_email})..."
+
+                        actions = old_pra.execute_migrate(req) + "\n"
+                        yield actions
+
+                    yield "All done!"
+
+                return StreamingHttpResponse(process(), content_type="text/plain; charset=utf-8")
+            else:
+                raise Exception(f"Unknown action {action}")
+
+    else:
+        form = PRAFormMigrate()
+
+    ctx["form"] = form
+
+    return render(req, "main/pra_migrate.html", ctx)
 
 
 def clear_pra_session_variables(req):

@@ -12,7 +12,10 @@ class User(AbstractUser):
     )
 
     def full_name(self):
-        return f"{self.first_name} {self.last_name}"
+        if self.first_name or self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        else:
+            return self.email
 
     def get_contact_email(self):
         return self.contact_email or self.email

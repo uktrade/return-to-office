@@ -36,6 +36,13 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
             user.contact_email = profile["contact_email"]
             user.save()
 
+        # pre-populated users do not have the name fields, or people's names
+        # might change over time
+        if (user.first_name != profile["first_name"]) or (user.last_name != profile["last_name"]):
+            user.first_name = profile["first_name"]
+            user.last_name = profile["last_name"]
+            user.save()
+
         return user
 
     def get_user(self, user_id):
