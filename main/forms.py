@@ -63,6 +63,16 @@ class BookingFormInitial(forms.Form):
         help_text="Or if booking on behalf of DIT staff, please enter their email address",
     )
 
+    confirm_presentation = forms.BooleanField(
+        required=False,
+        label=mark_safe(
+            """
+    <p class="govuk-body">I confirm that I have read the <a target="_blank" href="https://workspace.trade.gov.uk/working-at-dit/policies-and-guidance/returning-to-office-working/">
+    guidance on returning to a DIT office on the digital workspace.</a></p>"""
+        ),
+        widget=GovUKCheckboxInput(),
+    )
+
     booking_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     building = forms.ChoiceField(label="Building", widget=GovUKRadioSelect())
     dit_group = forms.ChoiceField(label="DIT group", widget=GovUKRadioSelect())
@@ -76,6 +86,7 @@ class BookingFormInitial(forms.Form):
         self.fields["dit_group"].widget.form_instance = self
         self.fields["on_behalf_of_name"].widget.form_instance = self
         self.fields["on_behalf_of_dit_email"].widget.form_instance = self
+        self.fields["confirm_presentation"].widget.form_instance = self
 
         self.fields["booking_date"].widget.attrs.update(
             {"min": str(datetime.date.today()), "class": "govuk-input", "style": "width: 250px"}
@@ -98,7 +109,12 @@ class BookingFormInitial(forms.Form):
         return booking_date
 
     def clean(self):
-        if not self.for_myself:
+        if self.for_myself:
+            if not self.cleaned_data.get("confirm_presentation"):
+                self.add_error(
+                    "confirm_presentation", forms.ValidationError("This field is required.")
+                )
+        else:
             name = self.cleaned_data.get("on_behalf_of_name")
             dit_email = self.cleaned_data.get("on_behalf_of_dit_email")
 
