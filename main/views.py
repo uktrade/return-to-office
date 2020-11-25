@@ -95,7 +95,7 @@ def create_booking_who_for(req):
     ctx = {}
 
     if req.method == "POST":
-        form = BookingFormWhoFor(req.POST)
+        form = BookingFormWhoFor(req, req.POST)
 
         if form.is_valid():
             req.session["for_myself"] = bool(int(form.cleaned_data["for_myself"]))
@@ -108,7 +108,7 @@ def create_booking_who_for(req):
         else:
             initial = {"for_myself": str(int(req.session["for_myself"]))}
 
-        form = BookingFormWhoFor(initial=initial)
+        form = BookingFormWhoFor(req, initial=initial)
 
     ctx["form"] = form
 

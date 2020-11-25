@@ -217,8 +217,8 @@ class PRA(models.Model):
 
         return False
 
-    def days_left_valid_for(self) -> str:
-        """Return how many days this PRA is still valid for, or "Expired"."""
+    def days_left_valid_for(self) -> int:
+        """Return how many days this PRA is still valid for. Can be negative if it's expired. """
 
         today = datetime.date.today()
 
@@ -230,7 +230,14 @@ class PRA(models.Model):
             - today
         ).days - 1
 
-        if days_left <= 0:
+        return days_left
+
+    def days_left_valid_for_str(self) -> str:
+        """Return how many days this PRA is still valid for, or "Expired"."""
+
+        left = self.days_left_valid_for()
+
+        if left <= 0:
             return "Expired"
         else:
-            return str(days_left)
+            return str(left)

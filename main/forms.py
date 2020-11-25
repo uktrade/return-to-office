@@ -4,7 +4,7 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.core.validators import validate_email
 
-from .models import Booking, Floor, Building, DitGroup
+from .models import Booking, Floor, Building, DitGroup, PRA
 from .widgets import GovUKCheckboxInput, GovUKRadioSelect, GovUKTextInput
 
 
@@ -15,10 +15,37 @@ class BookingFormWhoFor(forms.Form):
         choices=[("1", "Myself"), ("0", "Someone else")],
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.request = request
         self.fields["for_myself"].widget.form_instance = self
+
+    def clean(self):
+        for_myself = bool(int(self.cleaned_data["for_myself"]))
+
+        if for_myself:
+            pra = (
+                PRA.objects.filter(staff_member=self.request.user)
+                .order_by("-created_timestamp")
+                .first()
+            )
+
+            if (
+                not pra
+                or (pra.days_left_valid_for() <= 0)
+                or not pra.approved_staff_member
+                or not pra.approved_scs
+            ):
+                self.add_error(
+                    None,
+                    forms.ValidationError(
+                        """You do not have an approved Personal Risk Assessment
+                    form filed. Please work with your line manager to do this.
+                    Until you do so, you are unable to create any desk bookings
+                    for yourself."""
+                    ),
+                )
 
 
 class BookingFormInitial(forms.Form):
