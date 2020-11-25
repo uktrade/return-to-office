@@ -141,6 +141,8 @@ def create_booking_initial(req):
                 "dit_group": req.session["dit_group"],
                 "on_behalf_of_name": req.session["on_behalf_of_name"],
                 "on_behalf_of_dit_email": req.session["on_behalf_of_dit_email"],
+                # no need to store this in the session, it will always be True if coming back
+                "confirm_presentation": True,
             }
 
         form = BookingFormInitial(for_myself, initial=initial)
