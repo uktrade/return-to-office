@@ -26,6 +26,7 @@ from .forms_pra import (
     PRAFormReason,
     PRAFormBusinessUnit,
     PRAFormMigrate,
+    PRAFormFix,
 )
 
 from .models import PRA, DitGroup
@@ -708,6 +709,170 @@ def pra_migrate(req):
     ctx["form"] = form
 
     return render(req, "main/pra_migrate.html", ctx)
+
+
+def pra_fix(req):
+    class Item:
+        def description(self):
+            raise NotImplementedError
+
+        def actions_str(self):
+            raise NotImplementedError
+
+        def execute(self):
+            raise NotImplementedError
+
+    class DuplicateUserItem(Item):
+        def __init__(self, wrong_user, right_user):
+            self.wrong_user = wrong_user
+            self.right_user = right_user
+
+        def description(self):
+            return f"User: {self.wrong_user.email} (id={self.wrong_user.pk})"
+
+        def action_str(self):
+            return f"Delete duplicate user record (right one is {self.right_user.email} (id={self.right_user.pk}))"
+
+        def execute(self):
+            self.wrong_user.delete()
+
+    class FixStaffMemberItem(Item):
+        def __init__(self, pra, wrong_user, right_user):
+            self.pra = pra
+            self.wrong_user = wrong_user
+            self.right_user = right_user
+
+        def description(self):
+            return f"PRA: {self.pra.staff_member.email} (id={self.pra.pk})"
+
+        def action_str(self):
+            return f"Change staff_member from ({self.wrong_user.email} (id={self.wrong_user.pk})) to ({self.right_user.email} (id={self.right_user.pk}))"
+
+        def execute(self):
+            self.pra.staff_member = self.right_user
+            self.pra.save()
+
+    class FixLineManagerItem(Item):
+        def __init__(self, pra, wrong_user, right_user):
+            self.pra = pra
+            self.wrong_user = wrong_user
+            self.right_user = right_user
+
+        def description(self):
+            return f"PRA: {self.pra.staff_member.email} (id={self.pra.pk})"
+
+        def action_str(self):
+            return f"Change line_manager from ({self.wrong_user.email} (id={self.wrong_user.pk})) to ({self.right_user.email} (id={self.right_user.pk}))"
+
+        def execute(self):
+            self.pra.line_manager = self.right_user
+            self.pra.save()
+
+    class FixSCSItem(Item):
+        def __init__(self, pra, wrong_user, right_user):
+            self.pra = pra
+            self.wrong_user = wrong_user
+            self.right_user = right_user
+
+        def description(self):
+            return f"PRA: {self.pra.staff_member.email} (id={self.pra.pk})"
+
+        def action_str(self):
+            return f"Change SCS from ({self.wrong_user.email} (id={self.wrong_user.pk})) to ({self.right_user.email} (id={self.right_user.pk}))"
+
+        def execute(self):
+            self.pra.scs = self.right_user
+            self.pra.save()
+
+    ctx = {}
+
+    if not req.user.is_staff:
+        raise PermissionDenied
+
+    if req.method == "POST":
+        form = PRAFormFix(req.POST)
+
+        if form.is_valid():
+            action = form.cleaned_data["action"]
+
+            all_users = list(User.objects.all())
+
+            users_by_email = {user.email: user for user in all_users}
+
+            users_by_contact_email = {
+                user.contact_email: user for user in all_users if user.contact_email
+            }
+
+            users_by_pk = {user.pk: user for user in all_users}
+
+            # key = pk of dup user, value = pk of user to replace with
+            wrong_to_right_pk = {}
+
+            # values = DuplicateUserItem objects
+            dup_users = []
+
+            for contact_email, user in users_by_contact_email.items():
+                dup_user = users_by_email.get(contact_email)
+
+                if dup_user:
+                    dup_users.append(DuplicateUserItem(dup_user, user))
+
+                    wrong_to_right_pk[dup_user.pk] = user.pk
+
+            all_pras = PRA.objects.all()
+
+            # values = Fix*Item objects
+            pra_fixes = []
+
+            for pra in all_pras:
+                new_pk = wrong_to_right_pk.get(pra.staff_member_id)
+                if new_pk is not None:
+                    pra_fixes.append(
+                        FixStaffMemberItem(
+                            pra, users_by_pk[pra.staff_member_id], users_by_pk[new_pk]
+                        )
+                    )
+
+                new_pk = wrong_to_right_pk.get(pra.line_manager_id)
+                if new_pk is not None:
+                    pra_fixes.append(
+                        FixLineManagerItem(
+                            pra, users_by_pk[pra.line_manager_id], users_by_pk[new_pk]
+                        )
+                    )
+
+                new_pk = wrong_to_right_pk.get(pra.scs_id)
+                if new_pk is not None:
+                    pra_fixes.append(FixSCSItem(pra, users_by_pk[pra.scs_id], users_by_pk[new_pk]))
+
+            all_items = pra_fixes + dup_users
+
+            if action == "check":
+                if len(all_items) == 0:
+                    ctx["no_problems"] = True
+                else:
+                    ctx["items"] = all_items
+            elif action == "fix":
+
+                def process():
+                    yield f"Processing {len(all_items)} actions...\n"
+
+                    for i, item in enumerate(all_items):
+                        yield f"Processing {i+1}/{len(all_items)}: Item: {item.description()}, action: {item.action_str()}...\n"
+                        item.execute()
+
+                    yield "All done!"
+
+                return StreamingHttpResponse(process(), content_type="text/plain; charset=utf-8")
+            else:
+                raise Exception(f"Unknown action {action}")
+
+    else:
+        form = PRAFormFix()
+
+    ctx["form"] = form
+
+    return render(req, "main/pra_fix.html", ctx)
 
 
 def clear_pra_session_variables(req):

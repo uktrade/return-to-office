@@ -182,3 +182,20 @@ class PRAFormMigrate(forms.Form):
             ("check", "Check - do not import anything"),
             ("import", "Import - import PRA data, send emails as necessary"),
         ]
+
+
+class PRAFormFix(forms.Form):
+    action = forms.ChoiceField(widget=GovUKRadioSelect(), label="Action")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["action"].widget.form_instance = self
+
+        self.fields["action"].choices = [
+            ("check", "Check - do not change anything"),
+            (
+                "fix",
+                "Fix - delete duplicate user records, tweak PRA rows to point to right user records",
+            ),
+        ]
