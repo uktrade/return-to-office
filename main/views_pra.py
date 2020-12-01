@@ -814,7 +814,7 @@ def pra_fix(req):
             for contact_email, user in users_by_contact_email.items():
                 dup_user = users_by_email.get(contact_email)
 
-                if dup_user:
+                if dup_user and (dup_user.pk != user.pk):
                     dup_users.append(DuplicateUserItem(dup_user, user))
 
                     wrong_to_right_pk[dup_user.pk] = user.pk
