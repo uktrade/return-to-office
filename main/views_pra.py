@@ -811,6 +811,19 @@ def pra_fix(req):
             # values = DuplicateUserItem objects
             dup_users = []
 
+            # Fix emails containing upper case characters
+            for user in all_users:
+                if user.email == user.email.lower():
+                    continue
+
+                right_user = users_by_email.get(user.email.lower())
+
+                if right_user and (right_user.pk != user.pk):
+                    dup_users.append(DuplicateUserItem(user, right_user))
+
+                    wrong_to_right_pk[user.pk] = right_user.pk
+
+            # Fix email/contact_email differences
             for contact_email, user in users_by_contact_email.items():
                 dup_user = users_by_email.get(contact_email)
 
