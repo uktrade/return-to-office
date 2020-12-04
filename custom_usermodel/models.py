@@ -5,11 +5,23 @@ from .abstractModel import AbstractUser
 
 
 class User(AbstractUser):
+    username = models.CharField(
+        _("username"),
+        max_length=150,
+        unique=True,
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+        null=True,
+    )
+
     contact_email = models.CharField(
         _("contact_email"),
         max_length=255,
         blank=True,
     )
+
+    USERNAME_FIELD = "username"
 
     def full_name(self):
         if self.first_name or self.last_name:

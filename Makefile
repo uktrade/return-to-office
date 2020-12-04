@@ -19,6 +19,9 @@ migrations:
 migrate:
 	docker-compose run --rm web python manage.py migrate
 
+axes_reset:
+	docker-compose run --rm web python manage.py axes_reset
+
 compilescss:
 	docker-compose run --rm web python manage.py compilescss
 
