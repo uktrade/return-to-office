@@ -109,6 +109,8 @@ class BookingAdmin(admin.ModelAdmin):
 class PRAAdmin(admin.ModelAdmin):
     list_display = ("id", "staff_member", "line_manager", "approved_staff_member", "approved_scs")
 
+    search_fields = ["staff_member__email"]
+
     ordering = ["staff_member"]
 
 
