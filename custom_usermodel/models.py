@@ -24,7 +24,10 @@ class User(AbstractUser):
     USERNAME_FIELD = "username"
 
     def __str__(self):
-        return f"User(username={self.username}, email={self.email}, contact_email={self.contact_email})"
+        if self.username:
+            return f"User(username={self.username})"
+        else:
+            return f"User(email={self.email}, contact_email={self.contact_email})"
 
     def __repr__(self):
         return str(self)

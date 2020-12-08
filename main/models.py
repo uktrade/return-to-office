@@ -114,6 +114,10 @@ class Booking(models.Model):
 class PRA(models.Model):
     """Personal risk assessment form."""
 
+    class Meta:
+        verbose_name = "Personal Risk Assessment"
+        verbose_name_plural = "Personal Risk Assessments"
+
     # how many months are PRAs valid for
     MONTHS_VALID_FOR = 6
 
