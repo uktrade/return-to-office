@@ -23,6 +23,12 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "username"
 
+    def __str__(self):
+        return f"User(username={self.username}, email={self.email}, contact_email={self.contact_email})"
+
+    def __repr__(self):
+        return str(self)
+
     def full_name(self):
         if self.first_name or self.last_name:
             return f"{self.first_name} {self.last_name}"
