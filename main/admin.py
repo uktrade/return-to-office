@@ -51,6 +51,57 @@ def download_bookings_csv(modeladmin, request, queryset):
 download_bookings_csv.short_description = "Export as CSV"
 
 
+def download_pra_csv(modeladmin, request, queryset):
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(
+        [
+            "ID",
+            "Staff member",
+            "Line manager",
+            "SCS",
+            "Authorized reason",
+            "Group",
+            "Business unit",
+            "Risk category",
+            "Mitigation outcome",
+            "Mitigation measures",
+            "Creation time",
+            "Approved staff member",
+            "Approved SCS",
+        ]
+    )
+
+    for pra in queryset:
+        writer.writerow(
+            [
+                pra.pk,
+                pra.staff_member.email,
+                pra.line_manager.email,
+                pra.scs.email,
+                pra.authorized_reason,
+                pra.group,
+                pra.business_unit,
+                pra.risk_category,
+                pra.mitigation_outcome,
+                pra.mitigation_measures,
+                pra.created_timestamp.isoformat(),
+                pra.approved_staff_member,
+                pra.approved_scs,
+            ]
+        )
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment;filename=pra-export.csv"
+    response.write(output.getvalue())
+
+    return response
+
+
+download_pra_csv.short_description = "Export as CSV"
+download_pra_csv.allowed_permissions = ("view",)
+
+
 class MyDateTimeFilter(DateFieldListFilter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -112,6 +163,8 @@ class PRAAdmin(admin.ModelAdmin):
     search_fields = ["staff_member__email"]
 
     ordering = ["staff_member"]
+
+    actions = [download_pra_csv]
 
 
 admin.site.register(DitGroup, DitGroupAdmin)
