@@ -6,6 +6,29 @@
 
 <h1 class="govuk-heading-xl">Create new booking</h1>
 
+<h2 class="govuk-heading-l">Lateral flow test</h2>
+
+<p class="govuk-body">DIT encourages anyone who must go into an office and who
+does not have symptoms of COVID-19 to volunteer for a lateral flow test at a
+testing site.</p>
+
+<p class="govuk-body">If you work at a DIT London office, then you can <a
+href="https://www.eventbrite.co.uk/e/civil-service-asymptomatic-testing-site-queen-elizabeth-conference-centre-tickets-138450835175">book
+an appointment</a> at the civil service workplace asymptomatic testing site at
+the QEII Conference Centre just off Parliament Square.</p>
+
+<p class="govuk-body">If you regularly need to attend the office, from 2 to 5
+days a week, we recommend testing twice a week with at least 48 hours between
+tests.</p>
+
+<p class="govuk-body">If you need to attend for an occasional visit, we
+recommend you get a test on the day of attendance, before attending the office
+if possible.</p>
+
+<p class="govuk-body">You can <a
+href="https://workspace.trade.gov.uk/working-at-dit/how-do-i/get-a-covid-19-lateral-flow-test-lft-if-you-must-come-into-an-office/">read
+our guidance on booking a lateral flow test.</a></p>
+
 <form action="{% url "main:booking-create-initial" %}" method="post" novalidate>
     {% csrf_token %}
 
