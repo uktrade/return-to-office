@@ -68,3 +68,5 @@ all-requirements:
 	docker-compose run --rm web pip-compile --output-file requirements/dev.txt requirements.in/dev.in
 	docker-compose run --rm web pip-compile --output-file requirements/prod.txt requirements.in/prod.in
 
+test:
+	docker-compose run --rm web pytest

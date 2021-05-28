@@ -37,6 +37,8 @@ dj-database-url==0.5.0
     # via -r requirements.in/base.in
 django-appconf==1.0.4
     # via django-compressor
+django-audit-log-middleware==0.0.4
+    # via -r requirements.in/base.in
 django-autocomplete-light==3.3.2
     # via -r requirements.in/base.in
 django-axes==5.6.0
@@ -47,6 +49,7 @@ django-environ==0.4.5
     # via -r requirements.in/base.in
 django-ipware==3.0.2
     # via
+    #   django-audit-log-middleware
     #   django-axes
     #   django-log-formatter-ecs
 django-log-formatter-ecs==0.0.5
@@ -63,6 +66,7 @@ django==3.1.8
     # via
     #   -r requirements.in/base.in
     #   django-appconf
+    #   django-audit-log-middleware
     #   django-axes
     #   django-settings-export
     #   django-staff-sso-client

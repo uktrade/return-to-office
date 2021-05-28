@@ -22,7 +22,7 @@ dj-database-url==0.5.0
 django-appconf==1.0.4
     # via django-compressor
 django-audit-log-middleware==0.0.4
-    # via -r requirements.in/prod.in
+    # via -r requirements.in/base.in
 django-autocomplete-light==3.3.2
     # via -r requirements.in/base.in
 django-axes==5.6.0
