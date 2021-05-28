@@ -156,6 +156,7 @@ MIDDLEWARE = [
     "axes.middleware.AxesMiddleware",
     "main.middleware.IpRestrictionMiddleware",
     "authbroker_client.middleware.ProtectAllViewsMiddleware",
+    "django_audit_log_middleware.AuditLogMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [

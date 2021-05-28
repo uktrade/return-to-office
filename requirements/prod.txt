@@ -4,11 +4,11 @@
 #
 #    pip-compile --output-file=requirements/prod.txt requirements.in/prod.in
 #
-asgiref==3.2.10
+asgiref==3.3.4
     # via django
 attrs==19.2.0
     # via -r requirements.in/base.in
-certifi==2018.8.24
+certifi==2020.12.5
     # via
     #   elastic-apm
     #   requests
@@ -21,6 +21,8 @@ dj-database-url==0.5.0
     # via -r requirements.in/base.in
 django-appconf==1.0.4
     # via django-compressor
+django-audit-log-middleware==0.0.4
+    # via -r requirements.in/prod.in
 django-autocomplete-light==3.3.2
     # via -r requirements.in/base.in
 django-axes==5.6.0
@@ -29,12 +31,15 @@ django-compressor==2.4
     # via -r requirements.in/base.in
 django-environ==0.4.5
     # via -r requirements.in/base.in
-django-ipware==3.0.1
+django-ipware==3.0.2
     # via
+    #   django-audit-log-middleware
     #   django-axes
     #   django-log-formatter-ecs
 django-log-formatter-ecs==0.0.5
-    # via -r requirements.in/base.in
+    # via
+    #   -r requirements.in/base.in
+    #   -r requirements.in/prod.in
 django-sass-processor==0.8.2
     # via -r requirements.in/base.in
 django-settings-export==1.2.1
@@ -47,22 +52,25 @@ django==3.1.8
     # via
     #   -r requirements.in/base.in
     #   django-appconf
+    #   django-audit-log-middleware
     #   django-axes
     #   django-settings-export
     #   django-staff-sso-client
 docopt==0.6.2
     # via notifications-python-client
 elastic-apm==5.6.0
-    # via -r requirements.in/base.in
+    # via
+    #   -r requirements.in/base.in
+    #   -r requirements.in/prod.in
 future==0.18.2
     # via notifications-python-client
 gevent==20.6.2
     # via -r requirements.in/prod.in
-greenlet==0.4.16
+greenlet==1.1.0
     # via gevent
 gunicorn==19.9.0
     # via -r requirements.in/base.in
-idna==2.7
+idna==2.8
     # via requests
 kubi-ecs-logger==0.1.0
     # via django-log-formatter-ecs
@@ -72,7 +80,7 @@ marshmallow==3.6.1
     # via kubi-ecs-logger
 mohawk==1.1.0
     # via -r requirements.in/base.in
-monotonic==1.5
+monotonic==1.6
     # via notifications-python-client
 notifications-python-client==5.7.0
     # via -r requirements.in/base.in
@@ -86,7 +94,7 @@ psycopg2-binary==2.7.4
     # via -r requirements.in/base.in
 psycopg2==2.7.4
     # via -r requirements.in/base.in
-pyjwt==1.7.1
+pyjwt==2.1.0
     # via notifications-python-client
 python-dateutil==2.7.3
     # via -r requirements.in/base.in
@@ -111,24 +119,26 @@ rjsmin==1.1.0
     # via django-compressor
 sentry-sdk==0.17.5
     # via -r requirements.in/base.in
-six==1.15.0
+six==1.16.0
     # via
     #   django-compressor
     #   libsass
     #   mohawk
     #   python-dateutil
-sqlparse==0.2.4
+sqlparse==0.4.1
     # via django
-urllib3==1.24.2
+typing-extensions==3.10.0.0
+    # via asgiref
+urllib3==1.24.3
     # via
     #   elastic-apm
     #   requests
     #   sentry-sdk
 whitenoise==5.2.0
     # via -r requirements.in/base.in
-zope.event==4.4
+zope.event==4.5.0
     # via gevent
-zope.interface==5.1.0
+zope.interface==5.4.0
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
