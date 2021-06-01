@@ -2,3 +2,5 @@
 
 gevent==20.6.2
 psycogreen==1.0.2
+django-log-formatter-ecs~=0.0.5
+elastic-apm

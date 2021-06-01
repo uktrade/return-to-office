@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_audit_log_middleware",
     # "dal",
     # "dal_select2",
     "sass_processor",
@@ -156,6 +157,7 @@ MIDDLEWARE = [
     "axes.middleware.AxesMiddleware",
     "main.middleware.IpRestrictionMiddleware",
     "authbroker_client.middleware.ProtectAllViewsMiddleware",
+    "django_audit_log_middleware.AuditLogMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [

@@ -56,9 +56,17 @@ collectstatic:
 	docker-compose run --rm web python manage.py collectstatic --noinput
 
 dev-requirements:
-	pip-compile --output-file requirements/base.txt requirements.in/base.in
-	pip-compile --output-file requirements/dev.txt requirements.in/dev.in
+	docker-compose run --rm web pip-compile --output-file requirements/base.txt requirements.in/base.in
+	docker-compose run --rm web pip-compile --output-file requirements/dev.txt requirements.in/dev.in
 
 prod-requirements:
-	pip-compile --output-file requirements/base.txt requirements.in/base.in
-	pip-compile --output-file requirements/prod.txt requirements.in/prod.in
+	docker-compose run --rm web pip-compile --output-file requirements/base.txt requirements.in/base.in
+	docker-compose run --rm web pip-compile --output-file requirements/prod.txt requirements.in/prod.in
+
+all-requirements:
+	docker-compose run --rm web pip-compile --output-file requirements/base.txt requirements.in/base.in
+	docker-compose run --rm web pip-compile --output-file requirements/dev.txt requirements.in/dev.in
+	docker-compose run --rm web pip-compile --output-file requirements/prod.txt requirements.in/prod.in
+
+test:
+	docker-compose run --rm web pytest

@@ -8,7 +8,7 @@ apipkg==1.5
     # via execnet
 appdirs==1.4.4
     # via black
-asgiref==3.2.10
+asgiref==3.3.4
     # via django
 attrs==19.2.0
     # via
@@ -16,7 +16,7 @@ attrs==19.2.0
     #   pytest
 black==20.8b1
     # via -r requirements.in/dev.in
-certifi==2018.8.24
+certifi==2020.12.5
     # via
     #   elastic-apm
     #   requests
@@ -25,18 +25,20 @@ chardet==3.0.4
     # via
     #   -r requirements.in/base.in
     #   requests
-click==7.1.2
+click==8.0.1
     # via
     #   black
     #   pip-tools
 colorclass==2.2.0
     # via pip-check
-coverage==5.2
+coverage==5.5
     # via pytest-cov
 dj-database-url==0.5.0
     # via -r requirements.in/base.in
 django-appconf==1.0.4
     # via django-compressor
+django-audit-log-middleware==0.0.4
+    # via -r requirements.in/base.in
 django-autocomplete-light==3.3.2
     # via -r requirements.in/base.in
 django-axes==5.6.0
@@ -45,8 +47,9 @@ django-compressor==2.4
     # via -r requirements.in/base.in
 django-environ==0.4.5
     # via -r requirements.in/base.in
-django-ipware==3.0.1
+django-ipware==3.0.2
     # via
+    #   django-audit-log-middleware
     #   django-axes
     #   django-log-formatter-ecs
 django-log-formatter-ecs==0.0.5
@@ -63,6 +66,7 @@ django==3.1.8
     # via
     #   -r requirements.in/base.in
     #   django-appconf
+    #   django-audit-log-middleware
     #   django-axes
     #   django-settings-export
     #   django-staff-sso-client
@@ -70,11 +74,11 @@ docopt==0.6.2
     # via notifications-python-client
 elastic-apm==5.6.0
     # via -r requirements.in/base.in
-execnet==1.7.1
+execnet==1.8.0
     # via pytest-xdist
 factory-boy==3.0.1
     # via -r requirements.in/dev.in
-faker==4.1.3
+faker==8.2.1
     # via factory-boy
 flake8==3.8.3
     # via -r requirements.in/dev.in
@@ -84,9 +88,16 @@ future==0.18.2
     # via notifications-python-client
 gunicorn==19.9.0
     # via -r requirements.in/base.in
-idna==2.7
+idna==2.8
     # via requests
-iniconfig==1.0.1
+importlib-metadata==4.0.1
+    # via
+    #   click
+    #   flake8
+    #   pep517
+    #   pluggy
+    #   pytest
+iniconfig==1.1.1
     # via pytest
 kubi-ecs-logger==0.1.0
     # via django-log-formatter-ecs
@@ -98,7 +109,7 @@ mccabe==0.6.1
     # via flake8
 mohawk==1.1.0
     # via -r requirements.in/base.in
-monotonic==1.5
+monotonic==1.6
     # via notifications-python-client
 mypy-extensions==0.4.3
     # via black
@@ -108,13 +119,15 @@ oauthlib==2.1.0
     # via
     #   -r requirements.in/base.in
     #   requests-oauthlib
-packaging==20.4
+packaging==20.9
     # via pytest
-pathspec==0.8.0
+pathspec==0.8.1
     # via black
+pep517==0.10.0
+    # via pip-tools
 pip-check==2.6
     # via -r requirements.in/dev.in
-pip-tools==5.3.1
+pip-tools==6.0.1
     # via -r requirements.in/dev.in
 pluggy==0.13.1
     # via pytest
@@ -126,19 +139,20 @@ py==1.10.0
     # via
     #   -r requirements.in/dev.in
     #   pytest
+    #   pytest-forked
 pycodestyle==2.6.0
     # via flake8
 pyflakes==2.2.0
     # via flake8
-pyjwt==1.7.1
+pyjwt==2.1.0
     # via notifications-python-client
-pyparsing==2.2.0
+pyparsing==2.4.7
     # via packaging
 pytest-cov==2.10.1
     # via -r requirements.in/dev.in
 pytest-django==3.10.0
     # via -r requirements.in/dev.in
-pytest-forked==1.2.0
+pytest-forked==1.3.0
     # via pytest-xdist
 pytest-xdist==2.1.0
     # via -r requirements.in/dev.in
@@ -162,7 +176,7 @@ pytz==2018.3
     #   django
 rcssmin==1.0.6
     # via django-compressor
-regex==2020.6.8
+regex==2021.4.4
     # via black
 requests-oauthlib==1.0.0
     # via
@@ -177,35 +191,41 @@ rjsmin==1.1.0
     # via django-compressor
 sentry-sdk==0.17.5
     # via -r requirements.in/base.in
-six==1.15.0
+six==1.16.0
     # via
     #   django-compressor
     #   libsass
     #   mohawk
-    #   packaging
-    #   pip-tools
     #   python-dateutil
-sqlparse==0.2.4
+sqlparse==0.4.1
     # via django
 terminaltables==3.1.0
     # via pip-check
 text-unidecode==1.3
     # via faker
-toml==0.10.1
+toml==0.10.2
     # via
     #   black
+    #   pep517
     #   pytest
-typed-ast==1.4.1
+typed-ast==1.4.3
     # via black
-typing-extensions==3.7.4.3
-    # via black
-urllib3==1.24.2
+typing-extensions==3.10.0.0
+    # via
+    #   asgiref
+    #   black
+    #   importlib-metadata
+urllib3==1.24.3
     # via
     #   elastic-apm
     #   requests
     #   sentry-sdk
 whitenoise==5.2.0
     # via -r requirements.in/base.in
+zipp==3.4.1
+    # via
+    #   importlib-metadata
+    #   pep517
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

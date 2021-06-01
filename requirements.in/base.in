@@ -10,6 +10,7 @@ django-sass-processor==0.8.2
 django-settings-export==1.2.1
 django-staff-sso-client==3.1.0
 django-webpack-loader==0.7.0
+django-audit-log-middleware==0.0.4
 Django==3.1.8
 elastic-apm==5.6.0
 gunicorn==19.9.0
