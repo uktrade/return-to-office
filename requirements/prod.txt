@@ -64,10 +64,6 @@ elastic-apm==5.6.0
     #   -r requirements.in/prod.in
 future==0.18.2
     # via notifications-python-client
-gevent==20.6.2
-    # via -r requirements.in/prod.in
-greenlet==1.1.0
-    # via gevent
 gunicorn==19.9.0
     # via -r requirements.in/base.in
 idna==2.8
@@ -88,8 +84,6 @@ oauthlib==2.1.0
     # via
     #   -r requirements.in/base.in
     #   requests-oauthlib
-psycogreen==1.0.2
-    # via -r requirements.in/prod.in
 psycopg2-binary==2.7.4
     # via -r requirements.in/base.in
 psycopg2==2.7.4
@@ -136,10 +130,3 @@ urllib3==1.24.3
     #   sentry-sdk
 whitenoise==5.2.0
     # via -r requirements.in/base.in
-zope.event==4.5.0
-    # via gevent
-zope.interface==5.4.0
-    # via gevent
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
