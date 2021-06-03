@@ -74,7 +74,7 @@ mohawk==1.1.0
     # via -r requirements.in/base.in
 monotonic==1.6
     # via notifications-python-client
-notifications-python-client==5.7.0
+notifications-python-client==5.7.1
     # via -r requirements.in/base.in
 oauthlib==2.1.0
     # via
