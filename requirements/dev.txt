@@ -113,7 +113,7 @@ monotonic==1.6
     # via notifications-python-client
 mypy-extensions==0.4.3
     # via black
-notifications-python-client==5.7.0
+notifications-python-client==5.7.1
     # via -r requirements.in/base.in
 oauthlib==2.1.0
     # via
