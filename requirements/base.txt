@@ -46,7 +46,7 @@ django-staff-sso-client==3.1.0
     # via -r requirements.in/base.in
 django-webpack-loader==0.7.0
     # via -r requirements.in/base.in
-django==3.1.8
+django==3.1.12
     # via
     #   -r requirements.in/base.in
     #   django-appconf
@@ -100,7 +100,7 @@ requests-oauthlib==1.0.0
     # via
     #   -r requirements.in/base.in
     #   django-staff-sso-client
-requests==2.21.0
+requests==2.25.1
     # via
     #   -r requirements.in/base.in
     #   notifications-python-client
@@ -119,8 +119,9 @@ sqlparse==0.4.1
     # via django
 typing-extensions==3.10.0.0
     # via asgiref
-urllib3==1.24.3
+urllib3==1.26.5
     # via
+    #   -r requirements.in/base.in
     #   elastic-apm
     #   requests
     #   sentry-sdk
