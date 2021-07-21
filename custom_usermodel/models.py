@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -42,11 +44,12 @@ class User(AbstractUser):
         return self.contact_email or self.email
 
     @staticmethod
-    def get_by_email(email):
+    def get_by_email(email: str) -> Optional["User"]:
         """Get existing user by email address, or None if not found.
 
         Looks up by contact_email first, then email.
         """
+        email = email.lower()
 
         return (
             User.objects.filter(contact_email=email).first()

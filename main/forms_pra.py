@@ -36,13 +36,13 @@ class PRAFormInitial(forms.Form):
         ]
 
     def clean_staff_member_email(self):
-        addr = self.cleaned_data["staff_member_email"]
+        addr = self.cleaned_data["staff_member_email"].lower()
         self._check_user_exists(addr)
 
         return addr
 
     def clean_scs_email(self):
-        addr = self.cleaned_data["scs_email"]
+        addr = self.cleaned_data["scs_email"].lower()
         self._check_user_exists(addr)
 
         return addr
