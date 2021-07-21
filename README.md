@@ -30,12 +30,15 @@ developing, only within Docker.
 
 ## Initial setup
 
+- `cp sample.env .env`
+  - Only the `AUTHBROKER_XXX` env variables are required to run the project locally
+  - You can copy the `AUTHBROKER_XXX` values from Vault `dit/platform/return-to-office/dev`
+  - Then replace all values of ASK-SOMEBODY in `.env` with the real values
 - `make build`
   - Build all Docker containers
+- `npm install`
 - `make setup`
   - Create local virtualenv, set up pre-commit hooks, initialize database
-- `cp sample.env .env`
-  - Then replace all values of ASK-SOMEBODY in `.env` with the real values
 
 ## Running the application
 
