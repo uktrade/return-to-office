@@ -6,6 +6,10 @@
 
 <h2 class="govuk-heading-l">Welcome {{ user.first_name }} {{ user.last_name }}</h2>
 
+<p class="govuk-body">You must have a valid personal risk assessment (PRA) before entering any DIT building.</p>
+
+<p class="govuk-body">You must book a desk to enter 3 Whitehall Place or our Bristol office.</p>
+
 <p><a href="{% url 'main:booking-create-who-for' %}"><button class="govuk-button">Create new booking</button></a></p>
 
 <p><a href="{% url 'main:show-bookings' %}"><button class="govuk-button">Show existing bookings</button></a></p>
@@ -19,6 +23,7 @@
 {% endif %}
 
 <h4 class="govuk-heading-s">For line managers only</h4>
+<p class="govuk-body">Line managers can only create a personal risk assessment for those they manage. Follow the <a href="https://workspace.trade.gov.uk/working-at-dit/policies-and-guidance/returning-to-office-working/">returning to the office guidance</a> for assistance</p>
 
 <p class="govuk-body"><a href="{% url 'main:pra-create-initial' %}"><button
 class="govuk-button">Create new personal risk assessment</button></a></p>
