@@ -65,8 +65,11 @@ class PRAFormInitial(forms.Form):
 
         if not User.get_by_email(email):
             raise forms.ValidationError(
-                mark_safe((
-                    "User not found. If this is their email address, they need to go to <a href='{0}'>this service</a>. Once they have done this, you will be able to use their email address here.").format(reverse("main:index")))
+                mark_safe(
+                    (
+                        "User not found. If this is their email address, they need to go to <a href='{0}'>this service</a>. Once they have done this, you will be able to use their email address here."
+                    ).format(reverse("main:index"))
+                )
             )
 
 
