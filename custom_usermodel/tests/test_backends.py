@@ -1,3 +1,5 @@
+import pytest
+
 from datetime import datetime, timezone
 from custom_usermodel.backends import CustomAuthbrokerBackend
 from custom_usermodel.models import User
@@ -100,37 +102,71 @@ def test_match_contact_email(transactional_db):
 
 
 def test_duplicate_user_gets_deleted(transactional_db):
-    correct_user = User.objects.create(
-        username="pete.samuel-df798b95@id.trade.gov.uk",
+    full_details_user = User.objects.create(
+        username="john.smith-df798b95@id.trade.gov.uk",
         last_login="2021-01-01 00:00:00",
-        email="pete.samuel@digital.gsi.trade.gov.uk",
-        contact_email="pete.samuel@digital.trade.gov.uk",
-        first_name="Pete",
-        last_name="Samuel",
+        email="john.smith@digital.gsi.trade.gov.uk",
+        contact_email="john.smith@digital.trade.gov.uk",
+        first_name="John",
+        last_name="Smith",
     )
 
-    correct_user.refresh_from_db()
-
-    incorrect_user = User.objects.create(
-        username="pete.samuel-df798b952@id.trade.gov.uk",
+    partial_details_user = User.objects.create(
+        username=None,
         last_login=None,
-        email="pete.samuel2@digital.gsi.trade.gov.uk",
-        contact_email="pete.samuel@digital.trade.gov.uk",
-        first_name="Pete",
-        last_name="Samuel",
+        email="john.smith2@digital.gsi.trade.gov.uk",
+        contact_email="john.smith@digital.trade.gov.uk",
+        first_name="John",
+        last_name="Smith",
     )
-
-    incorrect_user.refresh_from_db()
 
     CustomAuthbrokerBackend.get_or_create_user(
         {
-            "email_user_id": "pete.samuel-df798b95@id.trade.gov.uk",
-            "email": "pete.samuel@digital.gsi.trade.gov.uk",
-            "contact_email": "pete.samuel@digital.trade.gov.uk",
+            "email_user_id": "john.smith-df798b95@id.trade.gov.uk",
+            "email": "john.smith@digital.gsi.trade.gov.uk",
+            "contact_email": "john.smith@digital.trade.gov.uk",
         }
     )
 
-    user_model_query = User.objects.filter(contact_email="pete.samuel@digital.trade.gov.uk")
+    user_model_query = User.objects.filter(contact_email="john.smith@digital.trade.gov.uk")
 
     assert user_model_query.count() == 1
     assert user_model_query.first().last_login == datetime(2021, 1, 1, 0, 0, tzinfo=timezone.utc)
+
+
+def test_assert_raised_by_more_than_one_user(transactional_db):
+    with pytest.raises(AssertionError):
+        complete_user_record = User.objects.create(
+            username="john.doe-df798b95@id.trade.gov.uk",
+            last_login="2021-01-01 00:00:00",
+            email="john.doe@digital.gsi.trade.gov.uk",
+            contact_email="john.doe@digital.trade.gov.uk",
+            first_name="John",
+            last_name="Doe",
+        )
+
+        partial_user_record_1 = User.objects.create(
+            username="john.doe-df798b952@id.trade.gov.uk",
+            last_login=None,
+            email="john.doe2@digital.gsi.trade.gov.uk",
+            contact_email="john.doe@digital.trade.gov.uk",
+            first_name="John",
+            last_name="Doe",
+        )
+
+        partial_user_record_2 = User.objects.create(
+            username="john.doe-df798b953@id.trade.gov.uk",
+            last_login="2021-01-01 00:00:00",
+            email="john.doe3@digital.gsi.trade.gov.uk",
+            contact_email="john.doe@digital.trade.gov.uk",
+            first_name="John",
+            last_name="Doe",
+        )
+
+        CustomAuthbrokerBackend.get_or_create_user(
+            {
+                "email_user_id": "john.doe-df798b95@id.trade.gov.uk",
+                "email": "john.doe@digital.gsi.trade.gov.uk",
+                "contact_email": "john.doe@digital.trade.gov.uk",
+            }
+        )
