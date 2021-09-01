@@ -27,23 +27,20 @@ class BookingFormWhoFor(forms.Form):
         if for_myself:
             pra = (
                 PRA.objects.filter(staff_member=self.request.user)
-                .order_by("-created_timestamp")
-                .first()
+                    .order_by("-created_timestamp")
+                    .first()
             )
 
             if (
-                not pra
-                or (pra.days_left_valid_for() <= 0)
-                or not pra.approved_staff_member
-                or not pra.approved_scs
+                    not pra
+                    or (pra.days_left_valid_for() <= 0)
+                    or not pra.approved_staff_member
+                    or not pra.approved_scs
             ):
                 self.add_error(
                     None,
                     forms.ValidationError(
-                        """You do not have an approved Personal Risk Assessment
-                    form filed. Please work with your line manager to do this.
-                    Until you do so, you are unable to create any desk bookings
-                    for yourself."""
+                        mark_safe("""You do not have an approved Personal Risk Assessment (PRA). Without a PRA you cannot enter any DIT office or book a desk. Follow the <a href="https://workspace.trade.gov.uk/working-at-dit/policies-and-guidance/returning-to-office-working/">return to office guidance</a> with your line manager to create a PRA.""")
                     ),
                 )
 

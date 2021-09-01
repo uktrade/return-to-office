@@ -3,6 +3,9 @@ from django import forms
 from django.conf import settings
 from django.core.validators import validate_email
 
+from django.utils.safestring import mark_safe
+from django.urls import reverse
+
 from custom_usermodel.models import User
 
 from .models import PRA, DitGroup
@@ -62,7 +65,8 @@ class PRAFormInitial(forms.Form):
 
         if not User.get_by_email(email):
             raise forms.ValidationError(
-                "User not found; please make sure they have logged in to the system at least once"
+                mark_safe((
+                    "User not found. If this is their email address, they need to go to <a href='{0}'>this service</a>. Once they have done this, you will be able to use their email address here.").format(reverse("main:index")))
             )
 
 
