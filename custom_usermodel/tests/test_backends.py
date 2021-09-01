@@ -100,7 +100,7 @@ def test_match_contact_email(transactional_db):
 
 
 def test_duplicate_user_gets_deleted(transactional_db):
-    incorrect_user = User.objects.create(
+    correct_user = User.objects.create(
         username="pete.samuel-df798b95@id.trade.gov.uk",
         last_login="2021-01-01 00:00:00",
         email="pete.samuel@digital.gsi.trade.gov.uk",
@@ -109,9 +109,9 @@ def test_duplicate_user_gets_deleted(transactional_db):
         last_name="Samuel",
     )
 
-    incorrect_user.refresh_from_db()
+    correct_user.refresh_from_db()
 
-    correct_user = CustomAuthbrokerBackend.get_or_create_user(
+    incorrect_user = CustomAuthbrokerBackend.get_or_create_user(
         {
             "email_user_id": "pete.samuel-df798b95e@id.trade.gov.uk",
             "last_login": None,
@@ -122,7 +122,7 @@ def test_duplicate_user_gets_deleted(transactional_db):
         }
     )
 
-    correct_user.refresh_from_db()
+    incorrect_user.refresh_from_db()
 
     user_model_query = User.objects.filter(contact_email="pete.samuel@digital.trade.gov.uk")
 
