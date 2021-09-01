@@ -36,7 +36,19 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
         if profile["contact_email"]:
             query |= Q(contact_email=profile["contact_email"])
 
-        user = User.objects.filter(query).first()
+        users = User.objects.filter(query)
+
+        # TODO - add comment
+        if users.count() > 1:
+            for user in users:
+                if user.last_login is None:
+                    user.delete()
+
+        users.refresh_from_db()
+
+        assert users.count() == 1 or users.count() == 0
+
+        user = users.first()
 
         if user:
             # this is now the preferred option for the user id
