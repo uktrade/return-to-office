@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from custom_usermodel.backends import CustomAuthbrokerBackend
 from custom_usermodel.models import User
 
@@ -96,3 +97,34 @@ def test_match_contact_email(transactional_db):
     assert user2.contact_email == "jane.doe@digital.trade.gov.uk"
     assert user2.first_name == "Jane"
     assert user2.last_name == "Doe"
+
+
+def test_duplicate_user_gets_deleted(transactional_db):
+    incorrect_user = User.objects.create(
+        username="pete.samuel-df798b95@id.trade.gov.uk",
+        last_login="2021-01-01 00:00:00",
+        email="pete.samuel@digital.gsi.trade.gov.uk",
+        contact_email="pete.samuel@digital.trade.gov.uk",
+        first_name="Pete",
+        last_name="Samuel",
+    )
+
+    incorrect_user.refresh_from_db()
+
+    correct_user = CustomAuthbrokerBackend.get_or_create_user(
+        {
+            "email_user_id": "pete.samuel-df798b95e@id.trade.gov.uk",
+            "last_login": None,
+            "email": "pete.samuel2@digital.gsi.trade.gov.uk",
+            "contact_email": "pete.samuel@digital.trade.gov.uk",
+            "first_name": "Pete",
+            "last_name": "Samuel",
+        }
+    )
+
+    correct_user.refresh_from_db()
+
+    user_model_query = User.objects.filter(contact_email="pete.samuel@digital.trade.gov.uk")
+
+    assert user_model_query.count() == 1
+    assert user_model_query.first().last_login == datetime(2021, 1, 1, 0, 0, tzinfo=timezone.utc)
