@@ -102,7 +102,7 @@ def test_match_contact_email(transactional_db):
 
 
 def test_duplicate_user_gets_deleted(transactional_db):
-    full_details_user = User.objects.create(
+    full_details_user = User.objects.create(  # noqa: F841
         username="john.smith-df798b95@id.trade.gov.uk",
         last_login="2021-01-01 00:00:00",
         email="john.smith@digital.gsi.trade.gov.uk",
@@ -111,7 +111,7 @@ def test_duplicate_user_gets_deleted(transactional_db):
         last_name="Smith",
     )
 
-    partial_details_user = User.objects.create(
+    partial_details_user = User.objects.create(  # noqa: F841
         username=None,
         last_login=None,
         email="john.smith2@digital.gsi.trade.gov.uk",
@@ -136,7 +136,7 @@ def test_duplicate_user_gets_deleted(transactional_db):
 
 def test_assert_raised_by_more_than_one_user(transactional_db):
     with pytest.raises(AssertionError):
-        complete_user_record = User.objects.create(
+        complete_user_record = User.objects.create(  # noqa: F841
             username="john.doe-df798b95@id.trade.gov.uk",
             last_login="2021-01-01 00:00:00",
             email="john.doe@digital.gsi.trade.gov.uk",
@@ -145,7 +145,7 @@ def test_assert_raised_by_more_than_one_user(transactional_db):
             last_name="Doe",
         )
 
-        partial_user_record_1 = User.objects.create(
+        partial_user_record_1 = User.objects.create(  # noqa: F841
             username="john.doe-df798b952@id.trade.gov.uk",
             last_login=None,
             email="john.doe2@digital.gsi.trade.gov.uk",
@@ -154,7 +154,7 @@ def test_assert_raised_by_more_than_one_user(transactional_db):
             last_name="Doe",
         )
 
-        partial_user_record_2 = User.objects.create(
+        partial_user_record_2 = User.objects.create(  # noqa: F841
             username="john.doe-df798b953@id.trade.gov.uk",
             last_login="2021-01-01 00:00:00",
             email="john.doe3@digital.gsi.trade.gov.uk",
