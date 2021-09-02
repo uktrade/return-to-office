@@ -38,14 +38,17 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
 
         users = User.objects.filter(query)
 
-        # duplicate users can be created so this checks for users that haven't logged in and deletes them from the system
+        # Duplicate user records might be present, as a user data set was added manually,
+        # so check for matching users who have never logged in and delete them from the system
         if users.count() > 1:
             for user in users:
                 if user.last_login is None:
                     user.delete()
-                    return
-                user.refresh_from_db()
 
+        # Regenerate queryset as previous result is cached
+        users = User.objects.filter(query)
+
+        # We should only ever have zero or one user/s at this point
         assert users.count() <= 1
 
         user = users.first()

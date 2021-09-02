@@ -1,8 +1,10 @@
 import pytest
 
+from django.test import TestCase
 from datetime import datetime, timezone
 from custom_usermodel.backends import CustomAuthbrokerBackend
 from custom_usermodel.models import User
+from main.tests.utils import create_test_user
 
 
 def test_no_match(transactional_db):
@@ -101,6 +103,23 @@ def test_match_contact_email(transactional_db):
     assert user2.last_name == "Doe"
 
 
+class TestUserRecords(TestCase):
+    def setUp(self):
+        self.test_user = create_test_user()
+
+    def test_create_new_user_record(self):
+        self.client.force_login(self.test_user)
+        assert User.objects.all().count() == 1
+
+    def test_user_login_updates_record(self):
+        self.client.force_login(self.test_user)
+        assert User.objects.first().last_login.date() == datetime.now().date()
+
+    def test_new_user_has_correct_details(self):
+        self.client.force_login(self.test_user)
+        assert User.objects.first().email == "test@test.com"
+
+
 def test_duplicate_user_gets_deleted(transactional_db):
     full_details_user = User.objects.create(  # noqa: F841
         username="john.smith-df798b95@id.trade.gov.uk",
@@ -125,6 +144,10 @@ def test_duplicate_user_gets_deleted(transactional_db):
             "email_user_id": "john.smith-df798b95@id.trade.gov.uk",
             "email": "john.smith@digital.gsi.trade.gov.uk",
             "contact_email": "john.smith@digital.trade.gov.uk",
+            "first_name": "John",
+            "last_name": "Smith",
+            "username": "john.smith-df798b95@id.trade.gov.uk",
+            "last_login": "2021-01-01 00:00:00",
         }
     )
 
