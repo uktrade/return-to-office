@@ -266,6 +266,9 @@ def create_pra_initial(req):
 
 
 def create_pra_business_unit(req):
+    if not req.session.get("pra_dit_group", None):
+        return reverse("main:pra-create-initial")
+
     ctx = {}
 
     dit_group = req.session["pra_dit_group"]
@@ -463,6 +466,8 @@ def create_pra_mitigation_do_not_approve(req):
 
 def create_pra_submit(req: HttpRequest):
     """ Returns either a list[str] of errors, or a str which is a redirect URL."""
+    if not req.session.get("pra_staff_member_email", None):
+        return reverse("main:pra-create-initial")
 
     staff_member_email = req.session["pra_staff_member_email"]
     scs_email = req.session["pra_scs_email"]
