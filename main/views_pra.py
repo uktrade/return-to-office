@@ -31,6 +31,10 @@ from .forms_pra import (
 
 from .models import PRA, DitGroup
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 # TODO: this can be deleted after migration of data from legacy form has been done
 class LegacyPRA:
@@ -267,7 +271,7 @@ def create_pra_initial(req):
 
 def create_pra_business_unit(req):
     if not req.session.get("pra_dit_group", None):
-        return reverse("main:pra-create-initial")
+        return redirect(reverse("main:pra-create-initial"))
 
     ctx = {}
 
@@ -467,7 +471,7 @@ def create_pra_mitigation_do_not_approve(req):
 def create_pra_submit(req: HttpRequest):
     """ Returns either a list[str] of errors, or a str which is a redirect URL."""
     if not req.session.get("pra_staff_member_email", None):
-        return reverse("main:pra-create-initial")
+        return redirect(reverse("main:pra-create-initial"))
 
     staff_member_email = req.session["pra_staff_member_email"]
     scs_email = req.session["pra_scs_email"]

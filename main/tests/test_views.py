@@ -8,6 +8,7 @@ from freezegun import freeze_time
 from mohawk import Sender
 
 from main.tests import factories
+from main.tests.utils import create_test_user
 
 
 def expected_booking_data(booking):
@@ -35,6 +36,33 @@ def expected_booking_data(booking):
             "dit:ReturnToOffice:Booking:cancelled": booking.canceled_timestamp,
         },
     }
+
+
+class TestNoSessionViewing(TestCase):
+    def setUp(self):
+        self.create_pra_business_unit_url = reverse("main:pra-create-business-unit")
+
+    def test_user_without_pra_session_is_redirected(self):
+        test_user = create_test_user()
+        self.client.force_login(test_user)
+
+        response = self.client.get(
+            self.create_pra_business_unit_url,
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_user_with_pra_session_is_not_redirected(self):
+        test_user = create_test_user()
+        self.client.force_login(test_user)
+
+        session = self.client.session
+        session["pra_dit_group"] = 1
+        session.save()
+
+        response = self.client.get(
+            self.create_pra_business_unit_url,
+        )
+        self.assertEqual(response.status_code, 200)
 
 
 class TestActivityStreamView(TestCase):
