@@ -4,7 +4,6 @@ from datetime import datetime
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django.test.client import RequestFactory
-from django.http import HttpResponse
 from django.urls import reverse
 from freezegun import freeze_time
 from mohawk import Sender
@@ -94,7 +93,7 @@ class TestSessionAccessPRASubmit(TestCase):
         request.session["pra_authorized_reason"] = "Example reason"
         request.session["pra_risk_category"] = "High"
         request.session["pra_staff_member_email"] = "test@test.com"
-        request.session["pra_scs_email"] = 'test@test.com'
+        request.session["pra_scs_email"] = "test@test.com"
 
         output = create_pra_submit(request)
         assert output == reverse("main:pra-show-thanks")
