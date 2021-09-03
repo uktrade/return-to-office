@@ -3,12 +3,15 @@ from datetime import datetime
 
 from django.conf import settings
 from django.test import TestCase, override_settings
+from django.test.client import RequestFactory
+from django.http import HttpResponse
 from django.urls import reverse
 from freezegun import freeze_time
 from mohawk import Sender
 
 from main.tests import factories
 from main.tests.utils import create_test_user
+from main.views_pra import create_pra_submit
 
 
 def expected_booking_data(booking):
@@ -38,11 +41,11 @@ def expected_booking_data(booking):
     }
 
 
-class TestNoSessionViewing(TestCase):
+class TestSessionAccessPRABusinessUnitView(TestCase):
     def setUp(self):
         self.create_pra_business_unit_url = reverse("main:pra-create-business-unit")
 
-    def test_user_without_pra_session_is_redirected(self):
+    def test_user_without_pra_business_session_is_redirected(self):
         test_user = create_test_user()
         self.client.force_login(test_user)
 
@@ -51,7 +54,7 @@ class TestNoSessionViewing(TestCase):
         )
         self.assertEqual(response.status_code, 302)
 
-    def test_user_with_pra_session_is_not_redirected(self):
+    def test_user_with_pra_business_session_is_not_redirected(self):
         test_user = create_test_user()
         self.client.force_login(test_user)
 
@@ -63,6 +66,38 @@ class TestNoSessionViewing(TestCase):
             self.create_pra_business_unit_url,
         )
         self.assertEqual(response.status_code, 200)
+
+
+class TestSessionAccessPRASubmit(TestCase):
+    def test_user_without_pra_submit_session_is_redirected(self):
+        test_user = create_test_user()
+
+        request_factory = RequestFactory()
+        request = request_factory.get(reverse("main:pra-create-risk-category"))
+
+        request.session = {}
+        request.user = test_user
+
+        output = create_pra_submit(request)
+        assert output[0] == "Some data is missing from your session please restart the PRA process"
+
+    def test_user_with_pra_submit_session_is_not_redirected(self):
+        test_user = create_test_user()
+
+        request_factory = RequestFactory()
+        request = request_factory.get(reverse("main:pra-create-risk-category"))
+
+        request.session = {}
+        request.user = test_user
+        request.session["pra_dit_group"] = 1
+        request.session["pra_business_unit"] = 2
+        request.session["pra_authorized_reason"] = "Example reason"
+        request.session["pra_risk_category"] = "High"
+        request.session["pra_staff_member_email"] = "test@test.com"
+        request.session["pra_scs_email"] = 'test@test.com'
+
+        output = create_pra_submit(request)
+        assert output == reverse("main:pra-show-thanks")
 
 
 class TestActivityStreamView(TestCase):
