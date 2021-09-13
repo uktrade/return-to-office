@@ -68,6 +68,7 @@ return-to-office uses [Black](https://pypi.org/project/black/) for code
 formatting and [flake8](https://flake8.pycqa.org/en/latest/) for code analysis.
 Useful commands:
 
+- `make black` - Run Django migrations
 - `make black` - Check code is formatted correctly
 - `make black_format` - Reformat all code
 - `make flake8` - Check code quality is up to scratch
