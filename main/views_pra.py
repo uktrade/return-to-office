@@ -31,10 +31,6 @@ from .forms_pra import (
 
 from .models import PRA, DitGroup
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 
 # TODO: this can be deleted after migration of data from legacy form has been done
 class LegacyPRA:
