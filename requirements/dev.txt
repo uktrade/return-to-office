@@ -62,7 +62,7 @@ django-staff-sso-client==3.1.0
     # via -r requirements.in/base.in
 django-webpack-loader==0.7.0
     # via -r requirements.in/base.in
-django==3.1.12
+django==3.2.7
     # via
     #   -r requirements.in/base.in
     #   django-appconf
@@ -197,8 +197,10 @@ six==1.16.0
     #   libsass
     #   mohawk
     #   python-dateutil
-sqlparse==0.4.1
-    # via django
+sqlparse==0.4.2
+    # via
+    #   -r requirements.in/base.in
+    #   django
 terminaltables==3.1.0
     # via pip-check
 text-unidecode==1.3
