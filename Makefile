@@ -70,3 +70,6 @@ all-requirements:
 
 test:
 	docker-compose run --rm web pytest
+
+superuser:
+	docker-compose run --rm web python manage.py createsuperuser
