@@ -59,6 +59,7 @@ class TestSessionAccessPRABusinessUnitView(TestCase):
 
         session = self.client.session
         session["pra_dit_group"] = 1
+        session["service_id"] = 1
         session.save()
 
         response = self.client.get(
@@ -94,6 +95,7 @@ class TestSessionAccessPRASubmit(TestCase):
         request.session["pra_risk_category"] = "High"
         request.session["pra_staff_member_email"] = "test@test.com"
         request.session["pra_scs_email"] = "test@test.com"
+        request.session["service_id"] = 1
 
         output = create_pra_submit(request)
         assert output == reverse("main:pra-show-thanks")
