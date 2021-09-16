@@ -40,10 +40,9 @@ class BookingFormWhoFor(forms.Form):
                 self.add_error(
                     None,
                     forms.ValidationError(
-                        """You do not have an approved Personal Risk Assessment
-                    form filed. Please work with your line manager to do this.
-                    Until you do so, you are unable to create any desk bookings
-                    for yourself."""
+                        mark_safe(
+                            """You do not have an approved Personal Risk Assessment (PRA). Without a PRA you cannot enter any DIT office or book a desk. Follow the <a href="https://workspace.trade.gov.uk/working-at-dit/policies-and-guidance/returning-to-office-working/">return to office guidance</a> with your line manager to create a PRA."""
+                        )
                     ),
                 )
 

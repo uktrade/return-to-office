@@ -36,7 +36,22 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
         if profile["contact_email"]:
             query |= Q(contact_email=profile["contact_email"])
 
-        user = User.objects.filter(query).first()
+        users = User.objects.filter(query)
+
+        # Duplicate user records might be present, as a user data set was added manually,
+        # so check for matching users who have never logged in and delete them from the system
+        if users.count() > 1:
+            for user in users:
+                if user.last_login is None:
+                    user.delete()
+
+        # Regenerate queryset as previous result is cached
+        users = User.objects.filter(query)
+
+        # We should only ever have zero or one user/s at this point
+        assert users.count() <= 1
+
+        user = users.first()
 
         if user:
             # this is now the preferred option for the user id
