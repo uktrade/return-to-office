@@ -133,5 +133,3 @@ chromedriver
 # Test files
 test.txt
 test_*.txt
-
-main/static/*
