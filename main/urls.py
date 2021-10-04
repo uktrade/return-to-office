@@ -74,4 +74,5 @@ urlpatterns = [
     # TODO: this can be deleted after migration of data from legacy form has been done
     path("pra/migrate", views_pra.pra_migrate, name="pra-migrate"),
     path("pra/fix", views_pra.pra_fix, name="pra-fix"),
+    path("activity-stream/pras", views.activity_stream_pras, name="activity-stream-pras"),
 ]
