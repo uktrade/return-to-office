@@ -20,5 +20,9 @@ jobs:
                 command: make docker_flake8
 
             - run:
+                name: Output CSS files
+                command: make compilescss
+
+            - run:
                 name: run tests
                 command: ./run-tests.sh
