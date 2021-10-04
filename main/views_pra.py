@@ -266,6 +266,9 @@ def create_pra_initial(req):
 
 
 def create_pra_business_unit(req):
+    if not req.session.get("pra_dit_group", None):
+        return redirect(reverse("main:pra-create-initial"))
+
     ctx = {}
 
     dit_group = req.session["pra_dit_group"]
@@ -463,6 +466,8 @@ def create_pra_mitigation_do_not_approve(req):
 
 def create_pra_submit(req: HttpRequest):
     """ Returns either a list[str] of errors, or a str which is a redirect URL."""
+    if not req.session.get("pra_staff_member_email", None):
+        return ["Some data is missing from your session please restart the PRA process"]
 
     staff_member_email = req.session["pra_staff_member_email"]
     scs_email = req.session["pra_scs_email"]
@@ -513,7 +518,7 @@ def create_pra_submit(req: HttpRequest):
         link = req.build_absolute_uri(reverse("main:pra-view", kwargs={"pk": pra.pk}))
 
         nc.send_email_notification(
-            email_address=staff_member.get_contact_email(),
+            email_address=staff_member_email,
             template_id="7c663f35-276c-4737-91c5-c0f4b02122bb",
             personalisation={
                 "link": link,
@@ -523,7 +528,7 @@ def create_pra_submit(req: HttpRequest):
     else:
         # PRA rejected immediately, do not even ask staff_member for approval, just notify them
         nc.send_email_notification(
-            email_address=staff_member.get_contact_email(),
+            email_address=staff_member_email,
             template_id="72760c96-cc22-4a55-89c0-b5d9dcd6a8ab",
             personalisation={
                 "line_manager": pra.line_manager.full_name(),
