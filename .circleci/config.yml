@@ -21,7 +21,7 @@ jobs:
 
             - run:
                 name: Output CSS files
-                command: make compilescss
+                command: npm install && make compilescss
 
             - run:
                 name: run tests
