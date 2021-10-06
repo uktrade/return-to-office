@@ -42,3 +42,19 @@ class BookingFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "main.Booking"
+
+
+class PRAFactory(factory.django.DjangoModelFactory):
+    staff_member = factory.SubFactory(UserFactory)
+    line_manager = factory.SubFactory(UserFactory)
+    scs = factory.SubFactory(UserFactory)
+    authorized_reason = factory.fuzzy.FuzzyText()
+    group = factory.fuzzy.FuzzyText()
+    business_unit = factory.fuzzy.FuzzyText()
+    risk_category = "moderate_risk"
+    mitigation_outcome = "approve_no_mitigation"
+    mitigation_measures = factory.fuzzy.FuzzyText()
+    migrated = False
+
+    class Meta:
+        model = "main.PRA"

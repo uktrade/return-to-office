@@ -407,7 +407,7 @@ def activity_stream_pras(request):
         )
 
     # Get cursor
-    after_ts_str, after_booking_id_str = request.GET.get("cursor", "0.0_0").split("_")
+    after_ts_str, after_pra_id_str = request.GET.get("cursor", "0.0_0").split("_")
     after_ts = datetime.datetime.fromtimestamp(float(after_ts_str))
 
     pras = list(
@@ -460,7 +460,7 @@ def activity_stream_pras(request):
             for pra in pras
         ],
         **(
-            {"next": f"{abs_url}?cursor={pras[-1].booked_timestamp.timestamp()}_{pras[-1].id}"}
+            {"next": f"{abs_url}?cursor={pras[-1].created_timestamp.timestamp()}_{pras[-1].id}"}
             if pras
             else {}
         ),
