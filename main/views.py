@@ -381,3 +381,92 @@ def activity_stream_bookings(request):
         data=page,
         status=200,
     )
+
+
+def activity_stream_pras(request):
+    def lookup_credentials(passed_id):
+        return (
+            settings.ACTIVITY_STREAM_HAWK_CREDENTIALS
+            if hmac.compare_digest(passed_id, settings.ACTIVITY_STREAM_HAWK_CREDENTIALS["id"])
+            else None
+        )
+
+    try:
+        Receiver(
+            lookup_credentials,
+            request.headers.get("Authorization"),
+            request.build_absolute_uri(),
+            request.method,
+            content=request.body,
+            content_type=request.headers.get("Content-Type"),
+        )
+    except (MissingAuthorization, CredentialsLookupError, MacMismatch):
+        return JsonResponse(
+            data={},
+            status=403,
+        )
+
+    # Get cursor
+    after_ts_str, after_pra_id_str = request.GET.get("cursor", "0.0_0").split("_")
+    after_ts = datetime.datetime.fromtimestamp(float(after_ts_str))
+
+    pras = list(
+        PRA.objects.extra(
+            where=[
+                "created_timestamp > %s",
+                "created_timestamp < STATEMENT_TIMESTAMP() - INTERVAL '1 second'",
+            ],
+            params=(after_ts,),
+        ).order_by("created_timestamp")[: settings.ACTIVITY_STREAM_ITEMS_PER_PAGE]
+    )
+
+    abs_url = request.build_absolute_uri(reverse("main:activity-stream-pras"))
+
+    page = {
+        "@context": [
+            "https://www.w3.org/ns/activitystreams",
+            {"dit": "https://www.trade.gov.uk/ns/activitystreams/v1"},
+        ],
+        "type": "Collection",
+        "orderedItems": [
+            {
+                "id": f"dit:ReturnToOffice:PRA:{pra.id}:Update",
+                "published": pra.created_timestamp,
+                "object": {
+                    "id": f"dit:ReturnToOffice:PRA:{pra.id}",
+                    "type": "dit:ReturnToOffice:PRA",
+                    "dit:ReturnToOffice:PRA:praId": pra.id,
+                    "dit:ReturnToOffice:PRA:staffMemberId": pra.staff_member_id,
+                    "dit:ReturnToOffice:PRA:staffMemberEmail": pra.staff_member.email,
+                    "dit:ReturnToOffice:PRA:staffMemberFullName": pra.staff_member.get_short_name(),
+                    "dit:ReturnToOffice:PRA:lineManagerId": pra.line_manager_id,
+                    "dit:ReturnToOffice:PRA:lineManagerEmail": pra.line_manager.email,
+                    "dit:ReturnToOffice:PRA:lineManagerFullName": pra.line_manager.get_short_name(),
+                    "dit:ReturnToOffice:PRA:scsId": pra.scs_id,
+                    "dit:ReturnToOffice:PRA:scsEmail": pra.scs.email,
+                    "dit:ReturnToOffice:PRA:scsFullName": pra.scs.get_short_name(),
+                    "dit:ReturnToOffice:PRA:authorizedReason": pra.authorized_reason,
+                    "dit:ReturnToOffice:PRA:group": pra.group,
+                    "dit:ReturnToOffice:PRA:businessUnit": pra.business_unit,
+                    "dit:ReturnToOffice:PRA:riskCategory": pra.risk_category_desc(),
+                    "dit:ReturnToOffice:PRA:mitigationOutcome": pra.mitigation_outcome_desc(),
+                    "dit:ReturnToOffice:PRA:mitigationMeasures": pra.mitigation_measures,
+                    "dit:ReturnToOffice:PRA:created": pra.created_timestamp,
+                    "dit:ReturnToOffice:PRA:approvedStaffMember": pra.approved_staff_member,
+                    "dit:ReturnToOffice:PRA:approvedSCS": pra.approved_scs,
+                    "dit:ReturnToOffice:PRA:migrated": pra.migrated,
+                },
+            }
+            for pra in pras
+        ],
+        **(
+            {"next": f"{abs_url}?cursor={pras[-1].created_timestamp.timestamp()}_{pras[-1].id}"}
+            if pras
+            else {}
+        ),
+    }
+
+    return JsonResponse(
+        data=page,
+        status=200,
+    )

@@ -177,6 +177,7 @@ SESSION_SERIALIZER = "django.contrib.sessions.serializers.PickleSerializer"
 AUTHBROKER_ANONYMOUS_PATHS = [
     "/pingdom/ping.xml",
     "/activity-stream/bookings",
+    "/activity-stream/pras",
 ]
 
 GOVUK_NOTIFY_API_KEY = env("GOVUK_NOTIFY_API_KEY")
