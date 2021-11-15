@@ -58,7 +58,7 @@ django==3.2.7
     #   django-staff-sso-client
 docopt==0.6.2
     # via notifications-python-client
-elastic-apm==5.6.0
+elastic-apm==6.6.3
     # via
     #   -r requirements.in/base.in
     #   -r requirements.in/prod.in
