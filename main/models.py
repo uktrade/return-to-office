@@ -190,7 +190,7 @@ class PRA(models.Model):
         return self.RC_MAPPING[self.risk_category]
 
     def mitigation_outcome_desc(self):
-        return self.MO_MAPPING[self.mitigation_outcome]
+        return self.MO_MAPPING.get(self.mitigation_outcome)
 
     def needs_staff_member_approval(self) -> bool:
         """Does this PRA need to be approved by the staff member?"""
