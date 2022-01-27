@@ -8,7 +8,8 @@ black_format:
 	.venv/bin/python -m black .
 
 setup:
-	scripts/initial-setup.sh
+	docker-compose build
+	git-hooks/setup.sh
 	make migrations migrate
 	make compilescss
 	make collectstatic
