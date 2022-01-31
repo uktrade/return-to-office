@@ -113,6 +113,7 @@ myignore/
 .env
 
 staticfiles/*
+main/static/main/css/styles.css
 
 # Node module dir
 node_modules

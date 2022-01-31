@@ -83,6 +83,7 @@ class PRAFormReason(forms.Form):
         self.fields["authorized_reason"].widget.form_instance = self
 
         self.fields["authorized_reason"].choices = [
+            ("Hybrid Working", "Hybrid Working"),
             ("Information access requirements", "Information access requirements"),
             ("Essential corporate enabler support", "Essential corporate enabler support"),
             ("Personal circumstances", "Personal circumstances"),
