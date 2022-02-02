@@ -19,9 +19,9 @@ class CustomAuthbrokerBackend(AuthbrokerBackend):
     def get_or_create_user(profile):
         # example values:
         #
-        # {'email': 'jane.doe@digital.trade.gov.uk',
-        #  'user_id': 'df798b95-56cd-4b4a-b549-9e4d98a31ef3',
-        #  'email_user_id': 'jane.doe-df798b95@id.trade.gov.uk',
+        # {'email': 'jane.doe@digital.trade.gov.uk',  /PS-IGNORE
+        #  'user_id': 'df798b95-56cd-4b4a-b549-9e4d98a31ef3',  /PS-IGNORE
+        #  'email_user_id': 'jane.doe-df798b95@id.trade.gov.uk',  /PS-IGNORE
 
         # these are guaranteed to always be present
         assert profile["email_user_id"]

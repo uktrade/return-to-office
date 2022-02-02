@@ -95,8 +95,8 @@ class Booking(models.Model):
 
         "Yourself"
         "Donald Duck"
-        "donald.duck@digital.trade.gov.uk"
-        "Donald Duck (donald.duck@digital.trade.gov.uk)"
+        "donald.duck@digital.trade.gov.uk"  /PS-IGNORE
+        "Donald Duck (donald.duck@digital.trade.gov.uk)"  /PS-IGNORE
         """
 
         if self.on_behalf_of_name or self.on_behalf_of_dit_email:

@@ -23,8 +23,8 @@ class DjangoIntegrationMixin(models.Model):
         abstract = True
 
 
-class FirstNameMixin(models.Model):
-    first_name = models.CharField(_("first name"), max_length=254, blank=True)
+class FirstNameMixin(models.Model):  # /PS-IGNORE
+    first_name = models.CharField(_("first name"), max_length=254, blank=True)  # /PS-IGNORE
 
     def get_first_name(self):
         return self.first_name
@@ -33,8 +33,8 @@ class FirstNameMixin(models.Model):
         abstract = True
 
 
-class LastNameMixin(models.Model):
-    last_name = models.CharField(_("last name"), max_length=254, blank=True)
+class LastNameMixin(models.Model):  # /PS-IGNORE
+    last_name = models.CharField(_("last name"), max_length=254, blank=True)  # /PS-IGNORE
 
     def get_last_name(self):
         return self.last_name
@@ -58,8 +58,8 @@ class EmailAuthMixin(models.Model):
 
 class AbstractUser(
     DjangoIntegrationMixin,
-    FirstNameMixin,
-    LastNameMixin,
+    FirstNameMixin,  # /PS-IGNORE
+    LastNameMixin,  # /PS-IGNORE
     EmailAuthMixin,
     PermissionsMixin,
     AbstractBaseUser,

@@ -8,7 +8,7 @@ from main.tests.utils import create_test_user
 
 
 def test_no_match(transactional_db):
-    user1 = User.objects.create(email="hello1@world.com", contact_email="blaa1@world.com")
+    user1 = User.objects.create(email="hello1@example.com", contact_email="blaa1@example.com")
 
     user2 = CustomAuthbrokerBackend.get_or_create_user(
         {
@@ -31,7 +31,7 @@ def test_no_match(transactional_db):
 
 def test_match_email(transactional_db):
     user1 = User.objects.create(
-        email="jane.doe@digital.trade.gov.uk", contact_email="blaa1@world.com"
+        email="jane.doe@digital.trade.gov.uk", contact_email="blaa1@example.com"
     )
 
     user2 = CustomAuthbrokerBackend.get_or_create_user(
@@ -57,14 +57,14 @@ def test_match_username(transactional_db):
     user1 = User.objects.create(
         username="jane.doe-df798b95@id.trade.gov.uk",
         email="jane.smith@digital.trade.gov.uk",
-        contact_email="blaa1@world.com",
+        contact_email="blaa1@example.com",
     )
 
     user2 = CustomAuthbrokerBackend.get_or_create_user(
         {
             "email_user_id": "jane.doe-df798b95@id.trade.gov.uk",
             "email": "jane.doe@digital.trade.gov.uk",
-            "contact_email": "jane.doe@somewhere.com",
+            "contact_email": "jane.doe@example.com",
             "first_name": "Jane",
             "last_name": "Doe",
         }
@@ -74,14 +74,14 @@ def test_match_username(transactional_db):
 
     assert user2.username == "jane.doe-df798b95@id.trade.gov.uk"
     assert user2.email == "jane.doe@digital.trade.gov.uk"
-    assert user2.contact_email == "jane.doe@somewhere.com"
+    assert user2.contact_email == "jane.doe@example.com"
     assert user2.first_name == "Jane"
     assert user2.last_name == "Doe"
 
 
 def test_match_contact_email(transactional_db):
     user1 = User.objects.create(
-        email="blaa@blaa.com", contact_email="jane.doe@digital.trade.gov.uk"
+        email="blaa@example.com", contact_email="jane.doe@digital.trade.gov.uk"
     )
 
     user2 = CustomAuthbrokerBackend.get_or_create_user(
@@ -117,7 +117,7 @@ class TestUserRecords(TestCase):
 
     def test_new_user_has_correct_details(self):
         self.client.force_login(self.test_user)
-        assert User.objects.first().email == "test@test.com"
+        assert User.objects.first().email == "test@example.com"
 
 
 def test_duplicate_user_gets_deleted(transactional_db):

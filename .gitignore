@@ -134,3 +134,7 @@ chromedriver
 # Test files
 test.txt
 test_*.txt
+
+# PII NER
+ner_output_file.txt
+.pii-secret-hook
