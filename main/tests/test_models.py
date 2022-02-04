@@ -7,8 +7,8 @@ def test_booking_on_behalf_of_yourself():
 
 
 def test_booking_on_behalf_of_dit_email():
-    b = Booking(on_behalf_of_dit_email="jane@blaa.com")
-    assert b.get_on_behalf_of() == "jane@blaa.com"
+    b = Booking(on_behalf_of_dit_email="jane@example.com")
+    assert b.get_on_behalf_of() == "jane@example.com"
 
 
 def test_booking_on_behalf_of_name():
@@ -17,8 +17,8 @@ def test_booking_on_behalf_of_name():
 
 
 def test_booking_on_behalf_of_name_and_dit_email():
-    b = Booking(on_behalf_of_name="Jane Doe", on_behalf_of_dit_email="jane@blaa.com")
-    assert b.get_on_behalf_of() == "Jane Doe (jane@blaa.com)"
+    b = Booking(on_behalf_of_name="Jane Doe", on_behalf_of_dit_email="jane@example.com")
+    assert b.get_on_behalf_of() == "Jane Doe (jane@example.com)"
 
 
 def test_dit_group_business_units_empty():

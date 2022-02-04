@@ -77,7 +77,7 @@ def cancel_booking(req, pk):
 
         nc.send_email_notification(
             email_address=req.user.get_contact_email(),
-            template_id="349eaf4a-c0d1-4e02-a263-6b85ee2557a9",
+            template_id=settings.GOVUK_NOTIFY_TEMPLATE_CANCELLATION_CONFIRMATION_V2,
             personalisation={
                 "on_behalf_of": b.get_on_behalf_of(),
                 "date": str(b.booking_date),
@@ -253,7 +253,7 @@ def create_booking_finalize(req):
 
                     nc.send_email_notification(
                         email_address=req.user.get_contact_email(),
-                        template_id="8df6e4a2-a29a-48f4-a03e-d00b9c5b3f49",
+                        template_id=settings.GOVUK_NOTIFY_TEMPLATE_BOOKING_CONFIRMATION_V2,
                         personalisation={
                             "on_behalf_of": booking.get_on_behalf_of(),
                             "date": str(booking.booking_date),

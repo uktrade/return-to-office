@@ -8,7 +8,7 @@
 
 <p class="govuk-body">If you, or the person you are booking for, would have
 difficulty using the stairs in an emergency, contact the <a
-href="mailto:healthandsafetyteam@trade.gov.uk">healthandsafetyteam@trade.gov.uk</a>
+href="mailto:{{ settings.HEALTH_AND_SAFETY_EMAIL_ADDRESS }}">{{ settings.HEALTH_AND_SAFETY_EMAIL_ADDRESS }}</a>
 to discuss evacuation arrangements before proceeding with a booking.</p>
 
 <form action="{% url "main:booking-create-who-for" %}" method="post" novalidate>

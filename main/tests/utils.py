@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 
 
 def create_test_user():
-    test_user_email = "test@test.com"
+    test_user_email = "test@example.com"
     test_password = "test_password"
 
     test_user, _ = get_user_model().objects.get_or_create(

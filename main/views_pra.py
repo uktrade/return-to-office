@@ -210,7 +210,7 @@ class LegacyPRA:
         if self.new_pra.approved_staff_member is None:
             nc.send_email_notification(
                 email_address=self.new_pra.staff_member.get_contact_email(),
-                template_id="7c663f35-276c-4737-91c5-c0f4b02122bb",
+                template_id=settings.GOVUK_NOTIFY_TEMPLATE_PRA_ASK_STAFF_FOR_APPROVAL,
                 personalisation={
                     "link": link,
                     "line_manager": self.new_pra.line_manager.full_name(),
@@ -222,7 +222,7 @@ class LegacyPRA:
         elif self.new_pra.approved_scs is None:
             nc.send_email_notification(
                 email_address=self.new_pra.scs.get_contact_email(),
-                template_id="9bae5273-ff86-43fd-b67b-1abdc0bea513",
+                template_id=settings.GOVUK_NOTIFY_TEMPLATE_PRA_ASK_SCS_FOR_APPROVAL,
                 personalisation={
                     "link": link,
                     "staff_member": self.new_pra.staff_member.full_name(),
@@ -514,7 +514,7 @@ def create_pra_submit(req: HttpRequest):
 
         nc.send_email_notification(
             email_address=staff_member.get_contact_email(),
-            template_id="7c663f35-276c-4737-91c5-c0f4b02122bb",
+            template_id=settings.GOVUK_NOTIFY_TEMPLATE_PRA_ASK_STAFF_FOR_APPROVAL,
             personalisation={
                 "link": link,
                 "line_manager": pra.line_manager.full_name(),
@@ -524,7 +524,7 @@ def create_pra_submit(req: HttpRequest):
         # PRA rejected immediately, do not even ask staff_member for approval, just notify them
         nc.send_email_notification(
             email_address=staff_member.get_contact_email(),
-            template_id="72760c96-cc22-4a55-89c0-b5d9dcd6a8ab",
+            template_id=settings.GOVUK_NOTIFY_TEMPLATE_PRA_REJECTED_BY_LINE_MANAGER,
             personalisation={
                 "line_manager": pra.line_manager.full_name(),
             },
@@ -580,7 +580,7 @@ def _mark_pra_staff_member_approval(req: HttpRequest, pk: int, approval: bool) -
 
     nc.send_email_notification(
         email_address=pra.line_manager.get_contact_email(),
-        template_id="3c4dfc7b-d978-4268-9c2e-517a41c24b64",
+        template_id=settings.GOVUK_NOTIFY_TEMPLATE_PRA_INFORM_LINE_MANAGER,
         personalisation={
             "link": link,
             "role": "A staff member",
@@ -592,7 +592,7 @@ def _mark_pra_staff_member_approval(req: HttpRequest, pk: int, approval: bool) -
     if approval:
         nc.send_email_notification(
             email_address=pra.scs.get_contact_email(),
-            template_id="9bae5273-ff86-43fd-b67b-1abdc0bea513",
+            template_id=settings.GOVUK_NOTIFY_TEMPLATE_PRA_ASK_SCS_FOR_APPROVAL,
             personalisation={
                 "link": link,
                 "staff_member": pra.staff_member.full_name(),
@@ -631,7 +631,7 @@ def _mark_pra_scs_approval(req: HttpRequest, pk: int, approval: bool) -> HttpRes
 
     nc.send_email_notification(
         email_address=pra.line_manager.get_contact_email(),
-        template_id="3c4dfc7b-d978-4268-9c2e-517a41c24b64",
+        template_id=settings.GOVUK_NOTIFY_TEMPLATE_PRA_INFORM_LINE_MANAGER,
         personalisation={
             "link": link,
             "role": "SCS",
