@@ -123,7 +123,6 @@ PyBuilder
 local_settings.py
 Docker
 Node
-backup.sql
 test_*.txt
 Vault
 DIT Google
