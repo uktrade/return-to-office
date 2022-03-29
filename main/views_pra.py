@@ -23,7 +23,6 @@ from .forms_pra import (
     PRAFormMitigation,
     PRAFormMitigationApprove,
     PRAFormMitigationDoNotApprove,
-    PRAFormReason,
     PRAFormBusinessUnit,
     PRAFormMigrate,
     PRAFormFix,
@@ -276,7 +275,7 @@ def create_pra_business_unit(req):
         if form.is_valid():
             req.session["pra_business_unit"] = form.cleaned_data["business_unit"]
 
-            return redirect(reverse("main:pra-create-reason"))
+            return redirect(reverse("main:pra-create-risk-category"))
     else:
         if not req.GET.get("back", False):
             initial = None
@@ -288,29 +287,6 @@ def create_pra_business_unit(req):
     ctx["form"] = form
 
     return render(req, "main/create_pra_business_unit.html", ctx)
-
-
-def create_pra_reason(req):
-    ctx = {}
-
-    if req.method == "POST":
-        form = PRAFormReason(req.POST)
-
-        if form.is_valid():
-            req.session["pra_authorized_reason"] = form.cleaned_data["authorized_reason"]
-
-            return redirect(reverse("main:pra-create-risk-category"))
-    else:
-        if not req.GET.get("back", False):
-            initial = None
-        else:
-            initial = {"authorized_reason": req.session["pra_authorized_reason"]}
-
-        form = PRAFormReason(initial=initial)
-
-    ctx["form"] = form
-
-    return render(req, "main/create_pra_reason.html", ctx)
 
 
 def create_pra_risk_category(req):
@@ -468,7 +444,7 @@ def create_pra_submit(req: HttpRequest):
     scs_email = req.session["pra_scs_email"]
     dit_group = get_object_or_404(DitGroup, pk=req.session["pra_dit_group"]).name
     business_unit = req.session["pra_business_unit"]
-    authorized_reason = req.session["pra_authorized_reason"]
+    authorized_reason = "N/A"
     risk_category = req.session["pra_risk_category"]
     mitigation_outcome = req.session.get("pra_mitigation_outcome", "")
     mitigation_measures = req.session.get("pra_mitigation_measures", "")
