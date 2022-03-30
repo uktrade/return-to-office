@@ -71,31 +71,6 @@ class PRAFormInitial(forms.Form):
             )
 
 
-class PRAFormReason(forms.Form):
-    authorized_reason = forms.ChoiceField(
-        widget=GovUKRadioSelect(),
-        label="Authorised reason for office attendance",
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["authorized_reason"].widget.form_instance = self
-
-        self.fields["authorized_reason"].choices = [
-            ("Hybrid Working", "Hybrid Working"),
-            ("Information access requirements", "Information access requirements"),
-            ("Essential corporate enabler support", "Essential corporate enabler support"),
-            ("Personal circumstances", "Personal circumstances"),
-            ("Support to Ministers or Cabinet Office", "Support to Ministers or Cabinet Office"),
-            ("Trade negotiations", "Trade negotiations"),
-            ("Visitor", "Visitor"),
-            ("Facilities Management", "Facilities Management"),
-            ("Collect Personal Items", "Collect Personal Items"),
-            ("Other", "Other"),
-        ]
-
-
 class PRAFormBusinessUnit(forms.Form):
     business_unit = forms.ChoiceField(label="Business unit", widget=GovUKRadioSelect())
 
