@@ -21,6 +21,8 @@ certifi==2020.12.5
     #   elastic-apm
     #   requests
     #   sentry-sdk
+cffi==1.15.0
+    # via cryptography
 chardet==3.0.4
     # via
     #   -r requirements.in/base.in
@@ -33,6 +35,8 @@ colorclass==2.2.0
     # via pip-check
 coverage==5.5
     # via pytest-cov
+cryptography==37.0.2
+    # via pyjwt
 dj-database-url==0.5.0
     # via -r requirements.in/base.in
 django==3.2.13
@@ -142,10 +146,14 @@ py==1.10.0
     #   pytest-forked
 pycodestyle==2.6.0
     # via flake8
+pycparser==2.21
+    # via cffi
 pyflakes==2.2.0
     # via flake8
-pyjwt==2.1.0
-    # via notifications-python-client
+pyjwt[crypto]==2.4.0
+    # via
+    #   -r requirements.in/base.in
+    #   notifications-python-client
 pyparsing==2.4.7
     # via packaging
 pytest==6.2.3

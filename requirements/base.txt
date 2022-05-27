@@ -13,10 +13,14 @@ certifi==2020.12.5
     #   elastic-apm
     #   requests
     #   sentry-sdk
+cffi==1.15.0
+    # via cryptography
 chardet==3.0.4
     # via
     #   -r requirements.in/base.in
     #   requests
+cryptography==37.0.2
+    # via pyjwt
 dj-database-url==0.5.0
     # via -r requirements.in/base.in
 django==3.2.13
@@ -84,8 +88,12 @@ psycopg2==2.7.4
     # via -r requirements.in/base.in
 psycopg2-binary==2.7.4
     # via -r requirements.in/base.in
-pyjwt==2.1.0
-    # via notifications-python-client
+pycparser==2.21
+    # via cffi
+pyjwt[crypto]==2.4.0
+    # via
+    #   -r requirements.in/base.in
+    #   notifications-python-client
 python-dateutil==2.7.3
     # via -r requirements.in/base.in
 python-dotenv==0.9.1

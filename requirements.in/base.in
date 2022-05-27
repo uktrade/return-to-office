@@ -30,4 +30,4 @@ whitenoise==5.2.0
 urllib3==1.26.5
 # Adding sqlparse here because pip-compile did not upgrade to high enough version
 sqlparse>=0.4.2
-
+pyjwt[crypto]>=2.4.0
