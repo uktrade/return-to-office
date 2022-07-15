@@ -140,6 +140,9 @@ class PRA(models.Model):
         RC_PREFER_NOT_TO_SAY: "The staff member would prefer not to say",
     }
 
+    RC_AMBER = {RC_ELEVATED_RISK, RC_MODERATE_RISK, RC_LIVES_WITH_MODERATE_RISK}
+    RC_RED = {RC_LIVES_WITH_HIGH_RISK, RC_HIGH_RISK}
+
     # mitigation outcome values
     MO_APPROVE_NO_MITIGATION = "approve_no_mitigation"
     MO_APPROVE_MITIGATION_REQUIRED = "approve_mitigation_required"

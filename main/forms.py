@@ -21,31 +21,6 @@ class BookingFormWhoFor(forms.Form):
         self.request = request
         self.fields["for_myself"].widget.form_instance = self
 
-    def clean(self):
-        for_myself = bool(int(self.cleaned_data["for_myself"]))
-
-        if for_myself:
-            pra = (
-                PRA.objects.filter(staff_member=self.request.user)
-                .order_by("-created_timestamp")
-                .first()
-            )
-
-            if (
-                not pra
-                or (pra.days_left_valid_for() <= 0)
-                or not pra.approved_staff_member
-                or not pra.approved_scs
-            ):
-                self.add_error(
-                    None,
-                    forms.ValidationError(
-                        mark_safe(
-                            """You do not have an approved Personal Risk Assessment (PRA). Without a PRA you cannot enter any DIT office or book a desk. Follow the <a href="https://workspace.trade.gov.uk/working-at-dit/policies-and-guidance/returning-to-office-working/">return to office guidance</a> with your line manager to create a PRA."""
-                        )
-                    ),
-                )
-
 
 class BookingFormInitial(forms.Form):
     on_behalf_of_name = forms.CharField(
