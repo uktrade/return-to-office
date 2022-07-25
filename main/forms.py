@@ -129,7 +129,7 @@ class BookingFormFinal(forms.Form):
     <p class="govuk-body">By making a booking I confirm that I, or the person on whose behalf I am making the booking have:</p>
 
     <ul class="govuk-list govuk-list--bullet">
-    <li>Completed a Personal Risk Assessment after consultation with my/their line manager
+    <li>Completed a Personal Risk Assessment <strong>(if appropriate - Amber or Red)</strong> after consultation with my/their line manager
     <li>Agreed with my/their line manager that it is safe to attend the office subject to any mitigation measures needed
     <li>Have the agreement of a member of the SCS in my line management chain to return to the office
     <li>Viewed the presentation on the 'Returning to DIT offices' digital workspace page
