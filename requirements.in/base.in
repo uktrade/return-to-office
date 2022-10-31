@@ -11,7 +11,7 @@ django-settings-export==1.2.1
 django-staff-sso-client==3.1.0
 django-webpack-loader==0.7.0
 django-audit-log-middleware==0.0.4
-Django==3.2.15
+Django==3.2.16
 elastic-apm==6.6.3
 gunicorn==19.9.0
 libsass==0.20.0
