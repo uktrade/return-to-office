@@ -76,6 +76,12 @@ if env("ELASTIC_APM_ENVIRONMENT", default=None):
         "ENVIRONMENT": env("ELASTIC_APM_ENVIRONMENT", default=None),
     }
 
+DATABASE_CREDS = env.json("DATABASE_CREDENTIALS", default={})
+
+if DATABASE_CREDS:
+    db_url = "{engine}://{username}:{password}@{host}:{port}/{dbname}".format(**DATABASE_CREDS)
+    os.environ["DATABASE_URL"] = db_url
+
 VCAP_SERVICES = env.json("VCAP_SERVICES", default={})
 
 if "postgres" in VCAP_SERVICES:
