@@ -4,5 +4,7 @@
     "private": true,
     "dependencies": {
         "govuk-frontend": "^3.8.0"
-    }
+    },
+    "scripts": {
+    	"build": "npm install"
 }
