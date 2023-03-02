@@ -11,17 +11,17 @@ AUTHENTICATION_BACKENDS += [
     "custom_usermodel.backends.CustomAuthbrokerBackend",
 ]
 
-INSTALLED_APPS += [  # noqa F405
-    "elasticapm.contrib.django",
-]
+# INSTALLED_APPS += [  # noqa F405
+#     "elasticapm.contrib.django",
+# ]
 
-ELASTIC_APM = {
-    "SERVICE_NAME": "Return to Office",
-    "SECRET_TOKEN": env("ELASTIC_APM_SECRET_TOKEN"),  # noqa F405
-    "SERVER_URL": env("ELASTIC_APM_SERVER_URL"),  # noqa F405
-    "ENVIRONMENT": env("APP_ENV"),  # noqa F405
-    "SERVER_TIMEOUT": env("ELASTIC_APM_SERVER_TIMEOUT", default="20s"),  # noqa F405
-}
+# ELASTIC_APM = {
+#     "SERVICE_NAME": "Return to Office",
+#     "SECRET_TOKEN": env("ELASTIC_APM_SECRET_TOKEN"),  # noqa F405
+#     "SERVER_URL": env("ELASTIC_APM_SERVER_URL"),  # noqa F405
+#     "ENVIRONMENT": env("APP_ENV"),  # noqa F405
+#     "SERVER_TIMEOUT": env("ELASTIC_APM_SERVER_TIMEOUT", default="20s"),  # noqa F405
+# }
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "node_modules/govuk-frontend"),)
 
