@@ -1,10 +1,13 @@
 {
-  "builpacks": [
+  "buildpacks": [
     {
       "paketo-buildpacks": "python"
     },
     {
       "paketo-buildpacks": "nodejs"
+    },
+    {
+      "fagiani": "run"
     }
   ]
 }

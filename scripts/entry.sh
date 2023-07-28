@@ -2,9 +2,9 @@
 
 python manage.py migrate --noinput
 
-python manage.py compilescss
+#python manage.py compilescss
 
-python manage.py collectstatic --noinput
+#python manage.py collectstatic --noinput
 
 gunicorn config.wsgi:application \
   --config config/gunicorn.py \
