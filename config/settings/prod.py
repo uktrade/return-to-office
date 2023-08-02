@@ -26,6 +26,7 @@ AUTHENTICATION_BACKENDS += [
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "node_modules/govuk-frontend"),)
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+WHITENOISE_MANIFEST_STRICT = False
 
 # X_ROBOTS_TAG (https://man.uktrade.io/docs/procedures/1st-go-live.html)
 X_ROBOTS_TAG = [
