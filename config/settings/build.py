@@ -13,16 +13,13 @@ ALLOWED_HOSTS = "*"
 INSTALLED_APPS = [
     "main",
     "custom_usermodel",
-    #"pingdom.apps.PingdomConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    #"django_audit_log_middleware",
     "sass_processor",
-    #"django.forms",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -37,13 +34,10 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                #"django_settings_export.settings_export",
             ]
         },
     }
 ]
-
-#FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -60,12 +54,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
-# USE_I18N = True
-# LANGUAGE_CODE = "en-gb"  
-# TIME_ZONE = "UTC"
-# USE_L10N = True
-# USE_TZ = True
 
 AUTH_USER_MODEL = "custom_usermodel.User"
 AUTHBROKER_URL = "dont-use-in-prod"
@@ -88,16 +76,4 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    #"axes.middleware.AxesMiddleware",
-
-    #"django_audit_log_middleware.AuditLogMiddleware",
 ]
-
-# AUTHENTICATION_BACKENDS = [
-#     "django.contrib.auth.backends.ModelBackend",
-#     "guardian.backends.ObjectPermissionBackend",
-
-# ]
-# AUTHENTICATION_BACKENDS += [
-#     "custom_usermodel.backends.CustomAuthbrokerBackend",
-# ]
